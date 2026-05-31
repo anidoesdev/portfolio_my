@@ -9,7 +9,7 @@ const lobsterTwo = Lobster_Two({
   subsets: ["latin"],
 });
 
-const TEXT = "Anika Jain";
+const TEXT = "Hi! I'm Anika";
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
 
 function staticChar(i: number) {

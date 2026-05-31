@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import treasure from "@/images/treasure.png";
 
 const achievements = [
@@ -23,8 +23,8 @@ export default function Achievements() {
           <Image
             src={treasure}
             alt=""
-            width={160}
-            height={160}
+            width={130}
+            height={130}
             className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />

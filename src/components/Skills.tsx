@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import booksBunch from "@/images/books_bunch.png";
 
 const skills = [
@@ -66,8 +66,8 @@ export default function Skills() {
           <Image
             src={booksBunch}
             alt=""
-            width={160}
-            height={160}
+            width={130}
+            height={130}
             className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />

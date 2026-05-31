@@ -23,10 +23,21 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: url("/page2_bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: scroll;
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+@supports (background-attachment: fixed) and (not (-webkit-overflow-scrolling: touch)) {
+  body {
+    background-attachment: fixed;
+  }
 }
 
 html {
@@ -64,18 +75,28 @@ html {
 }
 
 .section-divider {
-  border-top: 1px solid #838559;
+  border-top: none;
 }
 
 .section-heading {
   font-family: var(--font-lobster-two);
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   line-height: 1.1;
   font-weight: 700;
 }
 
 @media (min-width: 640px) {
   .section-heading {
+    font-size: 2.5rem;
+  }
+}
+
+#contact .section-heading {
+  font-size: 2.25rem;
+}
+
+@media (min-width: 640px) {
+  #contact .section-heading {
     font-size: 4.5rem;
   }
 }
@@ -109,32 +130,7 @@ html {
 
 
 .section-bg {
-  position: relative;
-  background-image: url("/page2_bg.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center top;
-  background-attachment: scroll;
-}
-
-@supports (background-attachment: fixed) and (not (-webkit-overflow-scrolling: touch)) {
-  .section-bg {
-    background-attachment: fixed;
-  }
-}
-
-.section-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(186, 179, 137, 0.10);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.section-bg > * {
-  position: relative;
-  z-index: 1;
+  background: rgba(186, 179, 137, 0.70);
 }
 
 .glass-card {

@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import treeLog from "@/images/stair_case.png";
 
 
@@ -118,8 +118,8 @@ export default function Projects() {
           <Image
             src={treeLog}
             alt=""
-            width={170}
-            height={170}
+            width={130}
+            height={130}
             className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />

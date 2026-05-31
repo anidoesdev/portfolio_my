@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -22,8 +22,8 @@ export default function Contributions() {
           <Image
             src={woodLog}
             alt=""
-            width={160}
-            height={160}
+            width={130}
+            height={130}
             className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
