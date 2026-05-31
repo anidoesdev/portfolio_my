@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 
 const navLinks = [
-  { label: "Home", href: "#hero" },
-  { label: "Projects", href: "#projects" },
-  { label: "Work", href: "#experience" },
-  { label: "Skills", href: "#about" },
-  { label: "Achievements", href: "#achievements" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home",         short: "Home",     href: "#hero" },
+  { label: "Projects",     short: "Projects",  href: "#projects" },
+  { label: "Work",         short: "Work",      href: "#experience" },
+  { label: "Skills",       short: "Skills",    href: "#about" },
+  { label: "Achievements", short: "Awards",    href: "#achievements" },
+  { label: "Contact",      short: "Contact",   href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -37,9 +37,9 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-1.5rem)] overflow-x-auto">
       <ul
-        className="flex items-center gap-0.5 px-2 py-1.5 rounded-xl"
+        className="flex items-center gap-0 sm:gap-0.5 px-1.5 sm:px-2 py-1.5 rounded-xl"
         style={{
           background: "rgba(26,40,28,0.88)",
           border: "1px solid #899f81",
@@ -47,17 +47,18 @@ export default function Navbar() {
           WebkitBackdropFilter: "blur(14px)",
         }}
       >
-        {navLinks.map(({ label, href }) => (
+        {navLinks.map(({ label, short, href }) => (
           <li key={href}>
             <a
               href={href}
-              className={`text-sm px-3 py-1.5 rounded-lg transition-all duration-150 block ${
+              className={`text-xs sm:text-sm px-2 sm:px-3 py-1.5 rounded-lg transition-all duration-150 block whitespace-nowrap ${
                 active === href
                   ? "font-semibold bg-white/15 text-white"
                   : "opacity-60 hover:opacity-90 text-[#e3ebe6]"
               }`}
             >
-              {label}
+              <span className="sm:hidden">{short}</span>
+              <span className="hidden sm:inline">{label}</span>
             </a>
           </li>
         ))}

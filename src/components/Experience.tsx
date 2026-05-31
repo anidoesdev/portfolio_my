@@ -41,10 +41,10 @@ export default function Experience() {
           </div>
           <Image
             src={leavesPile}
-            alt="Leaves"
+            alt=""
             width={160}
             height={160}
-            className="object-contain"
+            className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
         </div>
@@ -77,11 +77,11 @@ export default function Experience() {
                       onClick={() => setExpanded(isOpen ? null : item.org)}
                       className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
                     >
-                      <div className="flex items-baseline gap-3 min-w-0">
-                        <span className="text-base font-semibold text-foreground truncate">
+                      <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-3 min-w-0">
+                        <span className="text-base font-semibold text-foreground">
                           {item.title}
                         </span>
-                        <span className="text-sm text-muted-fg tabular-nums shrink-0">
+                        <span className="text-xs sm:text-sm text-muted-fg tabular-nums">
                           {item.period}
                         </span>
                       </div>

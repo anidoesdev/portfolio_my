@@ -22,10 +22,10 @@ export default function Achievements() {
           </div>
           <Image
             src={treasure}
-            alt="Treasure"
+            alt=""
             width={160}
             height={160}
-            className="object-contain"
+            className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
         </div>

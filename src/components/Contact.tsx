@@ -42,7 +42,7 @@ export default function Contact() {
         </a>
 
         <div
-          className="mt-12 flex justify-center gap-6"
+          className="mt-12 flex flex-wrap justify-center gap-4 sm:gap-6"
           style={{ borderTop: "1px solid #1b2920", paddingTop: "2rem" }}
         >
           {socials.map(({ label, href }) => (

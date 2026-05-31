@@ -21,16 +21,16 @@ export default function Contributions() {
           </div>
           <Image
             src={woodLog}
-            alt="Wood log"
+            alt=""
             width={160}
             height={160}
-            className="object-contain"
+            className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
         </div>
 
         <div
-          className="glass-card rounded-xl p-6 overflow-x-auto"
+          className="bglass-card rounded-xl p-6 overflow-x-auto"
         >
           <GitHubCalendar
             username="anidoesdev"

@@ -117,10 +117,10 @@ export default function Projects() {
           </div>
           <Image
             src={treeLog}
-            alt="Tree"
+            alt=""
             width={170}
             height={170}
-            className="object-contain"
+            className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
         </div>
