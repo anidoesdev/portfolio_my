@@ -1,58 +1,26 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import booksBunch from "@/images/books_bunch.png";
 
 const skills = [
   {
     category: "AI / ML / DL",
-    items: [
-      { name: "PyTorch", level: "Advanced" },
-      { name: "TensorFlow", level: "Intermediate" },
-      { name: "Transformers", level: "Advanced" },
-      { name: "LangChain", level: "Advanced" },
-      { name: "OpenAI API", level: "Expert" },
-      { name: "Scikit-learn", level: "Advanced" },
-    ],
+    items: ["PyTorch", "TensorFlow", "Transformers", "LangChain", "OpenAI API", "Scikit-learn"],
   },
   {
     category: "Frontend",
-    items: [
-      { name: "React", level: "Advanced" },
-      { name: "Next.js", level: "Advanced" },
-      { name: "TypeScript", level: "Intermediate" },
-      { name: "Tailwind CSS", level: "Advanced" },
-    ],
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
   },
   {
     category: "Backend",
-    items: [
-      { name: "Node.js", level: "Intermediate" },
-      { name: "Python", level: "Expert" },
-      { name: "FastAPI", level: "Advanced" },
-      { name: "Express", level: "Intermediate" },
-      { name: "REST APIs", level: "Advanced" },
-    ],
+    items: ["Node.js", "Python", "FastAPI", "Express", "REST APIs"],
   },
   {
     category: "Database & Cloud",
-    items: [
-      { name: "PostgreSQL", level: "Intermediate" },
-      { name: "MongoDB", level: "Intermediate" },
-      { name: "Redis", level: "Familiar" },
-      { name: "AWS", level: "Familiar" },
-      { name: "Docker", level: "Intermediate" },
-      { name: "Vercel", level: "Advanced" },
-    ],
+    items: ["PostgreSQL", "MongoDB", "Redis", "AWS", "Docker", "Vercel"],
   },
   {
     category: "Languages",
-    items: [
-      { name: "Python", level: "Expert" },
-      { name: "TypeScript", level: "Intermediate" },
-      { name: "JavaScript", level: "Advanced" },
-      { name: "SQL", level: "Intermediate" },
-      { name: "C++", level: "Familiar" },
-      { name: "Java", level: "Familiar" },
-    ],
+    items: ["Python", "TypeScript", "JavaScript", "SQL", "C++", "Java"],
   },
 ];
 
@@ -79,18 +47,12 @@ export default function Skills() {
               <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2">{category}</h3>
               <div className="border-t mb-3" style={{ borderColor: "rgba(131, 133, 89, 0.5)" }} />
               <div className="flex flex-wrap gap-2">
-                {items.map(({ name, level }) => (
+                {items.map((skill) => (
                   <span
-                    key={name}
-                    className="relative group glass-badge px-2.5 sm:px-3 py-1 text-xs font-medium rounded-md text-muted-fg group-hover:text-foreground transition-colors duration-150 cursor-default"
+                    key={skill}
+                    className="glass-badge px-2.5 sm:px-3 py-1 text-xs font-medium rounded-md text-muted-fg cursor-default"
                   >
-                    {name}
-                    <span
-                      className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10"
-                      style={{ background: "#1b2920", color: "#e3ebe6", border: "1px solid #899f81" }}
-                    >
-                      {level}
-                    </span>
+                    {skill}
                   </span>
                 ))}
               </div>
