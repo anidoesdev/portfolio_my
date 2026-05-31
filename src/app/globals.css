@@ -114,7 +114,13 @@ html {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center top;
-  background-attachment: fixed;
+  background-attachment: scroll;
+}
+
+@supports (background-attachment: fixed) and (not (-webkit-overflow-scrolling: touch)) {
+  .section-bg {
+    background-attachment: fixed;
+  }
 }
 
 .section-bg::before {
