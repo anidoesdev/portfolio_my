@@ -1,18 +1,50 @@
 ﻿import Image from "next/image";
-import treeLog from "@/images/stair_case.png";
+import treeLog from "@/images/well.png";
+import { title } from "process";
 
 
 const productionProjects = [
   {
     title: "Papyrus",
     description:
-      "Built a full-stack Retrieval-Augmented Generation (RAG) system for scientific literature Q&A, enabling users to ask natural-language questions and receive cited, grounded answers backed by source documents",
-    tags: ["Next.js", "TypeScript", "Prisma", "WebSocket"],
+      "Built a full-stack Retrieval-Augmented Generation (RAG) system for scientific literature Q&A, enabling users to ask natural-language questions and receive cited, grounded answers backed by source documents.Combines dense vector search and keyword retrieval through reciprocal rank fusion, reranks candidates with an LLM relevance scorer, and synthesizes grounded answers with inline citations.",
+    tags: ["Reciprocal Rank Fusion (RRF)", "Document Ingestion Pipelines", "Production RAG", "Cross-Encoder Reranking"],
     liveUrl: "https://papyrus.anidoes.dev",
     codeUrl: "https://github.com/anidoesdev/scientific-rag-assistant.git",
     
     youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
   },
+  {
+    title: "Distill",
+    description:
+      "Fine-tuned a small language model with SFT and DPO to extract structured JSON from scientific papers — authors, methodology, datasets, findings, limitations. Quantized and served with vLLM behind a FastAPI gateway with schema-constrained decoding. Outperforms frontier APIs on accuracy while cutting cost-per-call by an order of magnitude.",
+    tags: ["Fine-Tuning", "Qwen 2.5", "TRL", "Paged Attention", "MLOps"],
+    liveUrl: "",
+    codeUrl: "https://github.com/anidoesdev/distill.git",
+    
+    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+  },
+  {
+    title: "Synthesis",
+    description:
+      "A multi-agent system that answers complex research questions across scientific literature. Five specialized agents — planner, retriever, reader, critic, synthesizer — collaborate through structured memory and tool use, with every decision logged to a custom trajectory viewer. Includes a 50-question eval harness with LLM-as-judge scoring and a hallucination-guard pipeline.",
+    tags: ["Multi-Agent Systems", "Agentic AI", "Hallucination Detection", "Distributed Tracing"],
+    liveUrl: "",
+    codeUrl: "https://github.com/anidoesdev/synthesis.git",
+    
+    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+  },
+  {
+    title: "Sentinel",
+    description:
+      "Real-time anomaly detection across vibration, audio, and log streams from industrial equipment. Fuses a VAE on time-series sensors, a CNN on mel-spectrograms, and a text classifier on machine logs into a late-fusion ensemble with SHAP explanations. Kafka ingestion, Triton serving, TimescaleDB storage, and Evidently drift monitoring.",
+    tags: ["Anomaly Detection", "Variational Autoencoder (VAE)", "Convolutional Neural Networks", "Apache Kafka", "Time-Series Databases"],
+    liveUrl: "",
+    codeUrl: "https://github.com/anidoesdev/Sentinel.git",
+    
+    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+  },
+  
   
 ];
 
@@ -118,8 +150,8 @@ export default function Projects() {
           <Image
             src={treeLog}
             alt=""
-            width={130}
-            height={130}
+            width={160}
+            height={160}
             className="object-contain hidden sm:block"
             style={{ mixBlendMode: "multiply" }}
           />
