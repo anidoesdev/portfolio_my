@@ -7,6 +7,11 @@ const achievements = [
     label: "GATE",
     description: "All India Rank 5472 out of 69242 in Data Science and Artificial Intelligence (DA) branch. ",
   },
+  {
+    stat: "",
+    label: "Agents Course",
+    description: "Successfully Completed Agents Course by Hugging Face",
+  },
   
 ];
 
@@ -30,12 +35,12 @@ export default function Achievements() {
           />
         </div>
 
-        <ul className="flex flex-col items-center gap-4 max-w-2xl mx-auto">
+        <ul className="grid grid-cols-1 gap-4 max-w-3xl mx-auto">
           {achievements.map(({ stat, label, description }) => (
             <li key={label} className="flex items-center gap-3">
               <i
                 className="fi fi-ss-gem text-xl leading-none shrink-0"
-                style={{ color: "#50c878" }}
+                style={{ color: "#307848" }}
               />
               <p className="text-lg text-foreground">
                 <span className="font-semibold">{stat} {label}</span>

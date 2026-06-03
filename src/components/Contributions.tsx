@@ -39,7 +39,7 @@ export default function Contributions() {
             fontSize={11}
             colorScheme="light"
             theme={{
-              light: ["#e8e2d0", "#c8d4a8", "#8aaa60", "#4a7030", "#2e4820"],
+              light: ["rgba(131, 133, 89, 0.18)", "#c8d4a8", "#8aaa60", "#4a7030", "#2e4820"],
             }}
           />
         </div>
