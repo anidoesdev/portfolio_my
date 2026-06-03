@@ -7,23 +7,24 @@ import leavesPile from "@/images/leaves_pile.png";
 const experiences = [
   {
     period: "May 2026 — Present",
-    title: "Freelancer",
-    org: "Acme Corp",
-    location: "Remote · Full-time",
-    shortDesc:
-      "Lead the redesign of the customer dashboard, reducing load time by 40% and increasing engagement across key user flows.",
-    details:
-      "Collaborated with product and design teams to deliver the new dashboard two weeks ahead of schedule. Implemented advanced data visualisation with D3.js, optimised bundle size by 35%, and mentored two junior engineers through code reviews.",
+    title: "Open Source Contributer",
+    org: "Hugging Face",
+    location: "Remote",
+    details: [],
   },
   {
-    period: "Dec 2025 — May 2026",
-    title: "Back-End Engineer",
+    period: "Dec 2025 - May 2026",
+    title: "Data Science Trainee",
     org: "Infosys",
     location: "Mysore · Full-time",
-    shortDesc:
-      "Built and shipped three client products end-to-end — from API design through to deployed production environments.",
-    details:
-      "Designed REST APIs with Node.js and Express, set up CI/CD pipelines on GitHub Actions, and integrated third-party services (Stripe, Twilio, Sendgrid). Led database migrations from MongoDB to PostgreSQL for two of the products.",
+    details: [
+        "Engineered and optimized machine learning architectures by applying foundational mathematical principles (linear algebra, multivariate calculus, and probability), enabling the custom tuning of loss functions and optimizers that improved model accuracy by 15% over standard baselines.",
+        "Architected, trained, and evaluated complex deep learning models using PyTorch and TensorFlow, specifically optimizing forward and backward passes to reduce training times by 30% and maximize computational efficiency on datasets exceeding 500GB.",
+        "Spearheaded the development of an end-to-end AI research pipeline designed to process and synthesize massive, unstructured scientific data, automating the extraction of latent patterns and reducing manual analysis time by 40%.",
+        "Implemented advanced neural network architectures, including graph-based models, directly from research papers, mathematically verifying adjacency matrices to accurately capture non-linear relationships and boost predictive performance by 22% on highly relational data.",
+        "Constructed robust data ingestion and feature engineering workflows, resolving bottlenecks in data preprocessing to decrease data pipeline latency by 45% and accelerate model convergence during training.",
+        "Conducted rigorous model evaluation, hyperparameter optimization, and ablation studies, establishing highly reliable baselines and improving overall inference accuracy by 18% for downstream analytical tasks.",
+    ],
   },
 ];
 
@@ -48,7 +49,7 @@ export default function Experience() {
           />
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {experiences.map((item, idx) => {
             const isOpen = expanded === item.org;
             const isLast = idx === experiences.length - 1;
@@ -99,7 +100,7 @@ export default function Experience() {
                   <div
                     className="overflow-hidden"
                     style={{
-                      maxHeight: isOpen ? "600px" : "0px",
+                      maxHeight: isOpen ? "2000px" : "0px",
                       transition: "max-height 0.25s ease",
                     }}
                   >
@@ -111,8 +112,14 @@ export default function Experience() {
                         <span className="text-muted-fg">·</span>
                         <span className="text-muted-fg">{item.location}</span>
                       </div>
-                      <p className="text-lg leading-relaxed text-muted-fg">{item.shortDesc}</p>
-                      <p className="text-lg leading-relaxed text-muted-fg">{item.details}</p>
+    
+                      {item.details.length > 0 && (
+                        <ul className="list-disc list-inside space-y-1 text-lg leading-relaxed text-muted-fg">
+                          {item.details.map((point, i) => (
+                            <li key={i}>{point}</li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>

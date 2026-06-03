@@ -19,6 +19,10 @@ const skills = [
     items: ["PostgreSQL", "MongoDB", "Redis", "AWS", "Docker", "Vercel"],
   },
   {
+    category: "MLOps & Deployment",
+    items: ["Docker", "CI/CD for ML", "Model Serving (vLLM, TorchServe)", "MLflow", "Weights & Biases"],
+  },
+  {
     category: "Languages",
     items: ["Python", "TypeScript", "JavaScript", "SQL", "C++", "Java"],
   },

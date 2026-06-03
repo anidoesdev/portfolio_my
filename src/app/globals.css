@@ -45,10 +45,13 @@ html {
 }
 
 .card-hover {
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 .card-hover:hover {
   border-color: #505834 !important;
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
 }
 
 .icon-btn {

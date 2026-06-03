@@ -1,6 +1,6 @@
 ﻿import Image from "next/image";
 import treeLog from "@/images/well.png";
-import { title } from "process";
+
 
 
 const productionProjects = [
@@ -17,7 +17,7 @@ const productionProjects = [
   {
     title: "Distill",
     description:
-      "Fine-tuned a small language model with SFT and DPO to extract structured JSON from scientific papers — authors, methodology, datasets, findings, limitations. Quantized and served with vLLM behind a FastAPI gateway with schema-constrained decoding. Outperforms frontier APIs on accuracy while cutting cost-per-call by an order of magnitude.",
+      "Fine-tuned a small language model with SFT and DPO to extract structured JSON from scientific papers - authors, methodology, datasets, findings, limitations. Quantized and served with vLLM behind a FastAPI gateway with schema-constrained decoding. Outperforms frontier APIs on accuracy while cutting cost-per-call by an order of magnitude.",
     tags: ["Fine-Tuning", "Qwen 2.5", "TRL", "Paged Attention", "MLOps"],
     liveUrl: "",
     codeUrl: "https://github.com/anidoesdev/distill.git",
@@ -27,7 +27,7 @@ const productionProjects = [
   {
     title: "Synthesis",
     description:
-      "A multi-agent system that answers complex research questions across scientific literature. Five specialized agents — planner, retriever, reader, critic, synthesizer — collaborate through structured memory and tool use, with every decision logged to a custom trajectory viewer. Includes a 50-question eval harness with LLM-as-judge scoring and a hallucination-guard pipeline.",
+      "A multi-agent system that answers complex research questions across scientific literature. Five specialized agents - planner, retriever, reader, critic, synthesizer - collaborate through structured memory and tool use, with every decision logged to a custom trajectory viewer. Includes a 50-question eval harness with LLM-as-judge scoring and a hallucination-guard pipeline.",
     tags: ["Multi-Agent Systems", "Agentic AI", "Hallucination Detection", "Distributed Tracing"],
     liveUrl: "",
     codeUrl: "https://github.com/anidoesdev/synthesis.git",
@@ -160,7 +160,7 @@ export default function Projects() {
         {/* Production projects */}
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-muted-fg mb-4"></p>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-7">
             {productionProjects.map((p) => (
               <ProjectCard key={p.title} {...p} />
             ))}
