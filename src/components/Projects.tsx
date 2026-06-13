@@ -12,7 +12,7 @@ const productionProjects = [
     liveUrl: "https://papyrus.anidoes.dev",
     codeUrl: "https://github.com/anidoesdev/scientific-rag-assistant.git",
     
-    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+    youtubeUrl: "https://youtu.be/x2GqQqP2aSU",
   },
   {
     title: "Distill",
