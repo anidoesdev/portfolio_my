@@ -15,6 +15,16 @@ const productionProjects = [
     youtubeUrl: "https://youtu.be/x2GqQqP2aSU",
   },
   {
+    title: "Sentinel",
+    description:
+      "Real-time anomaly detection across vibration, audio, and log streams from industrial equipment. Fuses a VAE on time-series sensors, a CNN on mel-spectrograms, and a text classifier on machine logs into a late-fusion ensemble with SHAP explanations. Kafka ingestion, Triton serving, TimescaleDB storage, and Evidently drift monitoring.",
+    tags: ["Anomaly Detection", "Variational Autoencoder (VAE)", "Convolutional Neural Networks", "Apache Kafka", "Time-Series Databases"],
+    liveUrl: "https://sentinel.anidoes.dev",
+    codeUrl: "https://github.com/anidoesdev/Sentinel.git",
+    
+    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+  },
+  {
     title: "Distill",
     description:
       "Fine-tuned a small language model with SFT and DPO to extract structured JSON from scientific papers - authors, methodology, datasets, findings, limitations. Quantized and served with vLLM behind a FastAPI gateway with schema-constrained decoding. Outperforms frontier APIs on accuracy while cutting cost-per-call by an order of magnitude.",
@@ -34,16 +44,7 @@ const productionProjects = [
     
     youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
   },
-  {
-    title: "Sentinel",
-    description:
-      "Real-time anomaly detection across vibration, audio, and log streams from industrial equipment. Fuses a VAE on time-series sensors, a CNN on mel-spectrograms, and a text classifier on machine logs into a late-fusion ensemble with SHAP explanations. Kafka ingestion, Triton serving, TimescaleDB storage, and Evidently drift monitoring.",
-    tags: ["Anomaly Detection", "Variational Autoencoder (VAE)", "Convolutional Neural Networks", "Apache Kafka", "Time-Series Databases"],
-    liveUrl: "",
-    codeUrl: "https://github.com/anidoesdev/Sentinel.git",
-    
-    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
-  },
+  
   
   
 ];
