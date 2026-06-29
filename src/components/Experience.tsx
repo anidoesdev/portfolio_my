@@ -10,7 +10,7 @@ const experiences = [
     title: "Open Source Contributer",
     org: "Hugging Face",
     location: "Remote",
-    details: [],
+    details: ["The docstring of _get_train_sampler in GRPOTrainer comment to mention num_iterations > 1 fixed the existing issue."],
   },
   {
     period: "Dec 2025 - May 2026",
