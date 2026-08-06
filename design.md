@@ -54,7 +54,7 @@ Single scrolling page (`src/app/page.tsx`), sections in order:
 2. **Hero** (`#hero`) — full-bleed photo, scrambled-text name reveal, tagline, social icons, CTA
 3. **Projects** (`#projects`) — 2-col grid of glass cards with embedded YouTube demos
 4. **Experience** (`#experience`) — vertical timeline with expand/collapse entries
-5. **Skills** (`#about`) — categorized tag/badge grid
+5. **Skills** (`#about`) — flat, centered icon-pill list (all items from all categories flattened into one wrapped row group per category, each pill carrying its category's Flaticon icon; no visible category headers)
 6. **Achievements** (`#achievements`) — icon + stat list
 7. **Contributions** (`#contributions`) — GitHub activity calendar
 8. **Contact** (`#contact`) — full-bleed photo section mirroring Hero, mailto CTA + social links + footer
@@ -74,6 +74,8 @@ Each content section (`section-bg`) shares:
 - **Bottom floating navbar** — fixed, centered, `bottom-6`, dark glass pill (`rgba(26,40,28,0.88)` + blur), active section highlighted via scroll-position IntersectionObserver-style logic (manual scroll listener), short labels on mobile / full labels on `sm:`.
 - **Experience timeline** — left-hand vertical spine using a Flaticon tree glyph (`fi-ss-tree`) per entry connected by a thin olive line; entries expand/collapse via `max-height` transition.
 - **Nature motif imagery** — decorative PNGs (`leaves_pile`, `books_bunch`, `treasure`, `wood_log`, `well`) rendered with `mixBlendMode: multiply` so they visually merge into the background instead of sitting on a white box.
+- **Skills icon-pills** — every skill renders as a `glass-badge` pill with a small Flaticon glyph (one icon per category: `fi-ss-brain` AI/ML, `fi-ss-browser` Frontend, `fi-ss-database` Backend, `fi-ss-cloud` Database & Cloud, `fi-ss-gears` MLOps, `fi-ss-terminal` Languages) so items stay visually grouped even without headers. Note: not every Flaticon UIcons class name renders a glyph on the free CDN tier — verify by screenshot, not just class-name presence in the stylesheet (e.g. `fi-ss-server-key` exists in the CSS but renders empty).
+- **Project card corner badge** — a small circular `glass-badge` (not a raw multiply-blended image) sits at `top-2 right-2` inside each video-embed thumbnail, holding `stair_case.png`. Plain `mixBlendMode: multiply` washes out over a photographic YouTube thumbnail, so this uses an opaque glass chip instead; keep decorative overlays inside a card's `overflow-hidden` bounds (positive offsets), since negative offsets get clipped by the card's own rounded corners.
 
 ## Imagery
 
@@ -92,7 +94,7 @@ Each content section (`section-bg`) shares:
 
 - **Projects:** `{ title, description, tags[], liveUrl, codeUrl, youtubeUrl }` — YouTube URLs auto-converted to privacy-friendlier embed URLs (`getEmbedUrl`)
 - **Experience:** `{ period, title, org, location, details[] }`
-- **Skills:** `{ category, items[] }`
+- **Skills:** `{ category, icon, items[] }` — `icon` is a Flaticon UIcons class used on every pill belonging to that category
 - **Achievements:** `{ stat, label, description }`
 - **Contact/Hero socials:** `{ label, href }`
 

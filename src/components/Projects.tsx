@@ -1,5 +1,6 @@
 ﻿import Image from "next/image";
 import treeLog from "@/images/well.png";
+import stairCase from "@/images/stair_case.png";
 
 
 
@@ -89,6 +90,15 @@ function ProjectCard({
             loading="lazy"
             className="absolute inset-0 w-full h-full"
           />
+          <div className="glass-badge absolute top-2 right-2 w-10 h-10 rounded-full flex items-center justify-center pointer-events-none overflow-hidden">
+            <Image
+              src={stairCase}
+              alt=""
+              width={40}
+              height={40}
+              className="w-7 h-7 object-contain"
+            />
+          </div>
         </div>
       )}
 
