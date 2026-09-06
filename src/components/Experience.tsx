@@ -32,12 +32,13 @@ export default function Experience() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <section id="experience" className="py-20 px-6 section-divider section-bg">
+    <section id="experience" className="py-24 px-6 section-divider band-sky">
       <div className="mx-auto max-w-5xl">
 
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h2 className="section-heading text-foreground">Work Experience</h2>
+            <p className="eyebrow mb-3">Where I&apos;ve been</p>
+            <h2 className="section-heading">Work Experience</h2>
           </div>
           <Image
             src={leavesPile}
@@ -59,12 +60,12 @@ export default function Experience() {
                 <div className="flex flex-col items-center mt-1">
                   <i
                     className="fi fi-ss-tree text-xl leading-none"
-                    style={{ color: "#4a7c3f" }}
+                    style={{ color: "var(--meadow-deep)" }}
                   />
                   {!isLast && (
                     <div
                       className="flex-1 w-px mt-1"
-                      style={{ background: "rgba(131, 133, 89, 0.45)", minHeight: "2rem" }}
+                      style={{ background: "rgba(97, 112, 35, 0.35)", minHeight: "2rem" }}
                     />
                   )}
                 </div>
@@ -106,7 +107,7 @@ export default function Experience() {
                   >
                     <div className="mt-3 space-y-2">
                       <div className="flex flex-wrap items-center gap-2 text-base">
-                        <span className="font-medium" style={{ color: "#899f81" }}>
+                        <span className="font-semibold" style={{ color: "var(--terracotta-ink)" }}>
                           {item.org}
                         </span>
                         <span className="text-muted-fg">·</span>
@@ -114,7 +115,7 @@ export default function Experience() {
                       </div>
     
                       {item.details.length > 0 && (
-                        <ul className="list-disc list-inside space-y-1 text-lg leading-relaxed text-muted-fg">
+                        <ul className="list-disc list-outside pl-4 space-y-1.5 text-[15px] leading-relaxed text-muted-fg">
                           {item.details.map((point, i) => (
                             <li key={i}>{point}</li>
                           ))}

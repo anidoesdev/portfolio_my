@@ -11,13 +11,13 @@ const GitHubCalendar = dynamic(
 
 export default function Contributions() {
   return (
-    <section id="contributions" className="py-20 px-6 section-divider section-bg">
+    <section id="contributions" className="py-24 px-6 section-divider band-sky">
       <div className="mx-auto max-w-5xl">
 
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-fg mb-3">Open Source</p>
-            <h2 className="section-heading text-foreground">GitHub Activity</h2>
+            <p className="eyebrow mb-3">Open source</p>
+            <h2 className="section-heading">GitHub Activity</h2>
           </div>
           <Image
             src={woodLog}
@@ -30,7 +30,7 @@ export default function Contributions() {
         </div>
 
         <div
-          className="bglass-card rounded-xl p-6 overflow-x-auto"
+          className="glass-card rounded-2xl p-6 overflow-x-auto"
         >
           <GitHubCalendar
             username="anidoesdev"
@@ -39,7 +39,7 @@ export default function Contributions() {
             fontSize={11}
             colorScheme="light"
             theme={{
-              light: ["rgba(131, 133, 89, 0.18)", "#c8d4a8", "#8aaa60", "#4a7030", "#2e4820"],
+              light: ["rgba(97, 112, 35, 0.12)", "#dde3ad", "#b6c05a", "#84913a", "#4a5620"],
             }}
           />
         </div>

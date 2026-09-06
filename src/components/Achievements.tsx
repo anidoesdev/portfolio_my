@@ -17,13 +17,13 @@ const achievements = [
 
 export default function Achievements() {
   return (
-    <section id="achievements" className="py-20 px-6 section-divider section-bg">
+    <section id="achievements" className="py-24 px-6 section-divider band-paper">
       <div className="mx-auto max-w-5xl">
 
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-fg mb-3">Highlights</p>
-            <h2 className="section-heading text-foreground">Achievements</h2>
+            <p className="eyebrow mb-3">Highlights</p>
+            <h2 className="section-heading">Achievements</h2>
           </div>
           <Image
             src={treasure}
@@ -37,12 +37,12 @@ export default function Achievements() {
 
         <ul className="grid grid-cols-1 gap-4 max-w-3xl mx-auto">
           {achievements.map(({ stat, label, description }) => (
-            <li key={label} className="flex items-center gap-3">
+            <li key={label} className="glass-card rounded-2xl flex items-start gap-3.5 px-5 py-4">
               <i
                 className="fi fi-ss-gem text-xl leading-none shrink-0"
-                style={{ color: "#307848" }}
+                style={{ color: "var(--terracotta)" }}
               />
-              <p className="text-lg text-foreground">
+              <p className="text-[15px] leading-relaxed text-foreground">
                 <span className="font-semibold">{stat} {label}</span>
                 <span className="text-muted-fg"> : {description}</span>
               </p>

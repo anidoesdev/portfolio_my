@@ -50,6 +50,10 @@ const productionProjects = [
   
 ];
 
+function hasDemo(url?: string): boolean {
+  return Boolean(url) && !url!.includes("YOUR_VIDEO_ID");
+}
+
 function getEmbedUrl(url: string): string {
   const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
   if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?rel=0&modestbranding=1`;
@@ -78,33 +82,54 @@ function ProjectCard({
   codeUrl: string;
   youtubeUrl?: string;
 }) {
+  const hasLive = Boolean(liveUrl) && liveUrl !== "#";
+
   return (
-    <div className="glass-card card-hover group flex flex-col rounded-xl overflow-hidden">
-      {youtubeUrl && (
-        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+    <div className="glass-card card-hover group flex flex-col rounded-2xl overflow-hidden">
+      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+        {hasDemo(youtubeUrl) ? (
           <iframe
-            src={getEmbedUrl(youtubeUrl)}
+            src={getEmbedUrl(youtubeUrl!)}
             title={`${title} demo`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             loading="lazy"
             className="absolute inset-0 w-full h-full"
           />
-          <div className="glass-badge absolute top-2 right-2 w-10 h-10 rounded-full flex items-center justify-center pointer-events-none overflow-hidden">
-            <Image
-              src={stairCase}
-              alt=""
-              width={40}
-              height={40}
-              className="w-7 h-7 object-contain"
-            />
+        ) : (
+          /* No demo reel yet — a sunlit meadow plate rather than a dead black frame */
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              background:
+                "linear-gradient(150deg, #e1f2f4 0%, #eff2d9 48%, #f6ecc2 100%)",
+            }}
+          >
+            <span
+              className="display select-none"
+              style={{
+                fontSize: "2.75rem",
+                color: "rgba(97, 112, 35, 0.60)",
+              }}
+            >
+              {title}
+            </span>
           </div>
+        )}
+        <div className="glass-badge absolute top-2 right-2 w-10 h-10 rounded-full flex items-center justify-center pointer-events-none overflow-hidden">
+          <Image
+            src={stairCase}
+            alt=""
+            width={40}
+            height={40}
+            className="w-7 h-7 object-contain"
+          />
         </div>
-      )}
+      </div>
 
       <div className="flex flex-col flex-1 p-5">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors duration-150">
+          <h3 className="text-base font-bold text-foreground group-hover:text-[var(--terracotta)] transition-colors duration-150">
             {title}
           </h3>
           
@@ -117,7 +142,7 @@ function ProjectCard({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="glass-badge px-2.5 py-1 text-xs font-medium rounded-md text-muted-fg"
+              className="glass-badge px-2.5 py-1 text-xs font-medium rounded-full"
             >
               {tag}
             </span>
@@ -125,12 +150,12 @@ function ProjectCard({
         </div>
 
         <div className="flex gap-2">
-          {liveUrl !== "#" && (
+          {hasLive && (
             <a
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="glass-badge flex-1 text-center py-1.5 rounded-lg text-xs font-medium text-foreground transition-all duration-150 hover:opacity-90"
+              className="btn-primary flex-1 text-center py-2 rounded-full text-xs font-semibold"
             >
               Live
             </a>
@@ -139,7 +164,7 @@ function ProjectCard({
             href={codeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`glass-badge ${liveUrl !== "#" ? "flex-1" : "w-full"} text-center py-1.5 rounded-lg text-xs font-medium text-muted-fg hover:text-foreground transition-all duration-150`}
+            className={`glass-badge ${hasLive ? "flex-1" : "w-full"} text-center py-2 rounded-full text-xs font-semibold`}
           >
             Code
           </a>
@@ -151,12 +176,13 @@ function ProjectCard({
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-20 px-6 section-divider section-bg">
+    <section id="projects" className="py-24 px-6 section-divider band-paper">
       <div className="mx-auto max-w-5xl">
 
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h2 className="section-heading text-foreground">Projects</h2>
+            <p className="eyebrow mb-3">Selected work</p>
+            <h2 className="section-heading">Projects</h2>
           </div>
           <Image
             src={treeLog}

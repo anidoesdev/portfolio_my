@@ -36,11 +36,14 @@ const skills = [
 
 export default function Skills() {
   return (
-    <section id="about" className="py-20 px-6 section-divider section-bg">
+    <section id="about" className="py-24 px-6 section-divider band-leaf">
       <div className="mx-auto max-w-5xl">
 
         <div className="flex items-center justify-between mb-10">
-          <h2 className="section-heading text-foreground">Skills</h2>
+          <div>
+            <p className="eyebrow mb-3">Toolkit</p>
+            <h2 className="section-heading">Skills</h2>
+          </div>
           <Image
             src={booksBunch}
             alt=""
@@ -56,9 +59,9 @@ export default function Skills() {
             items.map((skill) => (
               <span
                 key={`${category}-${skill}`}
-                className="glass-badge flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full text-muted-fg cursor-default"
+                className="glass-badge flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-full cursor-default"
               >
-                <i className={`fi ${icon} text-sm leading-none`} style={{ color: "#4a7c3f" }} />
+                <i className={`fi ${icon} text-sm leading-none`} style={{ color: "var(--meadow-deep)" }} />
                 {skill}
               </span>
             ))
