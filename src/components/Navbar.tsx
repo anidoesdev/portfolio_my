@@ -54,26 +54,19 @@ export default function Navbar() {
           : "opacity-0 translate-y-8 pointer-events-none"
       }`}
     >
-      <ul
-        className="flex items-center gap-0 sm:gap-0.5 px-1.5 sm:px-2 py-1.5 rounded-full"
-        style={{
-          background: "rgba(255,253,246,0.82)",
-          border: "1px solid rgba(97,112,35,0.30)",
-          backdropFilter: "blur(16px) saturate(1.1)",
-          WebkitBackdropFilter: "blur(16px) saturate(1.1)",
-          boxShadow: "0 18px 40px -18px rgba(33,64,45,0.55)",
-        }}
-      >
-        {navLinks.map(({ label, short, href }) => (
+      <ul className="retro-nav flex items-center gap-0 sm:gap-0.5 px-1.5 sm:px-2 py-1.5">
+        {navLinks.map(({ label, short, href }, i) => (
           <li key={href}>
             <a
               href={href}
-              className={`text-xs sm:text-sm px-3 sm:px-3.5 py-1.5 rounded-full transition-all duration-150 block whitespace-nowrap ${
-                active === href
-                  ? "font-semibold text-[#fffdf6] bg-[var(--meadow-deep)] shadow-[0_6px_14px_-8px_rgba(33,64,45,0.9)]"
-                  : "text-[var(--muted-fg)] hover:text-[var(--terracotta)] hover:bg-[rgba(181,86,24,0.10)]"
-              }`}
+              aria-current={active === href ? "page" : undefined}
+              className="retro-key text-[0.9375rem] px-3 sm:px-3.5 py-1 block whitespace-nowrap"
             >
+              {/* Labels only. The real F-keys are reserved by browsers
+                  (F1 help, F5 reload) and hijacking them would be hostile. */}
+              <span className="fkey" aria-hidden="true">
+                F{i + 1}
+              </span>
               <span className="sm:hidden">{short}</span>
               <span className="hidden sm:inline">{label}</span>
             </a>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import meadow from "@/images/img.jpg";
+import HeroBoot from "./HeroBoot";
 
 const jumpLinks = [
   { label: "Projects", href: "#projects" },
@@ -40,6 +41,11 @@ export default function Hero() {
           ].join(", "),
         }}
       />
+
+      {/* Plays once per session, clears itself in ~1.9s with or without
+          JavaScript, and never runs under prefers-reduced-motion. The
+          hero content below is always in the DOM underneath it. */}
+      <HeroBoot />
 
       <div className="relative z-10 w-full max-w-2xl">
         <p className="eyebrow justify-center mb-5">AI Engineer</p>

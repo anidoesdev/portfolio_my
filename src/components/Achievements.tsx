@@ -35,17 +35,19 @@ export default function Achievements() {
           />
         </div>
 
-        <ul className="grid grid-cols-1 gap-4 max-w-3xl mx-auto">
+        {/* A power-on self-test: label, leader dots, status. The
+            description follows as console output on the next line. */}
+        <ul className="grid grid-cols-1 gap-3 max-w-3xl mx-auto">
           {achievements.map(({ stat, label, description }) => (
-            <li key={label} className="glass-card rounded-2xl flex items-start gap-3.5 px-5 py-4">
-              <i
-                className="fi fi-ss-gem text-xl leading-none shrink-0"
-                style={{ color: "var(--terracotta)" }}
-              />
-              <p className="text-[15px] leading-relaxed text-foreground">
-                <span className="font-semibold">{stat} {label}</span>
-                <span className="text-muted-fg"> : {description}</span>
+            <li key={label} className="glass-card px-5 py-4">
+              <p className="log-row">
+                <span className="log-name">
+                  {stat} {label}
+                </span>
+                <span className="log-dots" aria-hidden="true" />
+                <span className="log-status">Pass</span>
               </p>
+              <p className="log-detail mt-1.5">{description}</p>
             </li>
           ))}
         </ul>
