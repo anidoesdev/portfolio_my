@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import Schematic from "./Schematic";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import Schematic, { runDuration } from "./Schematic";
 import { ARCHITECTURES, DRAFT } from "./architectures";
 import {
   getSound,
@@ -13,7 +20,7 @@ import {
 
 type Project = {
   title: string;
-  /* A one-line summary, under the name in each row. */
+  /* A one-line summary, under the name in the open folder. */
   kicker: string;
   description: string;
   tags: string[];
@@ -90,7 +97,7 @@ function getEmbedUrl(url: string): string {
 const TOTAL = productionProjects.length;
 const DEPLOYED = productionProjects.filter((p) => isLive(p.liveUrl)).length;
 
-/* One colour per project, on its index chip. */
+/* One colour per folder, on its name tag's top strip. */
 const TYPE_COLOUR = [
   "var(--label-a)",
   "var(--label-b)",
@@ -98,24 +105,227 @@ const TYPE_COLOUR = [
   "var(--label-d)",
 ];
 
+/* How long the finished diagram sits before the demo takes over, added
+   to the animation's own run time. Papyrus runs for ~2s, so a 1s hold
+   puts the whole sequence at about 3 seconds. Deeper pipelines still
+   get proportionally longer — the hold is a pause, not the total. */
+const HOLD = 1;
+
+/* Length of the slide, in ms. Must stay in step with @keyframes
+   stageSlideIn / stageSlideOut in globals.css, which is how long the two
+   layers are both on screen for. */
+const SWAP_MS = 380;
+
 function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
 export default function Projects() {
-  /* The only state in the section. There is no selection: every project
-     is on screen at once, and a reader who never clicks still sees all
-     four and how each one is built. */
-  const [demo, setDemo] = useState<string | null>(null);
+  const [active, setActive] = useState(0);
+  /* Each folder is a two-stage sequence: 0 is the running schematic,
+     1 is the demo video, and the video replaces the diagram in the same
+     frame. Stage resets whenever a different folder is opened. */
+  const [stage, setStage] = useState(0);
+  /* Cancels the countdown that is running right now. It is *not* a
+     permanent opt-out: returning to the diagram, or replaying it, arms a
+     fresh countdown, so the swap follows the animation every time the
+     animation runs. Interacting only cancels the pass in flight. */
+  const [paused, setPaused] = useState(false);
+  /* Per-project counter that replays that project's pipeline animation. */
+  const [runs, setRuns] = useState<Record<string, number>>({});
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  /* Only the open folder's controls are reachable, so a single pair of
+     refs is enough — they are attached on the active panel only. */
+  const backRef = useRef<HTMLButtonElement | null>(null);
+  const nextRef = useRef<HTMLButtonElement | null>(null);
+  const wantFocus = useRef<"back" | "next" | null>(null);
+  /* True while the stage is mid-swap. The content changes at the pinch
+     point, where nothing is visible, so the diagram never dissolves
+     into the video — and the iframe's own first paint is hidden too. */
+  const [swapping, setSwapping] = useState(false);
+  /* The stage on its way out. Both stages are on screen together for the
+     length of the slide, which is what lets the outgoing one actually
+     travel rather than just disappearing. */
+  const [leaving, setLeaving] = useState<number | null>(null);
+  /* 1 slides the new content in from the right; -1 reverses it. */
+  const [dir, setDir] = useState(1);
+  const swapTimers = useRef<number[]>([]);
+  /* Read inside swapTo, which is stable so the auto-advance effect does
+     not restart every render. */
+  const activeRef = useRef(0);
+  const swappingRef = useRef(false);
+  const stageRef = useRef(0);
+  const [inView, setInView] = useState(false);
+  const baseId = useId();
 
   /* Sound is on by default and the choice is remembered per browser. It
      lives in an external store rather than component state so the server
      render and the hydrating client agree. */
   const sound = useSyncExternalStore(subscribeSound, getSound, getSoundOnServer);
 
-  function toggleDemo(title: string) {
+  /* The auto-advance is gated on the folder actually being on screen.
+     Without this the first folder starts its countdown at page load and
+     swaps the diagram out before anyone has scrolled to Projects. */
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([e]) => setInView(e.isIntersecting),
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* Hold the finished diagram for a beat, then show the demo. The delay
+     is the animation's own length plus a pause, so a deeper pipeline
+     gets proportionally longer rather than being cut off by a fixed
+     clock. */
+  const current = productionProjects[active];
+  const currentReel = hasDemo(current.youtubeUrl);
+  const currentDiagram = ARCHITECTURES[current.title];
+
+  activeRef.current = active;
+  swappingRef.current = swapping;
+  stageRef.current = stage;
+
+  /* The single way the stage ever changes, whether a reader pressed a
+     control or the countdown ran out.
+
+     The new stage is mounted immediately and the old one is kept beside
+     it for the length of the slide, so the two genuinely pass each other.
+     Both layers are direct children of `.stage` with stable keys, which
+     is what stops React unmounting and remounting the iframe mid-slide —
+     that would refetch the video every time you stepped back. */
+  const swapTo = useCallback((next: number) => {
+    if (swappingRef.current) return;
+    const from = stageRef.current;
+    if (from === next) return;
+
+    const apply = () => {
+      setStage(next);
+      if (next === 0) bump(productionProjects[activeRef.current].title);
+    };
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      apply();
+      return;
+    }
+
+    setDir(next > from ? 1 : -1);
+    setLeaving(from);
+    apply();
+    setSwapping(true);
+    swapTimers.current.push(
+      window.setTimeout(() => {
+        setSwapping(false);
+        setLeaving(null);
+      }, SWAP_MS + 20),
+    );
+  }, []);
+
+  useEffect(() => {
+    /* Captured rather than read in the cleanup: the ref object outlives
+       the effect, and the lint rule is right that reading `.current`
+       later is a different value than the one this effect saw. */
+    const timers = swapTimers.current;
+    return () => {
+      for (const t of timers) window.clearTimeout(t);
+    };
+  }, []);
+
+  const countdownMs = currentDiagram ? (runDuration(currentDiagram) + HOLD) * 1000 : 0;
+  /* Whether a countdown is running right now. Drives the progress line
+     under the stage, so the advance is something you can see coming and
+     stop, rather than something that happens to you. */
+  const counting = !paused && stage === 0 && inView && currentReel && Boolean(currentDiagram);
+
+  useEffect(() => {
+    if (paused || stage !== 0 || !inView || !currentReel || !currentDiagram) return;
+    /* Never move content on its own for anyone who asked for less motion. */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const t = window.setTimeout(() => swapTo(1), countdownMs);
+    return () => window.clearTimeout(t);
+  }, [paused, stage, inView, currentReel, currentDiagram, countdownMs, swapTo]);
+
+  /* Advancing disables the control you just pressed. Without this the
+     keyboard user is left focused on a dead button; move them to the one
+     that is now live. Only runs for a deliberate press — the automatic
+     advance sets no pending focus, because stealing focus from whatever
+     someone is reading is worse than the problem it solves. */
+  useEffect(() => {
+    const want = wantFocus.current;
+    if (!want) return;
+    wantFocus.current = null;
+    (want === "back" ? backRef : nextRef).current?.focus();
+  }, [stage]);
+
+  const tabId = (i: number) => `${baseId}-tab-${i}`;
+  const panelId = (i: number) => `${baseId}-panel-${i}`;
+
+  function bump(title: string) {
+    setRuns((r) => ({ ...r, [title]: (r[title] ?? 0) + 1 }));
+  }
+
+  /* Opening a folder runs its pipeline. The animation is the reward for
+     the click, so it should not need a second one. Stage and hold both
+     reset: a freshly opened folder starts at its diagram and is free to
+     advance again. */
+  /* Clicking a name tag always restarts that folder's sequence: the
+     diagram runs from the beginning and a fresh countdown is armed, so
+     the jump to the demo follows every click and not only the first.
+
+     There is deliberately no `i === active` early return. Clicking the
+     folder you are already in is a request to play it again, and
+     returning early there was why a second click did nothing. */
+  function open(i: number) {
     if (sound) playUnfile();
-    setDemo((open) => (open === title ? null : title));
+    setPaused(false);
+
+    if (i !== active) {
+      /* A different folder: reset outright. Any swap still in flight
+         belongs to the folder being left, so it is cancelled rather
+         than allowed to finish over the new one. */
+      for (const t of swapTimers.current) window.clearTimeout(t);
+      swapTimers.current = [];
+      setSwapping(false);
+      setLeaving(null);
+      setActive(i);
+      setStage(0);
+      bump(productionProjects[i].title);
+      return;
+    }
+
+    if (stage !== 0) {
+      /* Same folder, currently showing the demo: slide back, which
+         replays the diagram on the way in. */
+      swapTo(0);
+      return;
+    }
+
+    /* Same folder, already on the diagram: just run it again. */
+    bump(productionProjects[i].title);
+  }
+
+  function goStage(next: number) {
+    /* Returning to the diagram restarts its animation, so it arms a new
+       countdown — that is what makes the swap follow every run rather
+       than only the first. Going the other way there is nothing left to
+       count down to. */
+    setPaused(next === 1);
+    if (sound) playUnfile();
+    wantFocus.current = next === 1 ? "back" : "next";
+    swapTo(next);
+  }
+
+  function run(title: string) {
+    /* Replaying the animation arms a countdown too: the swap is what
+       happens when the pipeline finishes, however it was started. */
+    setPaused(false);
+    if (sound) playUnfile();
+    bump(title);
   }
 
   function toggleSound() {
@@ -123,6 +333,22 @@ export default function Projects() {
     setSound(next);
     /* Turning it on plays one, so you hear what you just enabled. */
     if (next) playUnfile();
+  }
+
+  /* Horizontal tablist: left/right move and open, Home/End jump. */
+  function onKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, i: number) {
+    const last = TOTAL - 1;
+    let next: number | null = null;
+
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+
+    if (next === null) return;
+    e.preventDefault();
+    tabRefs.current[next]?.focus();
+    open(next);
   }
 
   return (
@@ -150,32 +376,78 @@ export default function Projects() {
           </button>
         </div>
 
-        {/* Plain articles with real headings — no tablist, no roving
-            tabindex, no panels. Everything is visible without clicking,
-            which is also the simplest thing for a crawler to read. */}
-        <div className="flex flex-col gap-6">
+        {/* Name tags along the top, one folder body below. Every tag is
+            legible at once — which is the thing the buried pile got
+            wrong — and opening one is a single click. */}
+        <div
+          role="tablist"
+          aria-label="Projects"
+          className="fold-tabs"
+        >
+          {productionProjects.map((p, i) => {
+            const selected = i === active;
+            const live = isLive(p.liveUrl);
+            return (
+              <button
+                key={p.title}
+                ref={(el) => {
+                  tabRefs.current[i] = el;
+                }}
+                id={tabId(i)}
+                role="tab"
+                type="button"
+                aria-selected={selected}
+                aria-controls={panelId(i)}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => open(i)}
+                onKeyDown={(e) => onKeyDown(e, i)}
+                className="fold-tab"
+                style={{ ["--sticker" as string]: TYPE_COLOUR[i % TYPE_COLOUR.length] }}
+              >
+                <span className="fold-num">{pad(i + 1)}</span>
+                {p.title}
+                <span
+                  className="pip"
+                  data-on={live}
+                  title={live ? "Deployed" : "Source only"}
+                  aria-hidden="true"
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Pressing something cancels the countdown in flight. Merely
+            hovering no longer does: moving the cursor onto the diagram to
+            look at it is the most natural thing to do while waiting, and
+            cancelling on that made the jump fire only when the reader
+            happened to keep their mouse still.
+
+            These fire on pointerdown, before the click handlers below, so
+            a press of Back or Run still re-arms afterwards. Capture
+            phase, so it fires however deep the target is. */}
+        <div
+          ref={bodyRef}
+          className="fold-body"
+          onPointerDownCapture={() => setPaused(true)}
+          onFocusCapture={() => setPaused(true)}
+          onKeyDownCapture={() => setPaused(true)}
+        >
           {productionProjects.map((p, i) => {
             const live = isLive(p.liveUrl);
             const reel = hasDemo(p.youtubeUrl);
-            const open = demo === p.title;
             const diagram = ARCHITECTURES[p.title];
-            const panelId = `demo-${p.title.toLowerCase()}`;
+            const onDemo = i === active && stage === 1;
 
             return (
-              <article
+              <div
                 key={p.title}
-                className="proj"
-                style={{ ["--sticker" as string]: TYPE_COLOUR[i % TYPE_COLOUR.length] }}
+                id={panelId(i)}
+                role="tabpanel"
+                aria-labelledby={tabId(i)}
+                tabIndex={0}
+                hidden={i !== active}
               >
-                <div className="proj-bar">
-                  <span className="proj-num">{pad(i + 1)}</span>
-                  <span className="proj-file">{p.title.toUpperCase()}.PRJ</span>
-                  <span className="proj-dots" aria-hidden="true" />
-                  <span className="proj-stat" data-on={live}>
-                    {live ? "Online" : "Local"}
-                  </span>
-                </div>
-
                 <div className="proj-body">
                   {/* First in the DOM so the heading leads; moved to the
                       right column visually at lg. */}
@@ -211,49 +483,118 @@ export default function Projects() {
                           Launch
                         </a>
                       )}
-                      {reel && (
+                      {diagram && !onDemo && (
                         <button
                           type="button"
-                          className="proj-key"
-                          aria-expanded={open}
-                          aria-controls={panelId}
-                          onClick={() => toggleDemo(p.title)}
+                          className="proj-key proj-run"
+                          onClick={() => run(p.title)}
                         >
-                          {open ? "Hide demo" : "Demo"}
+                          Run
+                          <span className="sr-only"> the {p.title} pipeline animation</span>
                         </button>
                       )}
                     </div>
                   </div>
 
                   {diagram && (
-                    <figure className="proj-schem">
-                      {DRAFT.has(p.title) && (
-                        <figcaption className="schem-draft">Draft</figcaption>
+                    <div className="proj-stage">
+                      {/* One frame, two stages. It is a fixed 16:9 so the
+                          diagram and the video are exactly the same size —
+                          otherwise advancing would jolt the page. */}
+                      <div
+                        className="stage"
+                        data-swapping={i === active && swapping}
+                        style={{ ["--dir" as string]: String(dir) }}
+                      >
+                        {/* Keyed siblings, not nested branches: React
+                            keeps the iframe alive across the slide. */}
+                        {i === active && (stage === 1 || leaving === 1) && (
+                          <div
+                            key="demo"
+                            className="stage-inner"
+                            data-dir={stage === 1 ? "in" : "out"}
+                          >
+                            <div className="stage-video">
+                              <iframe
+                                src={getEmbedUrl(p.youtubeUrl!)}
+                                title={`${p.title} demo`}
+                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full"
+                              />
+                              {/* pointer-events: none — the player is under this */}
+                              <span className="crt-lines" aria-hidden="true" />
+                            </div>
+                          </div>
+                        )}
+
+                        {(i !== active || stage === 0 || leaving === 0) && (
+                          <div
+                            key="diagram"
+                            className="stage-inner"
+                            data-dir={i !== active || stage === 0 ? "in" : "out"}
+                          >
+                            <figure className="stage-schem">
+                              {DRAFT.has(p.title) && (
+                                <figcaption className="schem-draft">Draft</figcaption>
+                              )}
+                              <Schematic diagram={diagram} runId={runs[p.title] ?? 0} />
+                            </figure>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* The progress line only exists while a countdown is
+                          actually running, so it disappears the instant the
+                          reader takes over. */}
+                      {i === active && counting && (
+                        <div className="stage-timer" aria-hidden="true">
+                          <i style={{ ["--ms" as string]: `${countdownMs}ms` }} />
+                        </div>
                       )}
-                      <Schematic diagram={diagram} />
-                    </figure>
+
+                      {/* A two-step nav on a one-step folder is two dead
+                          controls. Projects without a reel say so instead. */}
+                      {reel ? (
+                        <div className="stage-nav">
+                          <button
+                            type="button"
+                            ref={i === active ? backRef : null}
+                            className="proj-key"
+                            aria-disabled={!onDemo}
+                            onClick={() => onDemo && goStage(0)}
+                          >
+                            Back
+                            <span className="sr-only"> to the diagram</span>
+                          </button>
+
+                          <span className="stage-dots" aria-hidden="true">
+                            <i data-on={!onDemo} />
+                            <i data-on={onDemo} />
+                          </span>
+                          <span className="sr-only" aria-live="polite">
+                            Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}
+                          </span>
+
+                          <button
+                            type="button"
+                            ref={i === active ? nextRef : null}
+                            className="proj-key stage-next"
+                            aria-disabled={onDemo}
+                            onClick={() => !onDemo && goStage(1)}
+                          >
+                            Next
+                            <span className="sr-only"> to the demo video</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="stage-note">No demo reel on file yet.</p>
+                      )}
+                    </div>
                   )}
                 </div>
-
-                {/* Mounted only while open, so no project loads a YouTube
-                    player a reader did not ask for. */}
-                {reel && open && (
-                  <div className="crt-well" id={panelId}>
-                    <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                      <iframe
-                        src={getEmbedUrl(p.youtubeUrl!)}
-                        title={`${p.title} demo`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        loading="lazy"
-                        className="absolute inset-0 w-full h-full"
-                      />
-                      {/* pointer-events: none — the player sits under this */}
-                      <span className="crt-lines" aria-hidden="true" />
-                    </div>
-                  </div>
-                )}
-              </article>
+              </div>
             );
           })}
         </div>

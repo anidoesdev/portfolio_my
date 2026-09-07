@@ -1,8 +1,6 @@
 ﻿"use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import woodLog from "@/images/wood_log.png";
 
 const GitHubCalendar = dynamic(
   () => import("react-github-calendar").then((m) => m.GitHubCalendar),
@@ -19,14 +17,6 @@ export default function Contributions() {
             <p className="eyebrow mb-3">Open source</p>
             <h2 className="section-heading">GitHub Activity</h2>
           </div>
-          <Image
-            src={woodLog}
-            alt=""
-            width={130}
-            height={130}
-            className="object-contain hidden sm:block"
-            style={{ mixBlendMode: "multiply" }}
-          />
         </div>
 
         <div

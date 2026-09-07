@@ -282,13 +282,227 @@ button.glass-badge:active {
   );
 }
 
-/* ---- A row --------------------------------------------------------- */
-.proj {
+/* ---- Skills, grouped -----------------------------------------------
+   One panel per category rather than one flat run of pills. Same
+   bevel-and-title-bar language as the project folders, so the two
+   sections read as parts of the same machine.
+   -------------------------------------------------------------------- */
+.skill-count {
+  font-family: var(--font-crt);
+  font-size: 0.9375rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-group {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--case-edge);
-  border-radius: 4px;
+  border-radius: 3px;
   background: linear-gradient(180deg, #fffdf6, #f3efe1);
-  font-family: var(--font-mono);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
+    0 2px 0 rgba(74, 70, 52, 0.18),
+    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+}
+
+.skill-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.6rem 0.32rem;
+  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
+  background: linear-gradient(180deg, #ecead9, #dcd7c3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  font-family: var(--font-crt);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+.skill-head i {
+  flex: none;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--meadow-deep);
+}
+.skill-head .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.skill-head .count {
+  margin-left: auto;
+  flex: none;
+  color: var(--amber-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.3rem;
+  padding: 0.6rem;
+  /* Groups hold 4-6 entries. Letting the list grow keeps every panel in
+     a row the same height instead of leaving ragged bottoms. */
+  flex: 1;
+}
+
+.skill-chip {
+  padding: 0.08rem 0.45rem 0.12rem;
+  border: 1px solid rgba(97, 112, 35, 0.3);
+  border-left-width: 3px;
+  border-left-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  border-radius: 2px;
+  background: rgba(255, 253, 246, 0.75);
+  font-family: var(--font-crt);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+}
+
+/* An entry that belongs to more than one group carries a terracotta
+   edge. Hovering any copy lights all of them. */
+.skill-chip[data-shared="true"] {
+  border-left-color: var(--terracotta);
+  color: var(--forest);
+}
+.skill-chip[data-linked="true"] {
+  background: var(--terracotta);
+  border-color: var(--terracotta);
+  color: var(--cloud);
+}
+
+.skill-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.skill-legend i {
+  width: 3px;
+  height: 0.75rem;
+  border-radius: 1px;
+  background: var(--terracotta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-chip {
+    transition: none;
+  }
+}
+
+/* ---- A folder with tabs across the top -----------------------------
+   The name tags sit in a row along the top edge and the body below
+   shows whichever folder is open. This is the pile idea without the
+   pile's problem: every project's tag is legible at once and nothing
+   is buried behind anything else.
+
+   The trade is that three of four bodies are closed at any moment.
+   They stay in the DOM (hidden, not unmounted) so every description is
+   still there to be read and indexed.
+   -------------------------------------------------------------------- */
+.fold-tabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 3px;
+  padding-left: 0.6rem;
+  /* Pulls the tab row down onto the body's top border, so the open tab
+     can erase its own segment of it and read as one piece of card. */
+  margin-bottom: -1px;
+}
+
+.fold-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 0.85rem 0.44rem;
+  border: 1px solid var(--case-edge);
+  border-bottom: 1px solid var(--case-edge);
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(180deg, #e7e2d2, #d5d0bc);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  font-family: var(--font-crt);
+  font-size: 1.0625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, padding 0.15s ease;
+}
+
+/* The colour-coded strip along the top of each tag */
+.fold-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  border-radius: 4px 4px 0 0;
+  background: var(--sticker, var(--label-a));
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+
+.fold-tab:hover {
+  background: linear-gradient(180deg, #efeadb, #ddd8c4);
+  color: var(--terracotta-ink);
+}
+
+/* The open folder. It sits a little taller, goes cream, and drops the
+   border segment it shares with the body. */
+.fold-tab[aria-selected="true"] {
+  padding-top: 0.6rem;
+  background: linear-gradient(180deg, #fffdf6, #f6f2e4);
+  border-bottom-color: transparent;
+  color: var(--forest);
+}
+.fold-tab[aria-selected="true"]::before {
+  opacity: 1;
+}
+
+.fold-tab:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.fold-tab .pip {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--meadow-deep);
+  box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
+}
+.fold-tab .pip[data-on="false"] {
+  background: rgba(97, 112, 35, 0.28);
+  box-shadow: none;
+}
+
+.fold-num {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--amber-ink);
+}
+.fold-tab[aria-selected="true"] .fold-num {
+  color: var(--terracotta-ink);
+}
+
+.fold-body {
+  border: 1px solid var(--case-edge);
+  border-radius: 0 4px 4px 4px;
+  background: linear-gradient(180deg, #fffdf6, #f3efe1);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
     inset -1px -1px 0 rgba(74, 70, 52, 0.22),
@@ -296,52 +510,21 @@ button.glass-badge:active {
     0 18px 32px -22px rgba(33, 64, 45, 0.4);
 }
 
-/* The row's own title bar, carrying the project's colour as a chip */
-.proj-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.32rem 0.7rem 0.34rem;
-  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
-  background: linear-gradient(180deg, #ecead9, #dcd7c3);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  font-family: var(--font-crt);
-  font-size: 1.0625rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--forest);
+@keyframes foldOpen {
+  from {
+    opacity: 0.25;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-.proj-num {
-  flex: none;
-  padding: 0.02rem 0.34rem 0.06rem;
-  border-radius: 2px;
-  background: var(--sticker, var(--label-a));
-  color: var(--cloud);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-.proj-file {
-  flex: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.proj-dots {
-  flex: 1;
-  min-width: 0.75rem;
-  align-self: center;
-  border-bottom: 1px dotted rgba(74, 70, 52, 0.4);
-}
-.proj-stat {
-  flex: none;
-  color: var(--meadow-deep);
-  white-space: nowrap;
-}
-.proj-stat[data-on="false"] {
-  color: var(--terracotta-ink);
+.fold-body > [role="tabpanel"]:not([hidden]) {
+  animation: foldOpen 0.3s ease both;
 }
 
-/* ---- Body: diagram and text side by side -------------------------
+/* ---- Inside an open folder: diagram and text side by side --------
    The text block comes FIRST in the DOM so the heading leads, and is
    moved to the right column only visually. Reading order and visual
    order are allowed to differ here because the diagram is a figure,
@@ -446,6 +629,19 @@ button.glass-badge:active {
     inset -1px -1px 0 rgba(255, 255, 255, 0.7),
     inset 1px 1px 0 rgba(74, 70, 52, 0.3);
 }
+/* Every control in the section needs a ring of its own: these have
+   custom backgrounds, so the browser default lands on low contrast. */
+.proj-key:focus-visible,
+.audio-toggle:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+}
+/* A disabled control should not look pressable. */
+.proj-key[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
 .proj-key[aria-expanded="true"] {
   background: linear-gradient(180deg, var(--terracotta), var(--terracotta-ink));
   color: var(--cloud);
@@ -518,11 +714,146 @@ button.glass-badge:active {
    Now the main element of a row rather than a detail. Everything is
    sized in viewBox units, so the whole diagram scales with its column.
    -------------------------------------------------------------------- */
-.proj-schem {
-  padding: 0.6rem 0.5rem;
+/* ---- The stage: one frame, two stages ----------------------------
+   The diagram and the demo occupy the same box, and the box is a fixed
+   16:9 so switching between them cannot change the page height. The
+   schematic is scaled to fit and centred, which leaves some air above
+   and below it — that is the cost of the two stages never jolting.
+   ------------------------------------------------------------------ */
+.proj-stage {
+  min-width: 0;
+}
+
+.stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
   border: 1px solid rgba(97, 112, 35, 0.26);
   border-radius: 3px;
   background: rgba(255, 253, 246, 0.7);
+}
+/* Everything the swap scales. The padding lives on the schematic rather
+   than the frame, so this layer can sit flush at inset 0 and the video
+   can fill it edge to edge. */
+.stage-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The swap: the two stages slide past each other. The incoming one
+   enters from the right and the outgoing one leaves to the left, so the
+   motion travels right-to-left going forward and reverses coming back.
+
+   Both layers are on screen for the whole slide, which is why they are
+   keyed siblings in the markup — an unmount here would refetch the
+   video every time you stepped back to the diagram. */
+@keyframes stageSlideIn {
+  from {
+    transform: translateX(calc(var(--dir, 1) * 100%));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes stageSlideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(var(--dir, 1) * -100%));
+  }
+}
+
+.stage[data-swapping="true"] .stage-inner[data-dir="in"] {
+  animation: stageSlideIn 380ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.stage[data-swapping="true"] .stage-inner[data-dir="out"] {
+  animation: stageSlideOut 380ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.stage-schem {
+  width: 100%;
+  max-height: 100%;
+  padding: 0.6rem 0.5rem;
+}
+.stage-schem .schem-svg {
+  max-height: 100%;
+}
+
+/* The recessed screen look lives on the video layer itself, not on the
+   frame. When it was on the frame, `.stage` restyled the instant the
+   slide began — the whole box changed appearance while its contents
+   were still moving, which read as a light switching on rather than as
+   anything sliding. Now the only thing that changes is position. */
+.stage-video {
+  position: absolute;
+  inset: 0;
+  background: #eaeddb;
+  box-shadow:
+    inset 1px 1px 0 rgba(74, 70, 52, 0.32),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* The countdown, made visible. It turns the automatic advance into
+   something a reader can see coming and stop, instead of something that
+   happens to them. It is removed from the DOM the moment they interact. */
+.stage-timer {
+  height: 2px;
+  margin-top: 0.4rem;
+  border-radius: 1px;
+  overflow: hidden;
+  background: rgba(97, 112, 35, 0.16);
+}
+.stage-timer i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--meadow-deep);
+  animation: stageCount var(--ms, 3000ms) linear forwards;
+}
+@keyframes stageCount {
+  to {
+    width: 100%;
+  }
+}
+
+.stage-note {
+  margin-top: 0.5rem;
+  font-family: var(--font-crt);
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+  opacity: 0.75;
+}
+
+.stage-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.stage-next {
+  margin-left: auto;
+}
+
+.stage-dots {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+.stage-dots i {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(97, 112, 35, 0.28);
+  transition: background 0.2s ease;
+}
+.stage-dots i[data-on="true"] {
+  background: var(--meadow-deep);
+  box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
 }
 
 .schem-svg {
@@ -596,10 +927,115 @@ button.glass-badge:active {
   color: var(--amber-ink);
 }
 
+/* ---- Running the pipeline -----------------------------------------
+   The diagram is already a graph, so the animation is derived from it
+   rather than choreographed: `depthOf` in Schematic.tsx gives each box
+   its distance from an input, and that number becomes both the box's
+   light delay and its outgoing links' pulse delay. Timing follows the
+   diagram automatically when a stage is added or moved.
+
+   Nothing animates until a folder has been opened or scrolled to (an
+   IntersectionObserver arms it once), or RUN is pressed.
+   -------------------------------------------------------------------- */
+@keyframes schemPulse {
+  0% {
+    stroke-dashoffset: 1.22;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.schem-pulse {
+  fill: none;
+  stroke: var(--meadow);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  /* pathLength="1" on the element normalises every path, so one dash
+     pattern travels a short hop and a long wrap at the same speed. */
+  stroke-dasharray: 0.22 1;
+  stroke-dashoffset: 1.22;
+  opacity: 0;
+}
+.schem-run .schem-pulse {
+  animation: schemPulse var(--dur, 0.5s) linear var(--delay, 0s) both;
+}
+
+/* Each box lights as the signal reaches it, then settles back. */
+@keyframes schemLight {
+  0%,
+  100% {
+    fill: rgba(255, 253, 246, 0.95);
+    stroke: rgba(74, 70, 52, 0.55);
+  }
+  18%,
+  55% {
+    fill: rgba(157, 165, 65, 0.32);
+    stroke: rgba(97, 112, 35, 0.95);
+  }
+}
+
+.schem-run .schem-box:not(.schem-box-dim) rect {
+  animation: schemLight 1.15s ease var(--delay, 0s) both;
+}
+
+.proj-run {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visually hidden, still announced. RUN on its own is two letters
+   short of saying what it runs. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .proj-key,
+  .stage,
+  .stage-dots i,
+  .fold-tab,
+  .fold-tab::before,
   .audio-toggle {
     transition: none;
+  }
+  .fold-body > [role="tabpanel"]:not([hidden]) {
+    animation: none;
+  }
+  /* Nothing advances on its own, so nothing counts down. And RUN would
+     produce no visible change, so it is not offered at all rather than
+     sitting there doing nothing. */
+  .stage-timer,
+  .proj-run {
+    display: none;
+  }
+  /* The swap is skipped in JS as well, so this is belt and braces. */
+  .stage[data-swapping="true"] .stage-inner {
+    animation: none;
+  }
+  /* No travelling pulse and no flashing boxes. RUN stays in place and
+     simply does nothing visible, which is the honest outcome — the
+     diagram already says everything the animation does. */
+  .schem-pulse {
+    display: none;
+  }
+  .schem-run .schem-box rect {
+    animation: none;
   }
 }
 

@@ -1,6 +1,4 @@
-﻿import Image from "next/image";
-import treasure from "@/images/treasure.png";
-
+﻿
 const achievements = [
   {
     stat: "",
@@ -25,14 +23,6 @@ export default function Achievements() {
             <p className="eyebrow mb-3">Highlights</p>
             <h2 className="section-heading">Achievements</h2>
           </div>
-          <Image
-            src={treasure}
-            alt=""
-            width={130}
-            height={130}
-            className="object-contain hidden sm:block"
-            style={{ mixBlendMode: "multiply" }}
-          />
         </div>
 
         {/* A power-on self-test: label, leader dots, status. The

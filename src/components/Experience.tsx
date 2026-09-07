@@ -1,8 +1,6 @@
 ﻿"use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import leavesPile from "@/images/leaves_pile.png";
 
 const experiences = [
   {
@@ -40,14 +38,7 @@ export default function Experience() {
             <p className="eyebrow mb-3">Where I&apos;ve been</p>
             <h2 className="section-heading">Work Experience</h2>
           </div>
-          <Image
-            src={leavesPile}
-            alt=""
-            width={130}
-            height={130}
-            className="object-contain hidden sm:block"
-            style={{ mixBlendMode: "multiply" }}
-          />
+          
         </div>
 
         <div className="max-w-4xl mx-auto">
