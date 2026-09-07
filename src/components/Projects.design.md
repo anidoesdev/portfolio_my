@@ -1,7 +1,7 @@
 # Projects section — design spec
 
-What `src/components/Projects.tsx`, `src/components/unfileSound.ts` and the `.nc-*` /
-`.crt-*` block in `src/app/globals.css` actually build.
+What `src/components/Projects.tsx`, `Schematic.tsx`, `architectures.ts`,
+`unfileSound.ts` and the `.proj-*` / `.schem-*` block in `src/app/globals.css` build.
 
 For the site-wide palette, typography and chassis this sits inside, see the root
 `design.md`. This file covers only the Projects section.
@@ -10,77 +10,51 @@ For the site-wide palette, typography and chassis this sits inside, see the root
 
 ## The idea
 
-**A split-pane file manager.** A listing of projects on the left, the selected project's
-contents on the right, a function-key bar along the foot — Norton Commander and its
-descendants. The window is **light**: a paper-white application sitting on the cream band, not a dark
-terminal cut into it.
+**Schematic-first rows.** One row per project, with that project's architecture diagram as
+the main element and its text alongside. No selection, no detail pane, nothing hidden: a
+reader who never clicks sees all four projects and how each one is built.
 
-It was chosen because it is the canonical retro-computer layout for *exactly this data
-shape*: a list plus a detail view. Everything the section needs was already list-and-detail;
-the earlier metaphors (a folder pile, a panel stack, a window cascade) were all spending
-effort to make a physical object behave like one.
+This inverts what four earlier versions did. A folder pile, a panel stack, a window cascade
+and a split-pane file manager all changed the *packaging* while showing the same title,
+sentence, video and tags. The diagrams — added last — were the first thing that made the
+section more informative, and they were buried three levels down inside a viewer pane. This
+version makes them the point.
 
-It also makes the `F1`–`F5` labels on the site nav mean something: the footer key bar is
-where that convention comes from.
+### What it removed
 
-### What this retired
+The tablist, the roving tabindex, the `tabpanel` plumbing, the `hidden` panels, the
+selection state, the keyboard arrow contract, and the two-pane grid. Each row is now a plain
+`<article>` with a real `<h3>` — simpler for a crawler, simpler for a screen reader, and
+simpler to reason about than any version that preceded it.
 
-The cascade, the flying-clone morph, the click flap, the expansion rails, per-project case
-tints, tilt/drift/inset, and the whole `--slot` placement system. A row in a listing cannot
-fly into a pane without looking wrong, so the morph went with the metaphor rather than being
-kept for its own sake.
-
-The **CTAs also moved**. Launch and Source used to sit in the panel body; they now live in
-the function-key bar, because in this metaphor that is where actions belong and keeping both
-would be two sets of controls for the same two links.
-
-### It uses the page's own colours
-
-A dark version of this window existed briefly and was reverted. That one had to redeclare
-`--foreground`, `--muted-fg` and their `--color-*` twins on `.nc` the way `#hero` does, so
-that Tailwind text utilities would not vanish into the background.
-
-**The light chassis needs none of that.** The section inherits the site's tokens like every
-other section, which is one less place for the palette to fork. The only colour rules left
-are the ones that are genuinely specific: the file-type bars, the amber-ink numerals and the
-status words.
-
-`--amber-ink` (`#7d5c0f`) does the work the bright `--amber` cannot — raw amber is
-unreadable on a light ground at any small size. It is defined once, alongside the log-line
-styles, and reused here for the file numbers and the `F`-key digits.
+**Nothing is `hidden` any more**, so every description is in the document as visible text
+rather than as a hidden panel a crawler has to be trusted to index.
 
 ---
 
 ## Layout
 
 ```
-<section id="projects">                      py-24 px-6 section-divider band-paper
-  header                                     eyebrow + h2 + lede
-  <div class="nc">                           the application window
-    <div class="nc-bar">                     A:\PROJECTS ........ 04 FILES · 02 DEPLOYED
-    <div class="nc-panes">                   1 col; 2 cols at 900px
-      <div class="nc-pane">                  LISTING
-        <div class="nc-pane-head">           NAME .......... STATUS
-        <div role="tablist" class="nc-list">
-          <button role="tab" class="nc-row"> ▸ 01 PAPYRUS.PRJ ···· ONLINE
-        <div class="nc-list-fill">           the empty rest of the listing
-      <div class="nc-pane">                  VIEWER
-        <div class="nc-pane-head">           swatch + PAPYRUS.PRJ + 01/04
-        <div class="nc-view">
-          <div role="tabpanel" class="project-panel">  x N, all but one `hidden`
-            <p class="nc-kicker">
-            <div class="crt-well">           iframe or .crt-plate, + .crt-lines
-            <div class="media-strip">
-            description
-            <div class="nc-tags">
-    <div class="nc-keys">                    F4 SOURCE · F5 LAUNCH · F9 SOUND
+<section id="projects">                    py-24 px-6 section-divider band-paper
+  header row                               eyebrow + h2 + lede + .audio-toggle
+  <div class="flex flex-col gap-6">
+    <article class="proj">                 x N
+      <div class="proj-bar">               01 · PAPYRUS.PRJ ······ ONLINE
+      <div class="proj-body">              1 col; 2 cols at lg
+        <div class="proj-text">            h3, kicker, description, tags, actions
+        <figure class="proj-schem">        the architecture diagram
+      <div class="crt-well">               only while a demo is open
 ```
 
-- The listing pane is deliberately narrow (`19rem`) — it is an index, not the content.
-- Below 900px the panes stack, listing above viewer.
-- `.nc-list-fill` gives the listing a floor even with four files in it. A real file manager's
-  listing runs to the bottom of its pane whether or not there is anything to fill it, and
-  without it the pane collapses to the height of the rows.
+### Reading order and visual order differ, deliberately
+
+`.proj-text` comes **first in the DOM** so the heading leads the row, and is moved to the
+right-hand column visually with `grid-column: 2` at `lg`. That is allowed here because the
+diagram is a figure supporting the row, not the start of its story — a screen reader gets
+name, summary, description, then the diagram's `alt`, which is the order that reads well.
+
+At `lg` the grid is `1.35fr / 1fr`, so the diagram column lands near **545px** — close to the
+560-unit viewBox the schematics were drawn against, which is why their labels stay legible.
 
 ---
 
@@ -88,11 +62,11 @@ styles, and reused here for the file numbers and the `F`-key digits.
 
 ```ts
 type Project = {
-  title: string;        // rendered as TITLE.PRJ in the listing and viewer header
-  kicker: string;       // one line at the head of the viewer
-  description: string;  // viewer only
-  tags: string[];       // listed in the viewer; the count feeds the media strip
-  liveUrl: string;      // "" means not deployed — drives ONLINE/LOCAL and the F5 key
+  title: string;        // heading, and TITLE.PRJ in the row bar
+  kicker: string;       // one line under the heading
+  description: string;
+  tags: string[];
+  liveUrl: string;      // "" means not deployed — drives ONLINE/LOCAL and the Launch action
   codeUrl: string;
   youtubeUrl?: string;  // "YOUR_VIDEO_ID" means no reel yet
 };
@@ -100,44 +74,65 @@ type Project = {
 
 | Function | Job |
 |---|---|
-| `hasDemo(url)` | False for a missing URL or the `YOUR_VIDEO_ID` placeholder |
-| `isLive(url)` | False for `""` or `"#"` — drives the status word and whether F5 is a link |
+| `hasDemo(url)` | False for a missing URL or the `YOUR_VIDEO_ID` placeholder — decides whether a Demo button exists at all |
+| `isLive(url)` | False for `""` or `"#"` — drives the status word and whether Launch is rendered |
 | `getEmbedUrl(url)` | `youtu.be/…`, `?v=…` and `/embed/…` all normalise to a `rel=0&modestbranding=1` embed |
 | `pad(n)` | `1` → `"01"` |
 
-`TOTAL` and `DEPLOYED` are counted from the array so the lede and the window's own counter
-cannot drift when a project is added.
-
-`TYPE_COLOUR` is the only per-project styling left: the file-type colour, used for the
-selection bar and the viewer header's swatch. All four are dark enough to hold cloud-white
-text at AA, which matters because the selection bar puts white on them.
+`TOTAL` and `DEPLOYED` are counted from the array so the lede cannot drift when a project is
+added. `TYPE_COLOUR` gives each row's index chip its colour.
 
 ---
 
-## The listing
+## Architecture schematics
 
-A row is `▸ 01 PAPYRUS.PRJ ····· ONLINE`.
+Every project's pipeline, drawn as a labelled block diagram in inline SVG.
 
-- The **selection bar is a solid block of colour**, not a border or a tint. That is the
-  visual language of a file manager, and it is why the type colours had to be AA-safe
-  against cloud white.
-- Leader dots are a **flexed `border-bottom`, not a run of periods**, so they fill the gap
-  exactly and can never wrap or overflow.
-- The `▸` caret is `aria-hidden` and revealed by opacity, so rows do not reflow on selection.
-- Each row carries an explicit `aria-label` of `"<title> — <kicker>"`. Without it the name
-  would absorb the caret glyph, the number and the leader dots.
+**Diagrams are data, not hand-drawn SVG.** `architectures.ts` holds, per project, a list of
+boxes with viewBox coordinates and a list of links; `Schematic.tsx` renders them. Four
+routes cover every connection in all four diagrams:
+
+| Route | What it draws |
+|---|---|
+| `h` (default) | Left to right, elbowing at the midpoint when the rows differ |
+| `down` | A straight drop from one box into the one below it |
+| `wrap` | Down, back across a `corridor` y, and into the start of the next row |
+| `tie` | A dashed line with no arrowhead, for shared state such as a memory layer |
+
+Moving a box is a coordinate change, not a redrawn path.
+
+**The viewBox is ~560 units wide on purpose.** Label text is sized in viewBox units, so a
+much wider viewBox would shrink the labels rather than making the diagram bigger.
+
+### The DRAFT stamp
+
+Each diagram was inferred from that project's written description, then confirmed by the
+owner. All four ship clean — `DRAFT` is an empty `Set<string>` in `architectures.ts`.
+
+The mechanism is kept for what comes next. A schematic is a claim about work someone did,
+and it is exactly the kind of claim that gets probed in an interview, so **a new project's
+diagram belongs in `DRAFT` until its owner has checked it** — and nobody should clear it on
+someone else's behalf. Adding a title to that set brings the stamp back with no other change.
+
+### Accessibility
+
+Each `Diagram` carries an `alt` string — a plain-language reading of the flow — applied as
+`role="img"` plus `aria-label`. The boxes do contain real SVG `<text>`, but their arrangement
+is the meaning, and that does not survive being read out box by box.
 
 ---
 
-## The function-key bar
+## The demo
 
-`F4 SOURCE`, `F5 LAUNCH`, `F9 SOUND`. Labels only — browsers reserve the real function keys
-(F1 help, F5 reload) and hijacking them would be hostile.
+A `Demo` button appears **only on projects that have a real reel** — three of the four
+currently have the `YOUR_VIDEO_ID` placeholder and so get no button at all, rather than a
+dead control or an empty frame.
 
-**When a project has no deployment, F5 renders as a `<span>`, not a disabled anchor.** An
-anchor without `href` is not a link, and leaving one in with `aria-disabled` would keep it
-in the tab order still announcing itself as a link. The span is `aria-disabled` and dimmed,
-and is simply not focusable.
+The iframe is mounted only while the demo is open. Combined with there being no default
+selection, **the section now loads zero YouTube players**. The original grid loaded four.
+
+The button carries `aria-expanded` and `aria-controls`, and the well it opens carries the
+matching `id`.
 
 ---
 
@@ -147,73 +142,51 @@ and is simply not focusable.
 about 45ms end to end: 7ms of high-passed noise for the contact, and a short triangle
 dropping through the mids for the body of the switch. Nothing is fetched or decoded.
 
-There is deliberately no tail, no sweep and no settle. Two earlier versions had them — a
-paper-and-latch sound, and a longer buckling-spring keyswitch — and both were reverted: a
-machine's button is short and dry, and a long tail on something you click repeatedly wears
-out fast.
-
-- **On by default**, toggled from `F9`. Gains are low: this plays on a portfolio, in an
-  office, near other people.
+- **On by default**, toggled beside the section lede.
 - The preference lives in `localStorage` behind an **external store**
   (`subscribeSound` / `getSound` / `getSoundOnServer`), read with `useSyncExternalStore`.
   Storage does not exist on the server, and reading it via `setState` in an effect is a
   cascading render — the store renders the server snapshot during hydration and swaps after.
 - Every call is wrapped in `try/catch`, and the `AudioContext` is created lazily. Browsers
-  hold it suspended until a gesture; the click that selects a row *is* that gesture.
+  hold it suspended until a gesture; the click that opens a demo *is* that gesture.
 
----
-
-## Interaction and accessibility
-
-- Vertical `role="tablist"` / `role="tab"` / `role="tabpanel"`, wired with `aria-selected`,
-  `aria-controls` and `aria-labelledby`. IDs come from `useId()`.
-- **Roving tabindex** — only the selected row is in the tab order.
-- **Keyboard:** ↓/→ and ↑/← move and open, wrapping at both ends; Home/End jump. Selection
-  moves focus with it and plays the click, exactly as a mouse does.
-- Focus ring is inset (`outline-offset: -2px`) so it is not clipped by the pane edge.
-- The caret, the leader dots, the swatch and the scanline overlay are all `aria-hidden`.
-- `prefers-reduced-motion: reduce` drops the panel fade, the blinking caret and the row
-  transitions.
+> **It now fires rarely.** With selection gone, the only thing that plays a click is the
+> Demo toggle, and only one project currently has a reel. The feature is worth keeping if
+> more demos are coming; if they are not, it is a toggle and a synthesizer earning very
+> little, and removing it would cost nothing else.
 
 ---
 
 ## Performance and SEO
 
-- **All panels stay in the DOM**, inactive ones hidden with the `hidden` attribute, so every
-  project's description is crawlable.
-- **The iframe is mounted only for the selected project** (`hasDemo(...) && i === active`).
-  The original grid loaded four YouTube players on page load.
-- Scanlines are generated in CSS — no image requests.
-- No morph clone, no per-frame animation, no `requestAnimationFrame` work.
+- **Nothing is hidden.** All four descriptions are visible text in the document.
+- **Zero iframes on load.** A player mounts only when a reader asks for one.
+- Schematics are inline SVG, generated from data — no image requests.
+- No selection state, no animation loop, no `requestAnimationFrame` work.
 
 ---
 
 ## Invariants
 
-1. **`.crt-lines` stays `pointer-events: none`.** It covers the media well, and the well can
-   hold a live YouTube player — without that rule it swallows every click meant for it.
-
-   > Two wider scanline layers used to exist as well: a page-wide `body::after` veil and an
-   > `.nc::after` over the whole window. Both were removed — grey lines over a light ground
-   > read as dirt, not as a screen. Scanlines now survive only on the media well, which is
-   > the one surface that is actually a display.
-
-2. **The media strip sits *under* the well, not over it**, for the same reason: an overlay
-   there would take clicks meant for the player.
-3. **The window does not fork the palette.** It runs on the site's own `--foreground` and
-   `--muted-fg`. If it ever goes dark again, the fix is a token block on `.nc` — the way
-   `#hero` does it — not per-element colour overrides, which is how a window ends up
-   half-inverted.
-4. **Type colours must clear WCAG AA behind cloud-white text**, because the selection bar
-   fills a row with them. Raw `--poppy` and `--sky-deep` both fail, which is why
-   `--label-c` and `--label-d` are darkened rather than taken from the palette directly.
-5. **Panels are never remounted to re-trigger animation.** A `key` change would reload the
-   YouTube iframe. `panelUnfold` restarts by itself when `hidden` is removed.
-6. **F5 is a span, not a disabled anchor, when there is no deployment.** See above.
-7. **Counts stay derived.** `TOTAL` and `DEPLOYED` are computed from the array; hard-coding
+1. **`.crt-lines` stays `pointer-events: none`.** It covers the demo well, and the well
+   holds a live YouTube player — without that rule it swallows every click meant for it.
+2. **A Demo button exists only when `hasDemo` is true.** A control that opens an empty frame
+   is worse than no control.
+3. **The iframe mounts only while open.** Rendering it hidden would reintroduce the four
+   players the original grid loaded.
+4. **A new diagram goes into `DRAFT` until its owner confirms it.** These are inferred from
+   prose; publishing one as fact is a claim about work, not a styling decision. The four
+   currently shipped have been confirmed; anything added later starts stamped.
+5. **`.proj-text` stays first in the DOM.** Its right-hand position at `lg` is visual only.
+   Reordering the source to match the visual layout would put a figure ahead of the heading
+   that names it.
+6. **Counts stay derived.** `TOTAL` and `DEPLOYED` are computed from the array; hard-coding
    them is how a portfolio ends up claiming four projects while showing five.
-8. **VT323 is never bolded, and never set below 15px.** It ships a single 400 weight; a
+7. **VT323 is never bolded, and never set below 15px.** It ships a single 400 weight; a
    faux-bold fills in its bitmap counters.
+8. **Row colours must clear WCAG AA behind cloud-white text**, because the index chip fills
+   with them. Raw `--poppy` and `--sky-deep` both fail, which is why `--label-c` and
+   `--label-d` are darkened rather than taken from the palette directly.
 
 ---
 
@@ -221,13 +194,11 @@ out fast.
 
 | To change | Edit |
 |---|---|
-| Listing width | The `grid-template-columns` on `.nc-panes` at the 900px breakpoint |
-| Where the panes stack | That same media query |
-| Window colours | The `background` and `--nc-edge` on `.nc`, plus the title-bar and key-cap gradients |
-| Text colours inside the window | Nothing local — it inherits the site tokens; `--amber-ink` covers the numerals |
-| Scanline strength | `--scanlines`, and the `opacity` on `.crt-lines` — the media well is the only surface that still has them |
-| File-type colours | `--label-a…d`, referenced through `TYPE_COLOUR` |
-| Which keys are in the footer | The `.nc-keys` block in `Projects.tsx` |
+| How much room the diagram gets | The `grid-template-columns` on `.proj-body` at `lg` |
+| Where the columns stack | That same media query |
+| A schematic's layout | The box coordinates in `architectures.ts` — the renderer needs no changes |
+| Whether a schematic shows DRAFT | The `DRAFT` set in `architectures.ts` |
+| Row colours | `--label-a…d`, referenced through `TYPE_COLOUR` |
 | Sound loudness | The two `gain.setValueAtTime` values in `unfileSound.ts` |
 | Sound default | `getSoundOnServer()` — returns `true`; it must match the server render |
 
@@ -235,12 +206,16 @@ out fast.
 
 ## Not yet verified
 
-The build, typecheck and lint pass. Most likely to need a pass in a real browser:
+The build, typecheck and lint pass, and the page serves four rows with four diagrams and no
+iframes. Most likely to need a pass in a real browser:
 
-- Whether the light chassis reads as its own object on the cream band or dissolves into it.
-  The bevel and the `0 2px 0` moulded edge are doing all of that work; the dark version had
-  no such problem, but punched a hole in the page instead.
-- Whether `19rem` is the right listing width once the real project names are set in VT323.
-- The viewer pane's height against the listing's. The listing is short and the viewer is
-  tall; `.nc-list-fill` gives the listing a floor, but the balance between them at desktop
-  width is a guess.
+- **The diagrams at full size.** They were drawn to sit at roughly this width, but they have
+  never been seen rendered. Box overlaps, arrows crossing labels, and the two wrap routes
+  (Distill and Synthesis) are the likeliest problems.
+- **Section length.** Four full-width rows with diagrams is a tall section. If it drags,
+  the description is the first thing to shorten, not the diagram.
+- Mobile, where the diagram column is narrower than the 560-unit viewBox and the labels
+  shrink with it. There may need to be a floor below which the diagram scrolls sideways
+  instead of scaling down.
+- Whether the row bar, the tag chips and the diagram frame add up to too many nested boxes
+  at a glance.

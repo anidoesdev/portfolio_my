@@ -55,18 +55,13 @@ export default function Navbar() {
       }`}
     >
       <ul className="retro-nav flex items-center gap-0 sm:gap-0.5 px-1.5 sm:px-2 py-1.5">
-        {navLinks.map(({ label, short, href }, i) => (
+        {navLinks.map(({ label, short, href }) => (
           <li key={href}>
             <a
               href={href}
               aria-current={active === href ? "page" : undefined}
               className="retro-key text-[0.9375rem] px-3 sm:px-3.5 py-1 block whitespace-nowrap"
             >
-              {/* Labels only. The real F-keys are reserved by browsers
-                  (F1 help, F5 reload) and hijacking them would be hostile. */}
-              <span className="fkey" aria-hidden="true">
-                F{i + 1}
-              </span>
               <span className="sm:hidden">{short}</span>
               <span className="hidden sm:inline">{label}</span>
             </a>
