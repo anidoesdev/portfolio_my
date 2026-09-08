@@ -54,7 +54,7 @@ There is **no dark-section override** any more. Hero and Contact used to swap in
 
 **Page canvas** — `body` paints three soft radial gradients over `--paper`: sky `rgba(68,150,166,.16)` top-left, meadow `rgba(157,165,65,.17)` mid-right, sun `rgba(232,207,67,.16)` at the foot. This reproduces the light in the artwork and keeps the page from reading as flat cream. `background-attachment: fixed` where supported.
 
-**GitHub calendar** ramp, rebuilt on the meadow hue: `rgba(97,112,35,0.12)` -> `#dde3ad` -> `#b6c05a` -> `#84913a` -> `#4a5620`. A phosphor-on-dark version was tried during the retro pass and reverted.
+**GitHub calendar** ramp, rebuilt on the meadow hue: empty `rgba(97,112,35,0.10)` -> `#aebb63` -> `#86953a` -> `#5e6c22` -> `#38460f`. The first attempt put `#dde3ad` at level 1, which composited to **1.05x** the empty cell's luminance — a day with commits was indistinguishable from a day without, which is the one distinction the graph exists to make. Empty was lightened and every filled step darkened; consecutive steps now sit at 1.58-1.78x, so the scale separates at every level rather than only at the top. A phosphor-on-dark version was tried during the retro pass and reverted.
 
 ## Contrast
 
@@ -92,7 +92,7 @@ Current ratios: body text 10.7, muted text 6.2, eyebrow ink 5.2-5.6, button text
 
 Single scrolling page (`src/app/page.tsx`), sections in order:
 
-1. **Navbar** — fixed pill nav, bottom-center (not top), floating over content
+1. **Navbar** — fixed pill nav, bottom-center (not top), floating over content, with an **icon-only sound switch** at the right end behind a hairline. It governs the click sound for the whole site: `ClickSound.tsx` is mounted once in the root layout and delegates from `document` in the capture phase, so every button, link, `summary` and tab sounds without any of them wiring it up. Capture phase because the project tabs stop propagation. `data-no-click` opts a control out — the switch itself uses it, so turning sound *off* is silent. Fires on `pointerdown` to stay in step with the `:active` press, plus `keydown` for keyboard activation. The nav hides over the hero, so the switch is out of reach until you scroll past it
 2. **Hero** (`#hero`) — full-bleed `img.jpg` under a **dim scrim**, text directly on the artwork (no panel), and three translucent `.glass-btn` jump links to Projects / Experience / Skills
 3. **Projects** (`#projects`) — **schematic-first rows**: one row per project, architecture diagram left, text right, demo on request (see `.proj` below)
 4. **Experience** (`#experience`) — a **quest log**: entries down a dashed rail, each with a hollow node that lights while the role is still running (derived from the period reading *Present*, so it cannot contradict the dates beside it). Role and employer are set large in CRT type; period and **location** sit under them as a mono readout, on screen without opening anything. Details expand as console output, animated `grid-template-rows: 0fr → 1fr` so nothing is clipped by a max-height guess. Unpanelled on purpose — the air between entries is what makes the hierarchy readable

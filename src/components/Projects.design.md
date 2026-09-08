@@ -330,18 +330,30 @@ reading is worse than the problem it solves.
 about 45ms end to end: 7ms of high-passed noise for the contact, and a short triangle
 dropping through the mids for the body of the switch. Nothing is fetched or decoded.
 
-- **On by default**, toggled beside the section lede.
+- **On by default**, toggled from the **navbar** — an icon-only switch on the same key rail
+  as the links, so it governs the whole site rather than this section. It used to sit beside
+  the lede here, which is why that row was a flex.
 - The preference lives in `localStorage` behind an **external store**
   (`subscribeSound` / `getSound` / `getSoundOnServer`), read with `useSyncExternalStore`.
   Storage does not exist on the server, and reading it via `setState` in an effect is a
   cascading render — the store renders the server snapshot during hydration and swaps after.
 - Every call is wrapped in `try/catch`, and the `AudioContext` is created lazily. Browsers
-  hold it suspended until a gesture; the click that opens a demo *is* that gesture.
+  hold it suspended until a gesture; the first click *is* that gesture.
 
-> **It now fires rarely.** With selection gone, the only thing that plays a click is the
-> Demo toggle, and only one project currently has a reel. The feature is worth keeping if
-> more demos are coming; if they are not, it is a toggle and a synthesizer earning very
-> little, and removing it would cost nothing else.
+**This section no longer plays it itself.** `ClickSound.tsx`, mounted once in the root
+layout, delegates from `document` in the capture phase and sounds every `button`, `a[href]`,
+`summary`, `[role="button"]` and `[role="tab"]` on the page — currently ~40 controls. The
+three explicit `playUnfile()` calls in `Projects.tsx` were removed when it landed, because
+they would now double-fire. Capture phase is deliberate: the folder tabs stop propagation,
+and a bubbling listener would go silent on exactly the controls the sound was written for.
+
+Opt a control out with `data-no-click` on it or any ancestor. The navbar switch uses it —
+otherwise the global listener would sound the click that turns sound *off*.
+
+It fires on `pointerdown` rather than `click`, because the keys press in on `:active` and a
+sound arriving on release would lag the visual by the length of the press. Keyboard
+activation fires no pointer event, so `keydown` is handled alongside it: Enter or Space on a
+button, Enter only on a link, since Space scrolls a link rather than following it.
 
 ---
 

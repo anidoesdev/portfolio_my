@@ -6,17 +6,9 @@ import {
   useId,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
 import Schematic, { runDuration } from "./Schematic";
 import { ARCHITECTURES, DRAFT } from "./architectures";
-import {
-  getSound,
-  getSoundOnServer,
-  playUnfile,
-  setSound,
-  subscribeSound,
-} from "./unfileSound";
 
 type Project = {
   title: string;
@@ -157,11 +149,6 @@ export default function Projects() {
   const [inView, setInView] = useState(false);
   const baseId = useId();
 
-  /* Sound is on by default and the choice is remembered per browser. It
-     lives in an external store rather than component state so the server
-     render and the hydrating client agree. */
-  const sound = useSyncExternalStore(subscribeSound, getSound, getSoundOnServer);
-
   /* The auto-advance is gated on the folder actually being on screen.
      Without this the first folder starts its countdown at page load and
      swaps the diagram out before anyone has scrolled to Projects. */
@@ -271,7 +258,6 @@ export default function Projects() {
      folder you are already in is a request to play it again, and
      returning early there was why a second click did nothing. */
   function open(i: number) {
-    if (sound) playUnfile();
     setPaused(false);
 
     if (i !== active) {
@@ -315,7 +301,6 @@ export default function Projects() {
        than only the first. Going the other way there is nothing left to
        count down to. */
     setPaused(next === 1);
-    if (sound) playUnfile();
     swapTo(next, direction);
   }
 
@@ -323,15 +308,7 @@ export default function Projects() {
     /* Replaying the animation arms a countdown too: the swap is what
        happens when the pipeline finishes, however it was started. */
     setPaused(false);
-    if (sound) playUnfile();
     bump(title);
-  }
-
-  function toggleSound() {
-    const next = !sound;
-    setSound(next);
-    /* Turning it on plays one, so you hear what you just enabled. */
-    if (next) playUnfile();
   }
 
   /* Horizontal tablist: left/right move and open, Home/End jump. */
@@ -354,25 +331,16 @@ export default function Projects() {
     <section id="projects" className="py-24 px-6 section-divider band-paper">
       <div className="mx-auto max-w-5xl">
 
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-          <div className="max-w-xl">
-            <p className="eyebrow mb-3">Selected work</p>
-            <h2 className="section-heading">Projects</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-fg">
-              {TOTAL} systems, end to end — retrieval, anomaly detection, model
-              distillation, and multi-agent research. {DEPLOYED} deployed, all open source.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="audio-toggle"
-            aria-pressed={sound}
-            onClick={toggleSound}
-          >
-            <span className="pip" aria-hidden="true" />
-            {sound ? "Sound on" : "Sound off"}
-          </button>
+        {/* The sound switch used to sit to the right of this lede, which
+            is why the row was a flex. It lives in the navbar now, where
+            it governs the whole site rather than one section. */}
+        <div className="max-w-xl mb-8">
+          <p className="eyebrow mb-3">Selected work</p>
+          <h2 className="section-heading">Projects</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-fg">
+            {TOTAL} systems, end to end — retrieval, anomaly detection, model
+            distillation, and multi-agent research. {DEPLOYED} deployed, all open source.
+          </p>
         </div>
 
         {/* Name tags along the top, one folder body below. Every tag is

@@ -591,8 +591,7 @@ button.glass-badge:active {
 }
 /* Every control in the section needs a ring of its own: these have
    custom backgrounds, so the browser default lands on low contrast. */
-.proj-key:focus-visible,
-.audio-toggle:focus-visible {
+.proj-key:focus-visible {
   outline: 2px solid var(--terracotta);
   outline-offset: 2px;
 }
@@ -631,43 +630,6 @@ button.glass-badge:active {
   pointer-events: none;
   background-image: var(--scanlines);
   opacity: 0.8;
-}
-
-/* ---- The sound switch, beside the section lede -------------------- */
-.audio-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.24rem 0.55rem;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #efeadb, #d9d3bd);
-  border: 1px solid var(--case-edge);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.85),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.28);
-  color: var(--muted-fg);
-  font-family: var(--font-crt);
-  font-size: 0.9375rem;
-  line-height: 1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-.audio-toggle:hover {
-  border-color: rgba(181, 86, 24, 0.6);
-  color: var(--terracotta-ink);
-}
-.audio-toggle .pip {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 999px;
-  background: var(--meadow-deep);
-  box-shadow: 0 0 5px rgba(157, 165, 65, 0.8);
-}
-.audio-toggle[aria-pressed="false"] .pip {
-  background: rgba(97, 112, 35, 0.3);
-  box-shadow: none;
 }
 
 /* ---- Architecture schematics --------------------------------------
@@ -1041,8 +1003,7 @@ button.glass-badge:active {
   .stage-arrow,
   .stage-dot,
   .fold-tab,
-  .fold-tab::before,
-  .audio-toggle {
+  .fold-tab::before {
     transition: none;
   }
   .fold-body > [role="tabpanel"]:not([hidden]) {
@@ -1159,6 +1120,44 @@ button.glass-badge:active {
 .retro-key:hover {
   color: var(--terracotta-ink);
 }
+/* A hairline before the switch, so it reads as a control on the rail
+   rather than a seventh place to go. */
+.nav-sep {
+  align-self: stretch;
+  width: 1px;
+  margin: 0.15rem 0.3rem;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(74, 70, 52, 0.3),
+    transparent
+  );
+}
+
+/* Icon only. The name is on the button via aria-label, and the icon
+   itself says which way the switch is thrown — the speaker gains waves
+   when sound is on and an X when it is off, so the state does not rest
+   on colour alone. */
+.nav-sound {
+  color: var(--muted-fg);
+}
+.nav-sound svg {
+  display: block;
+}
+.nav-sound[aria-pressed="true"] {
+  color: var(--meadow-deep);
+}
+.nav-sound[aria-pressed="true"]:hover,
+.nav-sound[aria-pressed="false"]:hover {
+  color: var(--terracotta-ink);
+}
+/* The keys get their ring from the browser default elsewhere in the
+   nav; this one has a background of its own on hover, so it is pinned. */
+.nav-sound:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+}
+
 .retro-key[aria-current="page"] {
   background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
   color: var(--cloud);

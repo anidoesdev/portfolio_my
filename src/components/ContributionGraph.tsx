@@ -21,9 +21,17 @@ export default function ContributionGraph({ username }: { username: string }) {
       fontSize={11}
       colorScheme="light"
       /* Five steps of the meadow ramp, so the grid reads as part of the
-         page rather than GitHub's green dropped into it. */
+         page rather than GitHub's green dropped into it.
+
+         The first ramp had #dde3ad at level 1, which composited to within
+         a hair of the empty cell — a day with commits looked like a day
+         without. Empty is now *lighter* (0.10) so it recedes, and every
+         filled step is darker, which widens the one boundary that
+         actually carries meaning. Consecutive steps sit at roughly even
+         luminance ratios (~1.6x), so no two levels collapse into each
+         other further up the scale either. */
       theme={{
-        light: ["rgba(97, 112, 35, 0.12)", "#dde3ad", "#b6c05a", "#84913a", "#4a5620"],
+        light: ["rgba(97, 112, 35, 0.10)", "#aebb63", "#86953a", "#5e6c22", "#38460f"],
       }}
     />
   );

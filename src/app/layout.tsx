@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ClickSound from "@/components/ClickSound";
 import { Inter, Amarante, IBM_Plex_Mono, VT323 } from "next/font/google";
 import "./globals.css";
 
@@ -49,6 +50,9 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        {/* Renders nothing. Attaches the one delegated listener that
+            gives every button and link on the site its click. */}
+        <ClickSound />
         {children}
       </body>
     </html>

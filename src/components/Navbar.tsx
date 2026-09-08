@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import {
+  getSound,
+  getSoundOnServer,
+  playUnfile,
+  setSound,
+  subscribeSound,
+} from "./unfileSound";
 
 const navLinks = [
   { label: "Home",         short: "Home",     href: "#hero" },
@@ -13,6 +20,11 @@ const navLinks = [
 
 export default function Navbar() {
   const [active, setActive] = useState("#hero");
+  /* On by default and remembered per browser. An external store
+     rather than component state, so the server render and the
+     hydrating client agree on a value localStorage only has on one
+     of them. */
+  const sound = useSyncExternalStore(subscribeSound, getSound, getSoundOnServer);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -44,6 +56,16 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  function toggleSound() {
+    const next = !sound;
+    setSound(next);
+    /* Turning it on plays one, so you hear the thing you just
+       enabled. Turning it off is silent, which is the point. This is
+       why the button carries `data-no-click`: the global listener
+       would otherwise sound the click that switches sound off. */
+    if (next) playUnfile();
+  }
+
   return (
     <nav
       inert={!visible}
@@ -67,6 +89,39 @@ export default function Navbar() {
             </a>
           </li>
         ))}
+
+        {/* Sits on the same key rail as the links, behind a hairline so
+            it reads as a switch rather than a seventh destination.
+            Icon only — the label is on the button, not beside it. */}
+        <li className="nav-sep" aria-hidden="true" />
+        <li>
+          <button
+            type="button"
+            data-no-click
+            onClick={toggleSound}
+            aria-pressed={sound}
+            aria-label="Click sound"
+            title={sound ? "Click sound on" : "Click sound off"}
+            className="retro-key nav-sound px-2.5 sm:px-3 py-1 block"
+          >
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              {/* Straight edges only, no arcs — the same drawing
+                  language as the architecture schematics. */}
+              <path d="M2.5 6h2.2L8 3.2v9.6L4.7 10H2.5z" fill="currentColor" />
+              {sound ? (
+                <g fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="square">
+                  <path d="M10.4 5.6 12.4 8l-2 2.4" />
+                  <path d="M13 3.8 15 8l-2 4.2" />
+                </g>
+              ) : (
+                <g stroke="currentColor" strokeWidth="1.3" strokeLinecap="square">
+                  <path d="M10.8 5.8 14.4 10.2" />
+                  <path d="M14.4 5.8 10.8 10.2" />
+                </g>
+              )}
+            </svg>
+          </button>
+        </li>
       </ul>
     </nav>
   );
