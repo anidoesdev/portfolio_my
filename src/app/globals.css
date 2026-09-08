@@ -1253,6 +1253,256 @@ button.glass-badge:active {
   --amber-ink: #7d5c0f;
 }
 
+/* ---- Achievements --------------------------------------------------
+   Each one a record card: label and state in the bar, the figure that
+   matters large underneath, and the raw numbers below it so the figure
+   can be checked rather than taken on trust.
+   -------------------------------------------------------------------- */
+.ach {
+  display: grid;
+  gap: 1rem;
+  max-width: 48rem;
+}
+@media (min-width: 640px) {
+  .ach {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ach-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--case-edge);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fffdf6, #f3efe1);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
+    0 2px 0 rgba(74, 70, 52, 0.18),
+    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+}
+
+.ach-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.65rem 0.32rem;
+  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
+  background: linear-gradient(180deg, #ecead9, #dcd7c3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  font-family: var(--font-crt);
+  font-size: 1.0625rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+.ach-bar .tag {
+  margin-left: auto;
+  flex: none;
+  color: var(--meadow-deep);
+  letter-spacing: 0.12em;
+}
+
+.ach-body {
+  flex: 1;
+  padding: 0.85rem 0.75rem 0.9rem;
+}
+
+.ach-figure {
+  font-family: var(--font-crt);
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--forest);
+}
+
+.ach-meter {
+  height: 6px;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(97, 112, 35, 0.16);
+  box-shadow: inset 0 1px 2px rgba(74, 70, 52, 0.25);
+}
+.ach-meter i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #74853a, var(--meadow-deep));
+}
+
+.ach-note {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+  font-variant-numeric: tabular-nums;
+}
+.ach-note b {
+  font-weight: 600;
+  color: var(--amber-ink);
+}
+
+.ach-detail {
+  margin-top: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted-fg);
+}
+
+/* ---- Repository cards ----------------------------------------------
+   The pinned repos as a board of labelled panels — same bevel, title
+   bar and terminal type as the skill groups and record cards, so the
+   list reads as another part of the same machine rather than a widget
+   borrowed from GitHub.
+
+   Whole card is the anchor: one target, one tab stop.
+   -------------------------------------------------------------------- */
+.repos-head {
+  margin: 3rem 0 1rem;
+  font-family: var(--font-crt);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+.repos {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .repos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .repos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.repo-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--case-edge);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fffdf6, #f3efe1);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
+    0 2px 0 rgba(74, 70, 52, 0.18),
+    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+/* A key being pressed: the card drops onto its own 2px shadow rather
+   than lifting off the page, which is how every other control here
+   behaves. */
+.repo-card:hover {
+  transform: translateY(1px);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
+    0 1px 0 rgba(74, 70, 52, 0.18),
+    0 10px 20px -18px rgba(33, 64, 45, 0.45);
+}
+.repo-card:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 3px;
+}
+
+.repo-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem 0.32rem;
+  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
+  background: linear-gradient(180deg, #ecead9, #dcd7c3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  font-family: var(--font-crt);
+  font-size: 1.0625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+.repo-bar .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.repo-card:hover .repo-bar .name {
+  color: var(--terracotta-ink);
+}
+.repo-bar .stars {
+  margin-left: auto;
+  flex: none;
+  color: var(--amber-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.repo-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.7rem 0.7rem;
+}
+
+.repo-desc {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--muted-fg);
+}
+
+.repo-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.repo-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+/* Square, not the round dot GitHub uses — the rest of the page is drawn
+   with corners. One colour for every language: guessing per-language
+   colours would mean shipping a lookup table that is wrong for anything
+   outside it. */
+.repo-lang i {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 1px;
+  background: var(--meadow-deep);
+}
+
+.repo-forks {
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repo-card {
+    transition: none;
+  }
+  .repo-card:hover {
+    transform: none;
+  }
+}
+
 /* ---- The quest log -------------------------------------------------
    Experience as a run of entries on a dashed rail: the role and employer
    large, the dates and place as a quiet readout underneath, a hollow
