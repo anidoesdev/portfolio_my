@@ -116,6 +116,9 @@ const HOLD = 1;
    layers are both on screen for. */
 const SWAP_MS = 380;
 
+/* What each dot goes to, in order. Also the accessible names for them. */
+const STAGES = ["architecture diagram", "demo video"];
+
 function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
@@ -135,11 +138,6 @@ export default function Projects() {
   const [runs, setRuns] = useState<Record<string, number>>({});
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const bodyRef = useRef<HTMLDivElement | null>(null);
-  /* Only the open folder's controls are reachable, so a single pair of
-     refs is enough — they are attached on the active panel only. */
-  const backRef = useRef<HTMLButtonElement | null>(null);
-  const nextRef = useRef<HTMLButtonElement | null>(null);
-  const wantFocus = useRef<"back" | "next" | null>(null);
   /* True while the stage is mid-swap. The content changes at the pinch
      point, where nothing is visible, so the diagram never dissolves
      into the video — and the iframe's own first paint is hidden too. */
@@ -198,7 +196,7 @@ export default function Projects() {
      Both layers are direct children of `.stage` with stable keys, which
      is what stops React unmounting and remounting the iframe mid-slide —
      that would refetch the video every time you stepped back. */
-  const swapTo = useCallback((next: number) => {
+  const swapTo = useCallback((next: number, direction?: number) => {
     if (swappingRef.current) return;
     const from = stageRef.current;
     if (from === next) return;
@@ -213,7 +211,11 @@ export default function Projects() {
       return;
     }
 
-    setDir(next > from ? 1 : -1);
+    /* The arrows wrap, so which way the slide travels is not always
+       implied by which stage is arriving — the right arrow moves forward
+       even when it is going back to stage 0. Callers that know their
+       direction say so; the rest derive it. */
+    setDir(direction ?? (next > from ? 1 : -1));
     setLeaving(from);
     apply();
     setSwapping(true);
@@ -249,18 +251,6 @@ export default function Projects() {
     const t = window.setTimeout(() => swapTo(1), countdownMs);
     return () => window.clearTimeout(t);
   }, [paused, stage, inView, currentReel, currentDiagram, countdownMs, swapTo]);
-
-  /* Advancing disables the control you just pressed. Without this the
-     keyboard user is left focused on a dead button; move them to the one
-     that is now live. Only runs for a deliberate press — the automatic
-     advance sets no pending focus, because stealing focus from whatever
-     someone is reading is worse than the problem it solves. */
-  useEffect(() => {
-    const want = wantFocus.current;
-    if (!want) return;
-    wantFocus.current = null;
-    (want === "back" ? backRef : nextRef).current?.focus();
-  }, [stage]);
 
   const tabId = (i: number) => `${baseId}-tab-${i}`;
   const panelId = (i: number) => `${baseId}-panel-${i}`;
@@ -309,15 +299,24 @@ export default function Projects() {
     bump(productionProjects[i].title);
   }
 
-  function goStage(next: number) {
+  /* Both arrows always move: right is forward, left is back, and with
+     two stages either lands on the other one. Nothing is ever disabled,
+     which is what makes a control that only appears when you reach for
+     it safe — reaching for one and finding it dead is worse than a loop.
+     It also means focus never sits on a control the press just killed,
+     so the focus juggling this used to need is gone. */
+  function step(direction: number) {
+    goStage(stage === 0 ? 1 : 0, direction);
+  }
+
+  function goStage(next: number, direction?: number) {
     /* Returning to the diagram restarts its animation, so it arms a new
        countdown — that is what makes the swap follow every run rather
        than only the first. Going the other way there is nothing left to
        count down to. */
     setPaused(next === 1);
     if (sound) playUnfile();
-    wantFocus.current = next === 1 ? "back" : "next";
-    swapTo(next);
+    swapTo(next, direction);
   }
 
   function run(title: string) {
@@ -529,6 +528,53 @@ export default function Projects() {
                           </div>
                         )}
 
+                        {i === active && reel && (
+                          <>
+                            {/* Faded rather than hidden. An iframe swallows
+                                pointer events, so hover over the video
+                                stage can never reach this element — if
+                                these were hidden until hover they would
+                                be unreachable there. Fading the chrome
+                                and leaving the glyph solid keeps them
+                                legible without being loud. */}
+                            <button
+                              type="button"
+                              className="stage-arrow"
+                              data-side="left"
+                              onClick={() => step(-1)}
+                              aria-label={`Previous — ${onDemo ? "architecture diagram" : "demo video"}`}
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                  d="M15 5l-7 7 7 7"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="stage-arrow"
+                              data-side="right"
+                              onClick={() => step(1)}
+                              aria-label={`Next — ${onDemo ? "architecture diagram" : "demo video"}`}
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                  d="M9 5l7 7-7 7"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          </>
+                        )}
+
                         {(i !== active || stage === 0 || leaving === 0) && (
                           <div
                             key="diagram"
@@ -557,36 +603,26 @@ export default function Projects() {
                       {/* A two-step nav on a one-step folder is two dead
                           controls. Projects without a reel say so instead. */}
                       {reel ? (
-                        <div className="stage-nav">
-                          <button
-                            type="button"
-                            ref={i === active ? backRef : null}
-                            className="proj-key"
-                            aria-disabled={!onDemo}
-                            onClick={() => onDemo && goStage(0)}
-                          >
-                            Back
-                            <span className="sr-only"> to the diagram</span>
-                          </button>
-
-                          <span className="stage-dots" aria-hidden="true">
-                            <i data-on={!onDemo} />
-                            <i data-on={onDemo} />
+                      <div className="stage-nav">
+                          <span className="stage-dots">
+                            {STAGES.map((label, n) => {
+                              const here = (onDemo ? 1 : 0) === n;
+                              return (
+                                <button
+                                  key={label}
+                                  type="button"
+                                  className="stage-dot"
+                                  data-on={here}
+                                  aria-current={here ? "true" : undefined}
+                                  aria-label={`Show the ${label}`}
+                                  onClick={() => !here && goStage(n)}
+                                />
+                              );
+                            })}
                           </span>
                           <span className="sr-only" aria-live="polite">
                             Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}
                           </span>
-
-                          <button
-                            type="button"
-                            ref={i === active ? nextRef : null}
-                            className="proj-key stage-next"
-                            aria-disabled={onDemo}
-                            onClick={() => !onDemo && goStage(1)}
-                          >
-                            Next
-                            <span className="sr-only"> to the demo video</span>
-                          </button>
                         </div>
                       ) : (
                         <p className="stage-note">No demo reel on file yet.</p>

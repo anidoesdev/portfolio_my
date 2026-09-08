@@ -26,6 +26,12 @@ const experiences = [
   },
 ];
 
+/* A role that has not ended yet, read off the period rather than stored
+   separately so it cannot contradict the dates printed beside it. */
+function isCurrent(period: string): boolean {
+  return /present|current/i.test(period);
+}
+
 export default function Experience() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -33,74 +39,75 @@ export default function Experience() {
     <section id="experience" className="py-24 px-6 section-divider band-sky">
       <div className="mx-auto max-w-5xl">
 
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <p className="eyebrow mb-3">Where I&apos;ve been</p>
-            <h2 className="section-heading">Work Experience</h2>
-          </div>
-          
+        <div className="mb-12">
+          <p className="eyebrow mb-3">Where I&apos;ve been</p>
+          <h2 className="section-heading">Work Experience</h2>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          {experiences.map((item, idx) => {
+        {/* Role and employer carry the entry; the dates and place sit
+            under them as a quiet readout. Everything except the detail
+            lines is on screen without opening anything.
+
+            No panel here, unlike Projects and Skills — the air between
+            entries is what makes the hierarchy readable, and a box would
+            take it back. */}
+        <ol className="quest">
+          {experiences.map((item) => {
             const isOpen = expanded === item.org;
-            const isLast = idx === experiences.length - 1;
+            const current = isCurrent(item.period);
+
             return (
-              <div key={item.org} className="flex gap-4">
-                {/* The log's left rule: a phosphor pip per entry on a
-                    dashed spine. */}
-                <div className="flex flex-col items-center mt-2.5">
-                  <span className="log-pip shrink-0" aria-hidden="true" />
-                  {!isLast && <div className="log-spine flex-1 mt-1.5" />}
-                </div>
+              <li key={item.org} className="quest-item" data-open={isOpen} data-current={current}>
+                <span className="quest-node" aria-hidden="true" />
 
-                {/* Entry — no box */}
-                <div className="flex-1 pb-8">
-                  {/* One log line: timestamp, role, leader dots, employer,
-                      and the open/closed marker a console would use. */}
-                  <button
-                    onClick={() => setExpanded(isOpen ? null : item.org)}
-                    aria-expanded={isOpen}
-                    className="log-row"
-                  >
-                    <span className="log-stamp">{item.period}</span>
-                    <span className="log-name">{item.title}</span>
-                    <span className="log-dots" aria-hidden="true" />
-                    <span className="log-status">{item.org}</span>
-                    <span className="log-toggle" aria-hidden="true">
-                      {isOpen ? "[-]" : "[+]"}
+                <button
+                  onClick={() => setExpanded(isOpen ? null : item.org)}
+                  aria-expanded={isOpen}
+                  className="quest-head"
+                >
+                  <span className="quest-lines">
+                    <span className="quest-title">
+                      {item.title}
+                      {/* Colour and the @ carry the employer, not italics:
+                          VT323 has no italic face, so an <em> here would
+                          be a synthesised slant across a bitmap font. */}
+                      <span className="quest-org">@ {item.org}</span>
                     </span>
-                  </button>
 
-                  {/* Expanded content */}
-                  <div
-                    className="overflow-hidden"
-                    style={{
-                      maxHeight: isOpen ? "2000px" : "0px",
-                      transition: "max-height 0.25s ease",
-                    }}
-                  >
-                    <div className="mt-2.5 space-y-1.5">
-                      {/* The employer has moved up onto the log line
-                          itself, so this carries only the location. */}
-                      <p className="log-detail">{item.location}</p>
-    
-                      {item.details.length > 0 && (
-                        <ul className="space-y-1.5">
-                          {item.details.map((point, i) => (
-                            <li key={i} className="log-detail">
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                    <span className="quest-meta">
+                      <span className="date">{item.period}</span>
+                      <span aria-hidden="true"> · </span>
+                      {item.location}
+                      {current && <span className="quest-active">Active</span>}
+                    </span>
+                  </span>
+
+                  <span className="quest-caret" aria-hidden="true">
+                    ▾
+                  </span>
+                </button>
+
+                {item.details.length > 0 && (
+                  /* Grid rows rather than a max-height guess: 0fr to 1fr
+                     animates to the content's real height, so a long
+                     entry is never clipped by a cap set too low nor left
+                     lagging behind one set too high. */
+                  <div className="quest-body">
+                    <div>
+                      <ul className="quest-out">
+                        {item.details.map((point, i) => (
+                          <li key={i} className="log-detail">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                </div>
-              </div>
+                )}
+              </li>
             );
           })}
-        </div>
+        </ol>
 
       </div>
     </section>

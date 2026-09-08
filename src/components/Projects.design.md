@@ -234,6 +234,85 @@ on file yet."
 An earlier version rendered `Next` disabled with an `sr-only` explanation. Hiding it is
 better: nothing should imply a second stage that does not exist.
 
+### The arrows
+
+Two arrow buttons sit **over the stage**, vertically centred against its edges. Each is
+hidden until the cursor comes near that side, revealed by a narrow hover strip down that
+edge. The dots sit centred in the strip underneath, on their own.
+
+**The strips cover the middle band only** — roughly 26% to 74% of the height. At the video
+stage the top and bottom of the frame are YouTube's own title and control bars, and a strip
+running the full height would take clicks meant for the player.
+
+**Both arrows always act, and they wrap.** Right moves forward, left moves back, and with
+two stages either lands on the other one. `swapTo` therefore takes an explicit direction:
+which way the slide travels is no longer implied by which stage is arriving, because the
+right arrow moves forward even when it is returning to stage 0.
+
+That wrapping paid for a deletion. The old `Back` / `Next` key caps disabled themselves at
+the ends, which meant a press could leave a keyboard user focused on a control that had just
+gone dead — so there was a pending-focus ref and an effect to move focus off it. **Nothing
+is ever disabled now, so all of that is gone.**
+
+### Hover is not the only way in
+
+A control that appears on hover does not exist on a phone and cannot be found with a
+keyboard. So the arrows are also:
+
+- permanently visible under `@media (hover: none)`;
+- revealed on `:focus-visible`, and in the tab order like any button.
+
+Without both, the only route to the demo on touch would be to wait out the auto-advance, and
+with a keyboard there would be none at all.
+
+### It arms again every time the diagram runs
+
+`paused` cancels the countdown **in flight**, not the feature. Going back to the diagram, or
+pressing `Run`, starts the animation over and arms a fresh countdown — so the swap follows
+the pipeline every time the pipeline runs, not only the first time.
+
+The ordering that makes this work is subtle: the cancel handlers fire on `pointerdown`, which
+precedes `click`, so `Back` and `Run` re-arm *after* their own press has cancelled. And
+`pointerenter` does not re-fire while the cursor stays inside the folder, so a reader whose
+mouse is already resting on `Back` still gets the next pass.
+
+Nothing auto-advances from the video: stage 2 has nowhere to go, so the sequence is bounded
+at one swap per run rather than looping.
+
+**The delay is derived, not typed.** `runDuration(diagram)` in `Schematic.tsx` returns the
+animation's own length from the graph's depth, and `HOLD` (1s) is added to it. A deeper
+pipeline therefore gets proportionally longer instead of being cut off by a fixed clock.
+Papyrus runs for about 2s, so its sequence lands at about **3 seconds**.
+
+> **One deviation worth naming.** Scrolling does *not* cancel the auto-advance, even though
+> "any interaction" would normally include it. The countdown only starts once the folder is
+> on screen, so scrolling to reach it would otherwise guarantee it never ran. Everything
+> else — hover, click, focus, keypress — cancels it.
+
+### The video never autoplays
+
+Advancing mounts the player; it does not start it. `autoplay` is deliberately absent from
+the iframe's `allow` list, so arriving at stage 2 can never make noise on its own.
+
+### The countdown is visible
+
+A thin progress line runs under the stage while an advance is pending. It exists only while
+a countdown is actually armed, so it vanishes the instant the reader interacts — which makes
+the "hover and it stops" behaviour discoverable rather than something you notice by
+accident. An advance you can see coming and cancel is a different thing from one that
+happens to you.
+
+It is `aria-hidden`: the `sr-only` live region in the nav already announces the change.
+
+### No reel yet
+
+The three projects without a real video **have no stage nav at all** — a two-step control
+strip on a one-step folder is two dead buttons. They get a plain line instead: "No demo reel
+on file yet."
+
+An earlier version rendered `Next` disabled with an `sr-only` explanation. Hiding it is
+better: nothing should imply a second stage that does not exist.
+
 ### Focus after advancing
 
 Pressing `Next` disables `Next`. Without help a keyboard user is left focused on a dead
@@ -328,9 +407,9 @@ Break these and the section stops working, in ways that are not obvious from the
 9. **`swapTo` is the only path that changes stage.** Setting `stage` directly anywhere else
    would skip the transition for that one route, which is how a countdown ends up cutting
    while a button press animates.
-10. **The automatic advance never moves focus; a pressed control does.** Only `goStage` sets
-   the pending-focus ref. If the timer set it too, the page would take focus from a reader
-   who never asked it to.
+10. **Both arrows always act.** Disabling one at an end reintroduces the problem the
+    wrapping removed: a press can leave focus on a control that just died, which is why the
+    pending-focus machinery existed and could be deleted.
 11. **`aria-disabled` controls also get `pointer-events: none`.** They are guarded in their
    handlers as well, but a control that looks dead and still reacts to a click is worse than
    either failure alone.
@@ -367,6 +446,7 @@ Break these and the section stops working, in ways that are not obvious from the
 | A schematic's layout | The box coordinates in `architectures.ts` — the renderer needs no changes |
 | Whether a schematic shows DRAFT | The `DRAFT` set in `architectures.ts` |
 | Run speed | `STEP` and `PULSE` in `Schematic.tsx` |
+| Arrow reveal area | The `top` / `bottom` / `width` on `.stage-zone` — keep it clear of the video's own chrome |
 | Swap speed | `SWAP_MS` in `Projects.tsx` **and** `@keyframes stageSlideIn` / `stageSlideOut` — all three together |
 | How long the diagram holds before the demo | `HOLD` in `Projects.tsx`, added to `runDuration(diagram)`. The progress line reads the same number, so the two cannot drift |
 | When the countdown may start | The `threshold` on the folder-body `IntersectionObserver` |

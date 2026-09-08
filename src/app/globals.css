@@ -287,14 +287,6 @@ button.glass-badge:active {
    bevel-and-title-bar language as the project folders, so the two
    sections read as parts of the same machine.
    -------------------------------------------------------------------- */
-.skill-count {
-  font-family: var(--font-crt);
-  font-size: 0.9375rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted-fg);
-  font-variant-numeric: tabular-nums;
-}
 
 .skill-group {
   display: flex;
@@ -357,9 +349,6 @@ button.glass-badge:active {
 .skill-chip {
   padding: 0.08rem 0.45rem 0.12rem;
   border: 1px solid rgba(97, 112, 35, 0.3);
-  border-left-width: 3px;
-  border-left-color: transparent;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   border-radius: 2px;
   background: rgba(255, 253, 246, 0.75);
   font-family: var(--font-crt);
@@ -370,35 +359,6 @@ button.glass-badge:active {
   color: var(--muted-fg);
 }
 
-/* An entry that belongs to more than one group carries a terracotta
-   edge. Hovering any copy lights all of them. */
-.skill-chip[data-shared="true"] {
-  border-left-color: var(--terracotta);
-  color: var(--forest);
-}
-.skill-chip[data-linked="true"] {
-  background: var(--terracotta);
-  border-color: var(--terracotta);
-  color: var(--cloud);
-}
-
-.skill-legend {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.skill-legend i {
-  width: 3px;
-  height: 0.75rem;
-  border-radius: 1px;
-  background: var(--terracotta);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skill-chip {
-    transition: none;
-  }
-}
 
 /* ---- A folder with tabs across the top -----------------------------
    The name tags sit in a row along the top edge and the body below
@@ -777,7 +737,9 @@ button.glass-badge:active {
 .stage-schem {
   width: 100%;
   max-height: 100%;
-  padding: 0.6rem 0.5rem;
+  /* Wide side padding so the arrows sit in a margin rather than on top
+     of the first and last boxes of the diagram. */
+  padding: 0.6rem 2.6rem;
 }
 .stage-schem .schem-svg {
   max-height: 100%;
@@ -830,30 +792,98 @@ button.glass-badge:active {
   opacity: 0.75;
 }
 
+/* ---- The arrows -----------------------------------------------------
+   Over the stage, vertically centred against its edges.
+
+   They are *faded*, not hidden. An iframe swallows pointer events, so a
+   hover over the video stage never reaches the page — arrows hidden
+   until hover would simply be unreachable there. Fading the chrome and
+   leaving the glyph at full strength keeps them quiet without dropping
+   the control below the 3:1 that a UI component needs.
+   -------------------------------------------------------------------- */
+.stage-arrow {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(74, 70, 52, 0.22);
+  border-radius: 2px;
+  /* Only the fill fades. The chevron stays solid. */
+  background: rgba(255, 253, 246, 0.34);
+  color: var(--terracotta-ink);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.stage-arrow[data-side="left"] {
+  left: 0.5rem;
+}
+.stage-arrow[data-side="right"] {
+  right: 0.5rem;
+}
+.stage-arrow svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Hovering anywhere on the stage brings both up to full. Over the video
+   this cannot fire — see above — which is exactly why the resting state
+   is usable on its own. */
+.stage:hover .stage-arrow,
+.stage-arrow:hover,
+.stage-arrow:focus-visible {
+  background: rgba(255, 253, 246, 0.96);
+  border-color: var(--case-edge);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.26),
+    0 2px 5px rgba(33, 64, 45, 0.28);
+}
+.stage-arrow:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+}
+.stage-arrow:active {
+  box-shadow:
+    inset -1px -1px 0 rgba(255, 255, 255, 0.7),
+    inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+}
+
 .stage-nav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
-}
-.stage-next {
-  margin-left: auto;
 }
 
 .stage-dots {
   display: inline-flex;
   gap: 0.3rem;
 }
-.stage-dots i {
-  width: 0.45rem;
-  height: 0.45rem;
+/* Clickable: each dot jumps straight to its stage. */
+.stage-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 0;
   border-radius: 999px;
   background: rgba(97, 112, 35, 0.28);
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
-.stage-dots i[data-on="true"] {
+.stage-dot:hover {
+  background: rgba(97, 112, 35, 0.55);
+  transform: scale(1.15);
+}
+.stage-dot[data-on="true"] {
   background: var(--meadow-deep);
   box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
+}
+.stage-dot:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
 }
 
 .schem-svg {
@@ -1008,7 +1038,8 @@ button.glass-badge:active {
 @media (prefers-reduced-motion: reduce) {
   .proj-key,
   .stage,
-  .stage-dots i,
+  .stage-arrow,
+  .stage-dot,
   .fold-tab,
   .fold-tab::before,
   .audio-toggle {
@@ -1222,6 +1253,168 @@ button.glass-badge:active {
   --amber-ink: #7d5c0f;
 }
 
+/* ---- The quest log -------------------------------------------------
+   Experience as a run of entries on a dashed rail: the role and employer
+   large, the dates and place as a quiet readout underneath, a hollow
+   node per entry that lights while the role is still running.
+
+   Unpanelled on purpose. Projects and Skills are boxed, but the air
+   between these entries is what makes the hierarchy work, and a frame
+   would take it back.
+   -------------------------------------------------------------------- */
+.quest {
+  max-width: 56rem;
+}
+
+.quest-item {
+  position: relative;
+  padding-left: 2rem;
+  padding-bottom: 2.6rem;
+}
+/* The rail, drawn from each node down to the next. */
+.quest-item::before {
+  content: "";
+  position: absolute;
+  left: 0.28rem;
+  top: 1.5rem;
+  bottom: 0;
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(97, 112, 35, 0.5) 0 3px,
+    transparent 3px 7px
+  );
+}
+.quest-item:last-child {
+  padding-bottom: 0;
+}
+.quest-item:last-child::before {
+  display: none;
+}
+
+/* Hollow by default, lit while the role is still running. A square
+   rather than a circle: it belongs to the same drawing as the rest of
+   the page. */
+.quest-node {
+  position: absolute;
+  left: 0;
+  top: 0.72rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border: 1px solid rgba(97, 112, 35, 0.6);
+  border-radius: 1px;
+  background: var(--paper);
+}
+.quest-item[data-current="true"] .quest-node {
+  background: var(--meadow-deep);
+  border-color: var(--meadow-deep);
+  box-shadow: 0 0 7px rgba(157, 165, 65, 0.85);
+}
+
+.quest-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+}
+.quest-head:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 4px;
+}
+
+.quest-lines {
+  flex: 1;
+  min-width: 0;
+}
+
+.quest-title {
+  display: block;
+  font-family: var(--font-crt);
+  font-size: 2rem;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  color: var(--forest);
+}
+@media (min-width: 640px) {
+  .quest-title {
+    font-size: 2.6rem;
+  }
+}
+
+.quest-org {
+  margin-left: 0.55rem;
+  font-size: 0.62em;
+  letter-spacing: 0.03em;
+  color: var(--terracotta-ink);
+  white-space: nowrap;
+}
+
+.quest-meta {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-fg);
+}
+.quest-meta .date {
+  color: var(--amber-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.quest-active {
+  margin-left: 0.6rem;
+  padding: 0.05rem 0.35rem 0.08rem;
+  border: 1px solid rgba(97, 112, 35, 0.55);
+  border-radius: 2px;
+  color: var(--meadow-deep);
+  letter-spacing: 0.14em;
+}
+
+.quest-caret {
+  flex: none;
+  margin-top: 0.55rem;
+  font-family: var(--font-crt);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--muted-fg);
+  transition: transform 0.25s ease, color 0.15s ease;
+}
+.quest-head:hover .quest-caret {
+  color: var(--terracotta-ink);
+}
+.quest-item[data-open="true"] .quest-caret {
+  transform: rotate(180deg);
+}
+
+.quest-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.quest-item[data-open="true"] .quest-body {
+  grid-template-rows: 1fr;
+}
+.quest-body > div {
+  overflow: hidden;
+}
+
+.quest-out {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.9rem 0 0.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quest-body,
+  .quest-caret {
+    transition: none;
+  }
+}
+
 /* ---- A log line -------------------------------------------------
    Shared by Experience and Achievements: stamp, name, leader dots,
    status. The dots are a flexed border rather than a row of periods,
@@ -1266,6 +1459,19 @@ button.glass-badge:active {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+/* Where the role was. It sits on the row rather than behind the toggle:
+   it is one short phrase, and hiding it left the visible line naming an
+   employer with no idea where. */
+.log-where {
+  flex: none;
+  color: var(--muted-fg);
+  white-space: nowrap;
+}
+.log-where::before {
+  content: "· ";
+  opacity: 0.6;
 }
 
 .log-toggle {
