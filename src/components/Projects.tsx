@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useCallback,
@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Image from "next/image";
 import Schematic, { runDuration } from "./Schematic";
 import { ARCHITECTURES, DRAFT } from "./architectures";
 
@@ -72,16 +73,34 @@ function isLive(url: string): boolean {
   return Boolean(url) && url !== "#";
 }
 
+/* One place that knows how to read a YouTube URL, because two things
+   need the id now: the player and the poster frame behind the dot. */
+function getVideoId(url: string): string | null {
+  const short = url.match(/youtu\.be\/([^?&/]+)/);
+  if (short) return short[1];
+
+  const long = url.match(/[?&]v=([^&]+)/);
+  if (long) return long[1];
+
+  const embed = url.match(/\/embed\/([^?&/]+)/);
+  if (embed) return embed[1];
+
+  return null;
+}
+
 function getEmbedUrl(url: string): string {
-  const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
-  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?rel=0&modestbranding=1`;
+  const id = getVideoId(url);
+  return id
+    ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`
+    : url;
+}
 
-  const longMatch = url.match(/[?&]v=([^&]+)/);
-  if (longMatch) return `https://www.youtube.com/embed/${longMatch[1]}?rel=0&modestbranding=1`;
-
-  if (url.includes("/embed/")) return url;
-
-  return url;
+/* mqdefault is 320x180 — exactly 16:9, and the smallest frame YouTube
+   serves that is not letterboxed. The host is whitelisted in
+   next.config.ts. */
+function getPosterUrl(url: string): string | null {
+  const id = getVideoId(url);
+  return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
 }
 
 /* Counted from the data rather than written down, so the lede cannot
@@ -304,13 +323,6 @@ export default function Projects() {
     swapTo(next, direction);
   }
 
-  function run(title: string) {
-    /* Replaying the animation arms a countdown too: the swap is what
-       happens when the pipeline finishes, however it was started. */
-    setPaused(false);
-    bump(title);
-  }
-
   /* Horizontal tablist: left/right move and open, Home/End jump. */
   function onKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, i: number) {
     const last = TOTAL - 1;
@@ -335,7 +347,6 @@ export default function Projects() {
             is why the row was a flex. It lives in the navbar now, where
             it governs the whole site rather than one section. */}
         <div className="max-w-xl mb-8">
-          <p className="eyebrow mb-3">Selected work</p>
           <h2 className="section-heading">Projects</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-fg">
             {TOTAL} systems, end to end — retrieval, anomaly detection, model
@@ -403,6 +414,7 @@ export default function Projects() {
           {productionProjects.map((p, i) => {
             const live = isLive(p.liveUrl);
             const reel = hasDemo(p.youtubeUrl);
+            const poster = p.youtubeUrl ? getPosterUrl(p.youtubeUrl) : null;
             const diagram = ARCHITECTURES[p.title];
             const onDemo = i === active && stage === 1;
 
@@ -431,6 +443,12 @@ export default function Projects() {
                       ))}
                     </div>
 
+                    {/* Two keys, not two identical keys. Source is always
+                        there; Launch only exists when something is
+                        actually deployed, so it is the lit one and reads
+                        as the rarer, more valuable door. Icons are drawn
+                        in the schematic's language — straight segments,
+                        square caps, no curves. */}
                     <div className="proj-actions">
                       <a
                         href={p.codeUrl}
@@ -438,27 +456,29 @@ export default function Projects() {
                         rel="noopener noreferrer"
                         className="proj-key"
                       >
+                        <svg className="key-ico" viewBox="0 0 20 20" aria-hidden="true">
+                          <path d="M7.4 5.6 3.4 10l4 4.4" />
+                          <path d="M12.6 5.6 16.6 10l-4 4.4" />
+                          <path d="M11.3 4.4 8.7 15.6" />
+                        </svg>
                         Source
                       </a>
+
                       {live && (
                         <a
                           href={p.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="proj-key"
+                          data-lit="true"
                         >
+                          <svg className="key-ico" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M8.6 4.6H4.4v11h11v-4.2" />
+                            <path d="M10.4 9.6 15.6 4.4" />
+                            <path d="M11.4 4.4h4.2v4.2" />
+                          </svg>
                           Launch
                         </a>
-                      )}
-                      {diagram && !onDemo && (
-                        <button
-                          type="button"
-                          className="proj-key proj-run"
-                          onClick={() => run(p.title)}
-                        >
-                          Run
-                          <span className="sr-only"> the {p.title} pipeline animation</span>
-                        </button>
                       )}
                     </div>
                   </div>
@@ -572,21 +592,58 @@ export default function Projects() {
                           controls. Projects without a reel say so instead. */}
                       {reel ? (
                       <div className="stage-nav">
-                          <span className="stage-dots">
-                            {STAGES.map((label, n) => {
-                              const here = (onDemo ? 1 : 0) === n;
-                              return (
-                                <button
-                                  key={label}
-                                  type="button"
-                                  className="stage-dot"
-                                  data-on={here}
-                                  aria-current={here ? "true" : undefined}
-                                  aria-label={`Show the ${label}`}
-                                  onClick={() => !here && goStage(n)}
-                                />
-                              );
-                            })}
+                          {/* One panel for the pair, not one per dot.
+                              Both stages side by side is the comparison
+                              a reader actually wants — "which of these
+                              two am I choosing between" — and opening
+                              them one at a time never showed it.
+
+                              aria-hidden: the dots already name their
+                              stages, and a screen reader gains nothing
+                              from a second copy of the diagram it has
+                              just had described to it. */}
+                          <span className="stage-peek">
+                            <span className="stage-dots">
+                              {STAGES.map((label, n) => {
+                                const here = (onDemo ? 1 : 0) === n;
+                                return (
+                                  <button
+                                    key={label}
+                                    type="button"
+                                    className="stage-dot"
+                                    data-on={here}
+                                    aria-current={here ? "true" : undefined}
+                                    aria-label={`Show the ${label}`}
+                                    onClick={() => !here && goStage(n)}
+                                  />
+                                );
+                              })}
+                            </span>
+
+                            <span className="stage-preview" aria-hidden="true">
+                              {STAGES.map((label, n) => {
+                                const here = (onDemo ? 1 : 0) === n;
+                                return (
+                                  <span key={label} className="pv" data-on={here}>
+                                    <span className="art">
+                                      {n === 0 ? (
+                                        <Schematic diagram={diagram} still />
+                                      ) : (
+                                        poster && (
+                                          <Image
+                                            src={poster}
+                                            alt=""
+                                            width={320}
+                                            height={180}
+                                            className="poster"
+                                          />
+                                        )
+                                      )}
+                                    </span>
+                                  </span>
+                                );
+                              })}
+                            </span>
                           </span>
                           <span className="sr-only" aria-live="polite">
                             Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}

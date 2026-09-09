@@ -1,4 +1,4 @@
-type Achievement = {
+﻿type Achievement = {
   label: string;
   /* Set when the achievement is a placing, so the card can work out
      where that sits rather than leaving a bare number to be read. */
@@ -55,7 +55,7 @@ export default function Achievements() {
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-8">
-          <p className="eyebrow mb-3">Highlights</p>
+        
           <h2 className="section-heading">Achievements</h2>
         </div>
 

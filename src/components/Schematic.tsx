@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 /* Architecture schematics, and the animation that runs them.
 
@@ -136,10 +136,16 @@ export function runDuration(diagram: Diagram): number {
 export default function Schematic({
   diagram,
   runId = 0,
+  still = false,
 }: {
   diagram: Diagram;
-  /* Bumped when the folder opens, and by its RUN control, to replay. */
+  /* Bumped when the folder opens to replay the run. */
   runId?: number;
+  /* A copy that never runs and is never announced — the thumbnail shown
+     when a reader hovers the diagram dot. The live diagram beside it
+     already carries the alt text, and reading the same description out
+     twice is worse than not offering it here at all. */
+  still?: boolean;
 }) {
   const ref = useRef<SVGSVGElement | null>(null);
   const [autoId, setAutoId] = useState(0);
@@ -147,6 +153,7 @@ export default function Schematic({
   /* Run once, the first time the diagram is properly on screen. Nothing
      animates on page load for a folder nobody has opened yet. */
   useEffect(() => {
+    if (still) return;
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
 
@@ -163,25 +170,35 @@ export default function Schematic({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [still]);
 
   const byId: Record<string, Box> = {};
   for (const b of diagram.boxes) byId[b.id] = b;
   const depth = depthOf(diagram);
 
-  const armed = runId > 0 || autoId > 0;
+  const armed = !still && (runId > 0 || autoId > 0);
   /* Remounting is what restarts the CSS animations: without a fresh
      element the delays have already elapsed and a replay does nothing. */
   const runKey = `${runId}:${autoId}`;
-  const arrowId = `schem-arrow-${diagram.w}-${diagram.h}`;
+
+  /* Per-instance, because the arrowhead is referenced by `url(#id)` and
+     two diagrams sharing an id is two elements answering to the same
+     name. It used to be keyed on the viewBox size, which held only
+     because all four diagrams happen to differ in height — and stopped
+     holding the moment a still copy of one was drawn beside it. The
+     sanitising matters: useId() returns a value wrapped in characters
+     that have no business inside a url() reference. */
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const arrowId = `schem-arrow-${uid}`;
 
   return (
     <svg
       ref={ref}
       className="schem-svg"
       viewBox={`0 0 ${diagram.w} ${diagram.h}`}
-      role="img"
-      aria-label={diagram.alt}
+      role={still ? undefined : "img"}
+      aria-label={still ? undefined : diagram.alt}
+      aria-hidden={still ? true : undefined}
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>

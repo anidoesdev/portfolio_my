@@ -189,11 +189,15 @@ All three clear `paused`, so a countdown is armed every time.
 ### It arms again every time the diagram runs
 
 `paused` cancels the countdown **in flight**, not the feature. Going back to the diagram, or
-pressing `Run`, starts the animation over and arms a fresh countdown — so the swap follows
-the pipeline every time the pipeline runs, not only the first time.
+clicking the folder's own name tag, starts the animation over and arms a fresh countdown — so
+the swap follows the pipeline every time the pipeline runs, not only the first time.
+
+There was a `Run` key beside `Source` and `Launch` for this. It was removed: clicking the open
+folder's tag already replays the diagram (`open()` has no `i === active` early return, which is
+deliberate), so `Run` was a third way to do a thing two controls already did.
 
 The ordering that makes this work is subtle: the cancel handlers fire on `pointerdown`, which
-precedes `click`, so `Back` and `Run` re-arm *after* their own press has cancelled. And
+precedes `click`, so `Back` re-arms *after* its own press has cancelled. And
 `pointerenter` does not re-fire while the cursor stays inside the folder, so a reader whose
 mouse is already resting on `Back` still gets the next pass.
 
@@ -268,11 +272,15 @@ with a keyboard there would be none at all.
 ### It arms again every time the diagram runs
 
 `paused` cancels the countdown **in flight**, not the feature. Going back to the diagram, or
-pressing `Run`, starts the animation over and arms a fresh countdown — so the swap follows
-the pipeline every time the pipeline runs, not only the first time.
+clicking the folder's own name tag, starts the animation over and arms a fresh countdown — so
+the swap follows the pipeline every time the pipeline runs, not only the first time.
+
+There was a `Run` key beside `Source` and `Launch` for this. It was removed: clicking the open
+folder's tag already replays the diagram (`open()` has no `i === active` early return, which is
+deliberate), so `Run` was a third way to do a thing two controls already did.
 
 The ordering that makes this work is subtle: the cancel handlers fire on `pointerdown`, which
-precedes `click`, so `Back` and `Run` re-arm *after* their own press has cancelled. And
+precedes `click`, so `Back` re-arms *after* its own press has cancelled. And
 `pointerenter` does not re-fire while the cursor stays inside the folder, so a reader whose
 mouse is already resting on `Back` still gets the next pass.
 
@@ -321,6 +329,82 @@ the render — to `Back` on advancing, to `Next` on going back.
 
 **The automatic advance sets no pending focus.** Stealing focus from whatever someone is
 reading is worse than the problem it solves.
+
+---
+
+## The tabs, the keys and the dots
+
+### A deployed tab has a light on
+
+Every name tag carries a pip. It was already lit for a deployed project and dim for a
+source-only one; it now **breathes** as well — one cycle every 1.6s. Two details are
+deliberate. It never goes fully out (it dips to 0.35), because a light that extinguishes
+reads as a *fault*, which is the opposite of what this one means. And 1.6s is nowhere near
+the three-flashes-per-second ceiling that makes blinking a seizure risk. Under
+`prefers-reduced-motion` it simply stays on: still clearly lit against a dim pip, just not
+moving.
+
+### Two keys, not two identical keys
+
+`Source` and `Launch` used to be the same key twice. `Source` is always present; `Launch`
+only exists when something is actually deployed — so it is the **lit** one, the rarer and
+more valuable door, and it presses in on `:active` like the solid key elsewhere on the site.
+Cloud-white on `--meadow-deep` clears AA at 5.4, which is why that gradient runs *darker*
+downward and never lighter.
+
+Both carry an icon drawn in the schematic's language — straight segments, square caps, no
+curves — stroked in `currentColor` so the glyph tracks the label through hover and focus
+instead of needing rules of its own.
+
+They **share the row out between them** (`flex: 1 1 9rem`) rather than hugging its left, so
+the block ends flush with both edges of the justified paragraph above — the same shape the
+text makes. Two keys sitting left with a gap of dead space to their right made the column
+look like it had stopped early. The `9rem` basis is the point below which two will not sit
+side by side: on a narrow column they wrap and each takes the full width instead of being
+squeezed. Labels are centred, because the label is no longer the width of the key.
+
+### The dots preview what is behind them
+
+Hovering the dots opens **one panel showing both stages side by side**: a still copy of the
+schematic, and the demo's **poster frame** pulled from `img.youtube.com`.
+
+One panel, not one card per dot. Opening them individually put each thumbnail on screen
+alone, which never answered the question the dots actually pose — *which of these two am I
+choosing between*. Seeing them together does.
+
+**Pictures only, square corners.** Two shapes were tried and dropped:
+
+- **The captions.** A block diagram and a video frame do not look alike, so a word under each
+  was naming what the reader could already see. Dropping them bought the pictures room to be
+  half again as large (`7.5rem` a side). The full stage names stay on the dots'
+  `aria-label`s, which is where they were doing real work.
+- **A rounded capsule.** It would have been the only fully round object on a site whose every
+  corner is 2-3px. It went the other way instead: **no radius at all**, on the panel or the
+  thumbnails. The right angles are what make it read as an instrument readout rather than a
+  tooltip, and it is the one element on the page drawn with true corners.
+
+With the labels gone, the lit border on a thumbnail is the *only* thing saying which stage
+you are on, so it carries more weight than it did when a caption said it too: a
+`--meadow-deep` border plus a ring rather than a hairline shift.
+
+Focus opens it as well as hover — a preview only a mouse can reach is a preview half the
+readers never get. The selector is `:has(.stage-dot:focus-visible)` rather than
+`:focus-within`, because focus-within also fires when a dot is *clicked*, which would pin the
+card open over the very frame the reader just asked to see. Under `prefers-reduced-motion` it still opens — it just stops sliding;
+removing it would take away information, which is not what a motion preference asks for.
+
+### The description is justified
+
+`text-align: justify` with `hyphens: auto`. The hyphenation is not optional at this measure:
+the column runs about 55 characters, and justifying that narrow without letting words break
+opens rivers of white down the paragraph.
+
+### A rule that never matched
+
+The `lg` grid placed `.proj-schem` in column 1. The section renders `.proj-stage` — that
+selector had never matched anything, and the layout worked only because auto-placement had
+exactly one free cell to drop the stage into. Named correctly, the arrangement is stated
+rather than inferred.
 
 ---
 
@@ -374,8 +458,9 @@ button, Enter only on a link, since Space scrolls a link rather than following i
   `<text>`, but their arrangement is the meaning, and that does not survive being read out
   box by box.
 - **`prefers-reduced-motion: reduce`** removes the pulse, the box lighting, the folder-open
-  transition and the countdown, and stops the folder advancing on its own. `RUN` is hidden
-  outright under it rather than sitting there producing no visible change.
+  transition and the countdown, and stops the folder advancing on its own. The diagram is
+  drawn in full and simply sits there, which is the honest outcome — it already says
+  everything the animation does.
 
 ---
 

@@ -54,7 +54,6 @@ export default function Skills() {
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-8">
-          <p className="eyebrow mb-3">Toolkit</p>
           <h2 className="section-heading">Skills</h2>
         </div>
 

@@ -48,7 +48,7 @@ export default function Hero() {
       <HeroBoot />
 
       <div className="relative z-10 w-full max-w-2xl">
-        <p className="eyebrow justify-center mb-5">AI Engineer</p>
+        
 
         <h1 className="display text-5xl sm:text-7xl text-foreground mb-3">
           Hi, I&apos;m Anika

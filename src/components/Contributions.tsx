@@ -16,11 +16,10 @@ export default async function Contributions() {
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-10">
-          <p className="eyebrow mb-3">Open source</p>
           <h2 className="section-heading">GitHub Activity</h2>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 overflow-x-auto">
+        <div className="glass-card p-6 overflow-x-auto">
           <ContributionGraph username={USERNAME} />
         </div>
 

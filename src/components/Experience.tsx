@@ -11,6 +11,18 @@ const experiences = [
     details: ["The docstring of _get_train_sampler in GRPOTrainer comment to mention num_iterations > 1 fixed the existing issue."],
   },
   {
+    period: "June 2026 - August 2026",
+    title: "Web Developer",
+    org: "WREN",
+    location: "United Kingdom · Remote · Full-time",
+    details: [
+        "Sole engineer on a contracted MVP build for a UK children's sleep product: Next.js PWA + Supabase/Postgres, shipped ahead of a 50-family validation study.",
+        "Designed the data model and rules engine converting nightly parent logs into one human-reviewed weekly recommendation",
+        "Enforced consent, age gating, and row-level security (RLS) at the database layer; built export, revoke, and wipe flows for UK GDPR and Children's Code compliance",
+        "Built the operator review console and the app's shared design-system components"
+    ],
+  },
+  {
     period: "Dec 2025 - May 2026",
     title: "Data Science Trainee",
     org: "Infosys",
@@ -40,7 +52,6 @@ export default function Experience() {
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-12">
-          <p className="eyebrow mb-3">Where I&apos;ve been</p>
           <h2 className="section-heading">Work Experience</h2>
         </div>
 

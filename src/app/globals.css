@@ -37,7 +37,20 @@
   --border:      rgba(97, 112, 35, 0.24);
   --primary:     var(--meadow-deep);
   --accent:      var(--terracotta);
-  --radius:      0.1875rem;
+  /* Corner radii, as one scale rather than a literal per rule. The site
+     was drawn square — 2px and 3px everywhere, which reads as sharp —
+     and this rounds it off. Four steps, because a chip and a folder
+     body rounded by the same amount look wrong: the radius has to grow
+     with the box or the small things turn into lozenges while the big
+     ones still look square.
+
+     True circles (the deployed pip, the stage dots) stay at 999px and
+     are not part of this scale. */
+  --r-xs:        3px;   /* thin bars and small marks */
+  --r-sm:        6px;   /* chips, tags, keys, small controls */
+  --r-md:        9px;   /* cards and panels */
+  --r-lg:        14px;  /* the big containers and the nav */
+  --radius:      var(--r-md);
 }
 
 @theme inline {
@@ -155,7 +168,7 @@ body::-webkit-scrollbar {
 .glass-card {
   background: linear-gradient(180deg, rgba(255, 253, 246, 0.94), rgba(238, 234, 221, 0.92));
   border: 1px solid var(--case-edge);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.85),
     inset -1px -1px 0 rgba(74, 70, 52, 0.24),
@@ -180,7 +193,7 @@ body::-webkit-scrollbar {
 .glass-badge {
   background: linear-gradient(180deg, #efeadb, #dcd6c0);
   border: 1px solid var(--case-edge);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   color: var(--muted-fg);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.85),
@@ -225,7 +238,7 @@ button.glass-badge:active {
 .glass-btn {
   background: rgba(16, 30, 21, 0.58);
   border: 1px solid rgba(255, 253, 246, 0.45);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   color: var(--cloud);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.3),
@@ -293,7 +306,7 @@ button.glass-badge:active {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--case-edge);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   background: linear-gradient(180deg, #fffdf6, #f3efe1);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
@@ -349,7 +362,7 @@ button.glass-badge:active {
 .skill-chip {
   padding: 0.08rem 0.45rem 0.12rem;
   border: 1px solid rgba(97, 112, 35, 0.3);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: rgba(255, 253, 246, 0.75);
   font-family: var(--font-crt);
   font-size: 0.9375rem;
@@ -391,7 +404,7 @@ button.glass-badge:active {
   padding: 0.42rem 0.85rem 0.44rem;
   border: 1px solid var(--case-edge);
   border-bottom: 1px solid var(--case-edge);
-  border-radius: 5px 5px 0 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
   background: linear-gradient(180deg, #e7e2d2, #d5d0bc);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   font-family: var(--font-crt);
@@ -409,7 +422,7 @@ button.glass-badge:active {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  border-radius: 4px 4px 0 0;
+  border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
   background: var(--sticker, var(--label-a));
   opacity: 0.45;
   transition: opacity 0.15s ease;
@@ -445,9 +458,28 @@ button.glass-badge:active {
   background: var(--meadow-deep);
   box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
 }
+/* A deployed project's tab has a light on. It breathes rather than
+   strobes: one cycle every 1.6s, nowhere near the three-per-second
+   ceiling that makes flashing a seizure risk, and it dips to 0.35
+   instead of going out — a light that fully extinguishes reads as a
+   fault, which is the opposite of what this one means. */
+.fold-tab .pip[data-on="true"] {
+  animation: pipBlink 1.6s ease-in-out infinite;
+}
 .fold-tab .pip[data-on="false"] {
   background: rgba(97, 112, 35, 0.28);
   box-shadow: none;
+}
+
+@keyframes pipBlink {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
+  }
+  50% {
+    opacity: 0.35;
+    box-shadow: 0 0 1px rgba(157, 165, 65, 0.3);
+  }
 }
 
 .fold-num {
@@ -461,7 +493,7 @@ button.glass-badge:active {
 
 .fold-body {
   border: 1px solid var(--case-edge);
-  border-radius: 0 4px 4px 4px;
+  border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg);
   background: linear-gradient(180deg, #fffdf6, #f3efe1);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
@@ -506,7 +538,11 @@ button.glass-badge:active {
     grid-column: 2;
     grid-row: 1;
   }
-  .proj-schem {
+  /* Was `.proj-schem`, which is not a class this section renders — the
+     stage only landed here because auto-placement had one free cell to
+     put it in. Named correctly, the arrangement is now stated rather
+     than inferred. */
+  .proj-stage {
     grid-column: 1;
     grid-row: 1;
   }
@@ -532,6 +568,12 @@ button.glass-badge:active {
   margin-top: 0.6rem;
   font-size: 0.8125rem;
   color: var(--muted-fg);
+  /* Both edges flush. Hyphenation is not optional here: the column runs
+     about 55 characters, and justifying a measure that narrow without
+     letting words break opens rivers of white down the paragraph. */
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
 
 .proj-tags {
@@ -543,7 +585,7 @@ button.glass-badge:active {
 .proj-tag {
   padding: 0.06rem 0.4rem 0.1rem;
   border: 1px solid rgba(97, 112, 35, 0.3);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: rgba(255, 253, 246, 0.75);
   font-family: var(--font-crt);
   font-size: 0.9375rem;
@@ -553,27 +595,40 @@ button.glass-badge:active {
   color: var(--muted-fg);
 }
 
-/* ---- Actions ------------------------------------------------------ */
+/* ---- Actions ------------------------------------------------------
+   The keys share the row out between them rather than hugging the left
+   of it, so the block ends flush with both edges of the justified
+   paragraph above — the same shape the text makes. Growing them was the
+   way to do that: two keys sitting left with a gap of dead space to
+   their right made the column look like it had stopped early.
+
+   `flex: 1 1 9rem` — an equal share each, but 9rem is the point below
+   which two will not sit side by side, so on a narrow column they wrap
+   and each takes the full width instead of being squeezed.
+   -------------------------------------------------------------------- */
 .proj-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.9rem;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
 }
 
 .proj-key {
   display: inline-flex;
+  flex: 1 1 9rem;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.7rem 0.32rem;
+  /* Centred, because the label is no longer the width of the key. */
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem 0.55rem;
   border: 1px solid var(--case-edge);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: linear-gradient(180deg, #efeadb, #dcd6c0);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
     inset -1px -1px 0 rgba(74, 70, 52, 0.26);
   font-family: var(--font-crt);
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted-fg);
@@ -588,6 +643,53 @@ button.glass-badge:active {
   box-shadow:
     inset -1px -1px 0 rgba(255, 255, 255, 0.7),
     inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+}
+
+/* Straight segments, square caps, no curves — the same hand that drew
+   the schematics. `currentColor` so the glyph tracks the label through
+   every state rather than needing a rule of its own. */
+.proj-key .key-ico {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  opacity: 0.85;
+}
+.proj-key:hover .key-ico {
+  opacity: 1;
+}
+
+/* The lit key. Only rendered when a project is actually deployed, so it
+   is the rarer of the two and carries the weight. The gradient runs
+   *darker* downward, never lighter: cloud-white on --meadow-deep clears
+   AA at 5.4, and a lighter top would drop it under 4.5. */
+.proj-key[data-lit="true"] {
+  border-color: rgba(48, 58, 14, 0.75);
+  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.26),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 rgba(48, 58, 14, 0.55);
+  color: var(--cloud);
+}
+.proj-key[data-lit="true"]:hover {
+  background: linear-gradient(180deg, var(--terracotta), #8e4212);
+  border-color: rgba(120, 55, 12, 0.8);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.28),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 rgba(120, 55, 12, 0.6);
+  color: var(--cloud);
+}
+.proj-key[data-lit="true"]:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset -1px -1px 0 rgba(255, 255, 255, 0.2),
+    inset 1px 1px 0 rgba(0, 0, 0, 0.35);
 }
 /* Every control in the section needs a ring of its own: these have
    custom backgrounds, so the browser default lands on low contrast. */
@@ -614,7 +716,7 @@ button.glass-badge:active {
 .crt-well {
   position: relative;
   margin: 0 0.85rem 0.85rem;
-  border-radius: 3px;
+  border-radius: var(--r-md);
   overflow: hidden;
   background: #eaeddb;
   box-shadow:
@@ -651,7 +753,7 @@ button.glass-badge:active {
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid rgba(97, 112, 35, 0.26);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   background: rgba(255, 253, 246, 0.7);
 }
 /* Everything the swap scales. The padding lives on the schematic rather
@@ -727,7 +829,7 @@ button.glass-badge:active {
 .stage-timer {
   height: 2px;
   margin-top: 0.4rem;
-  border-radius: 1px;
+  border-radius: var(--r-xs);
   overflow: hidden;
   background: rgba(97, 112, 35, 0.16);
 }
@@ -774,7 +876,7 @@ button.glass-badge:active {
   width: 2rem;
   height: 2rem;
   border: 1px solid rgba(74, 70, 52, 0.22);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   /* Only the fill fades. The chevron stays solid. */
   background: rgba(255, 253, 246, 0.34);
   color: var(--terracotta-ink);
@@ -826,7 +928,128 @@ button.glass-badge:active {
   display: inline-flex;
   gap: 0.3rem;
 }
-/* Clickable: each dot jumps straight to its stage. */
+
+/* ---- What is behind the dots ---------------------------------------
+   One panel for the pair, not one per dot. Hovering anywhere on the
+   dots opens both stages side by side, and the one you are already on
+   is marked — so it answers "which of these two am I choosing
+   between", which is the question the dots actually pose. Opening them
+   one at a time never showed that, because the comparison was never on
+   screen at once.
+
+   Pictures only. The two thumbnails are recognisable on sight — a
+   block diagram and a video frame do not look alike — so a word under
+   each was naming what the reader could already see, and dropping it
+   bought the pictures the room to be twice the size.
+
+   Sharp corners — no radius at all, on the panel or the thumbnails.
+   A fully rounded capsule was tried first and would have been the only
+   round object on a site whose every corner is 2-3px; this went the
+   other way instead, and the right angles are what make it read as an
+   instrument readout rather than a tooltip.
+
+   The demo half is the point: a video otherwise costs an iframe to find
+   out anything about, and this answers whether advancing is worth it
+   for the price of a poster frame.
+
+   `:has(...:focus-visible)` rather than `:focus-within` — focus-within
+   also fires when a dot is *clicked*, which would pin the panel open
+   over the frame the reader just asked to see.
+   -------------------------------------------------------------------- */
+.stage-peek {
+  position: relative;
+  display: inline-flex;
+}
+
+.stage-preview {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: max-content;
+  max-width: min(24rem, calc(100vw - 2rem));
+  padding: 0.4rem;
+  border: 1px solid var(--case-edge);
+  /* Sharp. No radius anywhere in here, panel or thumbnails — this is
+     the one element on the page drawn with true right angles. */
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, #fffdf6, #f1ecdd);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
+    0 14px 30px -12px rgba(33, 64, 45, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% 4px;
+  transition: opacity 0.14s ease, translate 0.14s ease, visibility 0.14s;
+  pointer-events: none;
+}
+.stage-peek:hover .stage-preview,
+.stage-peek:has(.stage-dot:focus-visible) .stage-preview {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+}
+
+.stage-preview::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  translate: -50% -0.28rem;
+  rotate: 45deg;
+  border-right: 1px solid var(--case-edge);
+  border-bottom: 1px solid var(--case-edge);
+  background: #f1ecdd;
+}
+
+.stage-preview .pv {
+  display: flex;
+  min-width: 0;
+}
+
+/* 16:9, matching the stage itself, so each thumbnail is a picture of
+   the frame rather than a differently-shaped crop of it. */
+.stage-preview .art {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 7.5rem;
+  aspect-ratio: 16 / 9;
+  padding: 0.2rem;
+  border: 1px solid rgba(97, 112, 35, 0.28);
+  border-radius: var(--r-sm);
+  background: rgba(255, 253, 246, 0.85);
+  box-shadow: inset 0 1px 3px rgba(74, 70, 52, 0.18);
+}
+.stage-preview .art .schem-svg {
+  width: 100%;
+  height: auto;
+}
+.stage-preview .poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--r-xs);
+}
+
+/* Which of the two you are on. With the labels gone this is the only
+   thing carrying that, so it is a lit border and a ring rather than the
+   hairline shift it was when a caption said it too. */
+.stage-preview .pv[data-on="true"] .art {
+  border-color: var(--meadow-deep);
+  box-shadow:
+    inset 0 1px 3px rgba(74, 70, 52, 0.18),
+    0 0 0 2px rgba(157, 165, 65, 0.45);
+}
+
 .stage-dot {
   width: 0.55rem;
   height: 0.55rem;
@@ -911,7 +1134,7 @@ button.glass-badge:active {
   margin-bottom: 0.35rem;
   padding: 0 0.32rem 0.04rem;
   border: 1px solid rgba(125, 92, 15, 0.55);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   font-family: var(--font-crt);
   font-size: 0.9375rem;
   letter-spacing: 0.14em;
@@ -979,12 +1202,7 @@ button.glass-badge:active {
   animation: schemLight 1.15s ease var(--delay, 0s) both;
 }
 
-.proj-run {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Visually hidden, still announced. RUN on its own is two letters
-   short of saying what it runs. */
+/* Visually hidden, still announced. */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1009,20 +1227,30 @@ button.glass-badge:active {
   .fold-body > [role="tabpanel"]:not([hidden]) {
     animation: none;
   }
-  /* Nothing advances on its own, so nothing counts down. And RUN would
-     produce no visible change, so it is not offered at all rather than
-     sitting there doing nothing. */
-  .stage-timer,
-  .proj-run {
+  /* Nothing advances on its own, so nothing counts down. */
+  .stage-timer {
     display: none;
+  }
+  /* The deployed light stays on rather than pulsing. It still reads as
+     lit against the dim pip of a source-only project, so nothing is
+     lost but the movement. */
+  .fold-tab .pip[data-on="true"] {
+    animation: none;
+  }
+  /* The preview still opens, it just stops sliding. Removing it
+     outright would take away information, which is not what a motion
+     preference asks for. */
+  .stage-preview {
+    transition: none;
+    translate: -50% 0;
   }
   /* The swap is skipped in JS as well, so this is belt and braces. */
   .stage[data-swapping="true"] .stage-inner {
     animation: none;
   }
-  /* No travelling pulse and no flashing boxes. RUN stays in place and
-     simply does nothing visible, which is the honest outcome — the
-     diagram already says everything the animation does. */
+  /* No travelling pulse and no flashing boxes. The diagram is drawn in
+     full and simply sits there, which is the honest outcome — it
+     already says everything the animation does. */
   .schem-pulse {
     display: none;
   }
@@ -1035,7 +1263,7 @@ button.glass-badge:active {
 .art-panel {
   background: linear-gradient(180deg, rgba(255, 253, 246, 0.94), rgba(236, 232, 218, 0.93));
   border: 1px solid var(--case-edge);
-  border-radius: 4px;
+  border-radius: var(--r-lg);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
     inset -1px -1px 0 rgba(74, 70, 52, 0.25),
@@ -1048,7 +1276,7 @@ button.glass-badge:active {
    ------------------------------------------------------------ */
 .icon-btn {
   border: 1px solid var(--case-edge);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: linear-gradient(180deg, #efeadb, #dcd6c0);
   color: var(--meadow-deep);
   box-shadow:
@@ -1073,7 +1301,7 @@ button.glass-badge:active {
 .btn-primary {
   background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
   border: 1px solid rgba(48, 58, 14, 0.75);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   color: var(--cloud);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.26),
@@ -1101,7 +1329,7 @@ button.glass-badge:active {
 .retro-nav {
   background: linear-gradient(180deg, #efeadb, #d9d3bd);
   border: 1px solid var(--case-edge);
-  border-radius: 3px;
+  border-radius: var(--r-lg);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
     inset -1px -1px 0 rgba(74, 70, 52, 0.3),
@@ -1109,7 +1337,7 @@ button.glass-badge:active {
     0 16px 30px -18px rgba(33, 64, 45, 0.5);
 }
 .retro-key {
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   font-family: var(--font-crt);
   font-weight: 400;
   letter-spacing: 0.06em;
@@ -1212,7 +1440,7 @@ button.glass-badge:active {
   content: "";
   width: 1.5rem;
   height: 2px;
-  border-radius: 2px;
+  border-radius: var(--r-xs);
   background: linear-gradient(90deg, var(--sun), var(--terracotta));
 }
 
@@ -1250,6 +1478,20 @@ button.glass-badge:active {
   /* Amber is unreadable on cream at any small size, so timestamps on
      light ground use this darkened version instead. 5.6:1 on --paper. */
   --amber-ink: #7d5c0f;
+
+  /* Screen colours, for the two places that are a *screen* rather than a
+     case: the hero boot sequence and the closing terminal.
+
+     These three were referenced by `.boot` from the day it was written
+     and never actually defined, so every rule using them was invalid at
+     computed-value time — the boot background fell back to transparent
+     and its text to the inherited dark green, which is why the sequence
+     read as nothing much happening. Defined here, once, for both.
+
+     On --crt-deep: phosphor 10.9:1, amber 9.4:1. */
+  --crt-deep: #0e1811;
+  --phosphor: #a8d84f;
+  --amber: #e8b23a;
 }
 
 /* ---- Achievements --------------------------------------------------
@@ -1273,7 +1515,7 @@ button.glass-badge:active {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--case-edge);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   background: linear-gradient(180deg, #fffdf6, #f3efe1);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
@@ -1319,7 +1561,7 @@ button.glass-badge:active {
 .ach-meter {
   height: 6px;
   margin-top: 0.6rem;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   overflow: hidden;
   background: rgba(97, 112, 35, 0.16);
   box-shadow: inset 0 1px 2px rgba(74, 70, 52, 0.25);
@@ -1327,7 +1569,7 @@ button.glass-badge:active {
 .ach-meter i {
   display: block;
   height: 100%;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: linear-gradient(180deg, #74853a, var(--meadow-deep));
 }
 
@@ -1391,7 +1633,7 @@ button.glass-badge:active {
   height: 100%;
   overflow: hidden;
   border: 1px solid var(--case-edge);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   background: linear-gradient(180deg, #fffdf6, #f3efe1);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
@@ -1485,7 +1727,7 @@ button.glass-badge:active {
 .repo-lang i {
   width: 0.45rem;
   height: 0.45rem;
-  border-radius: 1px;
+  border-radius: var(--r-xs);
   background: var(--meadow-deep);
 }
 
@@ -1551,7 +1793,7 @@ button.glass-badge:active {
   width: 0.65rem;
   height: 0.65rem;
   border: 1px solid rgba(97, 112, 35, 0.6);
-  border-radius: 1px;
+  border-radius: var(--r-xs);
   background: var(--paper);
 }
 .quest-item[data-current="true"] .quest-node {
@@ -1617,7 +1859,7 @@ button.glass-badge:active {
   margin-left: 0.6rem;
   padding: 0.05rem 0.35rem 0.08rem;
   border: 1px solid rgba(97, 112, 35, 0.55);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   color: var(--meadow-deep);
   letter-spacing: 0.14em;
 }
@@ -1774,6 +2016,296 @@ button.glass-badge:active {
   }
 }
 
+/* ---- The closing terminal ------------------------------------------
+   The page opens on the meadow in daylight and closes on it after dark.
+   Same photograph as the hero, mirrored, with no panel on top of it —
+   a white box floating on a night field is what made this section read
+   as a form rather than an ending.
+
+   The dim is the hero's, not a blackout: the same forest green at the
+   same weight, over the same near-black pools. The first version buried
+   the photograph under 94% black, which was dim but not the hero's dim
+   and threw the field away entirely.
+
+   Because the photograph now shows through, contrast cannot be measured
+   against a flat colour. Every figure below is measured against a
+   **pure white pixel** under the scrim — the worst case the image can
+   produce — so the text holds wherever it happens to land.
+   -------------------------------------------------------------------- */
+.contact-close {
+  position: relative;
+  overflow: hidden;
+  padding: 9rem 1.5rem 7rem;
+  background: var(--crt-deep);
+
+  /* A step brighter than the global --phosphor, which is tuned for the
+     boot screen's near-black ground. This one sits on a lit photograph
+     and needs the extra light: 6.8:1 against white under the scrim. */
+  --screen-lit: #b9e26a;
+}
+@media (min-width: 900px) {
+  .contact-close {
+    padding: 11rem 2.5rem 7rem;
+  }
+}
+
+.contact-field {
+  object-fit: cover;
+  object-position: bottom;
+  /* Mirrored, so the field reads as the far side of the same place. */
+  transform: scaleX(-1);
+}
+
+/* Four layers, painted top down — the hero's recipe, inverted so the
+   cream join is at the head instead of the foot:
+     1. cream fade, so arriving from Contributions is a dissolve
+     2. a pool under the left column
+     3. a pool under the readout
+     4. the flat forest dim itself
+   The pools are what make the text legible; without them the same copy
+   runs at 1.1-3.3:1 over a bright frame. */
+.contact-dim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(250, 247, 234, 0.98) 0%,
+      rgba(250, 247, 234, 0.35) 7%,
+      rgba(250, 247, 234, 0) 17%
+    ),
+    radial-gradient(
+      ellipse 68% 58% at 30% 52%,
+      rgba(16, 34, 24, 0.66),
+      rgba(16, 34, 24, 0) 72%
+    ),
+    radial-gradient(
+      ellipse 52% 46% at 78% 60%,
+      rgba(16, 34, 24, 0.66),
+      rgba(16, 34, 24, 0) 74%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(33, 64, 45, 0.2) 0%,
+      rgba(33, 64, 45, 0.6) 20%,
+      rgba(33, 64, 45, 0.6) 78%,
+      rgba(33, 64, 45, 0.72) 100%
+    );
+}
+
+/* The screen the text sits on. Lower than before — over a photograph
+   this reads as dirt rather than as a screen if pushed. */
+.contact-scan {
+  position: absolute;
+  inset: 0;
+  background-image: var(--scanlines);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+/* Scattered rather than stacked. One centred column of everything was
+   tidy and inert; this lets the heading run wide on the left while the
+   readout hangs off the right and lower, so the eye crosses the field
+   instead of walking straight down a list. */
+.contact-inner {
+  position: relative;
+  z-index: 10;
+  max-width: 64rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "prompt"
+    "title"
+    "lede"
+    "rows"
+    "cta"
+    "foot";
+}
+@media (min-width: 900px) {
+  .contact-inner {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    column-gap: 5rem;
+    grid-template-areas:
+      "prompt ."
+      "title  rows"
+      "lede   rows"
+      "cta    rows"
+      "foot   foot";
+  }
+}
+
+.contact-prompt {
+  grid-area: prompt;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 253, 246, 0.72);
+}
+.contact-prompt .who {
+  color: var(--screen-lit);
+}
+.contact-prompt .dir {
+  color: var(--amber);
+}
+
+.contact-title {
+  grid-area: title;
+  margin-top: 0.6rem;
+  font-family: var(--font-crt);
+  font-weight: 400;
+  font-size: 3.4rem;
+  line-height: 0.98;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cloud);
+  text-wrap: balance;
+}
+@media (min-width: 640px) {
+  .contact-title {
+    font-size: 4.6rem;
+  }
+}
+
+.contact-lede {
+  grid-area: lede;
+  max-width: 26rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: rgba(255, 253, 246, 0.88);
+}
+
+/* Hangs lower than the heading it sits beside — the offset is the whole
+   point of the arrangement, so it is set here rather than left to
+   whatever the row heights happen to work out to. */
+.contact-rows {
+  grid-area: rows;
+  align-self: end;
+  border-top: 1px solid rgba(185, 226, 106, 0.3);
+}
+@media (min-width: 900px) {
+  .contact-rows {
+    margin-bottom: 0.4rem;
+  }
+}
+
+.contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.68rem 0;
+  border-bottom: 1px solid rgba(185, 226, 106, 0.18);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+/* 9ch — one wider than LINKEDIN, the longest key. The face is monospace,
+   so that is an exact measure and the values fall into a column with no
+   table and no grid. */
+.contact-row .k {
+  flex: none;
+  width: 9ch;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  color: #bcd07e;
+}
+
+.contact-row .v {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 253, 246, 0.95);
+  text-decoration: none;
+  /* Reserved from the start, so nothing shifts when it appears. */
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.contact-row .v:hover {
+  color: var(--screen-lit);
+  border-bottom-color: var(--screen-lit);
+}
+.contact-row .v:focus-visible {
+  outline: 2px solid var(--screen-lit);
+  outline-offset: 3px;
+}
+
+/* The one lit control on a dark screen. Outlined rather than filled, so
+   it belongs to the terminal instead of importing the cream key caps
+   from the rest of the page onto a night field. */
+.contact-cta {
+  grid-area: cta;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.2rem;
+  padding: 0.5rem 1.25rem 0.55rem;
+  border: 1px solid var(--screen-lit);
+  border-radius: var(--r-sm);
+  background: rgba(185, 226, 106, 0.1);
+  font-family: var(--font-crt);
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--screen-lit);
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+.contact-cta:hover {
+  background: var(--screen-lit);
+  color: var(--crt-deep);
+  box-shadow: 0 0 26px -4px rgba(185, 226, 106, 0.5);
+}
+.contact-cta:active {
+  box-shadow: none;
+}
+.contact-cta:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+.contact-cta .arrow {
+  font-size: 0.8em;
+}
+
+.contact-foot {
+  grid-area: foot;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 5rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(255, 253, 246, 0.16);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 253, 246, 0.72);
+}
+
+/* The cursor left sitting at the end of the last line. It is the only
+   thing on the page that is still moving when you reach the bottom. */
+.contact-foot .caret {
+  width: 0.45rem;
+  height: 0.95rem;
+  background: var(--screen-lit);
+  animation: caretBlink 1.1s step-end infinite;
+}
+
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-foot .caret {
+    animation: none;
+  }
+  .contact-row .v,
+  .contact-cta {
+    transition: none;
+  }
+}
+
 /* ---- Hero boot sequence -----------------------------------------
    Server-rendered and driven entirely by CSS animation, so it clears
    itself even with JavaScript disabled — the hero content underneath
@@ -1835,7 +2367,7 @@ button.glass-badge:active {
   bottom: 1.25rem;
   padding: 0.25rem 0.6rem;
   border: 1px solid rgba(157, 165, 65, 0.5);
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: rgba(0, 0, 0, 0.35);
   color: var(--phosphor);
   font-family: var(--font-crt);
