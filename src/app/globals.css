@@ -410,6 +410,13 @@ button.glass-badge:active {
   border: 1px solid var(--case-edge);
   border-bottom: 1px solid var(--case-edge);
   border-radius: var(--r-lg) var(--r-lg) 0 0;
+  /* Clips the colour strip to the tab's own corner. Without this the
+     strip has to guess its way to a matching curve, and a 3px-tall box
+     cannot hold a 14px radius — the browser scales the radii down to fit
+     the box, so the strip ends up with ~3px corners poking out past the
+     tab-s 14px ones. Clipping makes them concentric by construction, at
+     any radius. */
+  overflow: hidden;
   background: linear-gradient(180deg, #e7e2d2, #d5d0bc);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   font-family: var(--font-crt);
@@ -427,7 +434,9 @@ button.glass-badge:active {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
+  /* No radius of its own — the tab clips it. It used to carry
+     `calc(var(--r-lg) - 1px)`, which was an attempt to sit 1px inside
+     the tab-s curve and could never work at this height. */
   background: var(--sticker, var(--label-a));
   opacity: 0.45;
   transition: opacity 0.15s ease;
@@ -1280,74 +1289,225 @@ button.glass-badge:active {
     inset 1px 1px 0 rgba(0, 0, 0, 0.35);
 }
 
-/* The bottom-centre nav, as a moulded key strip */
-.retro-nav {
-  background: linear-gradient(180deg, #efeadb, #d9d3bd);
-  border: 1px solid var(--case-edge);
-  border-radius: var(--r-lg);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.3),
-    0 3px 0 rgba(74, 70, 52, 0.22),
-    0 16px 30px -18px rgba(33, 64, 45, 0.5);
-}
-.retro-key {
-  border-radius: var(--r-sm);
-  font-family: var(--font-crt);
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted-fg);
-  transition: color 0.15s ease, background 0.15s ease, box-shadow 0.12s ease;
-}
-.retro-key:hover {
-  color: var(--terracotta-ink);
-}
-/* A hairline before the switch, so it reads as a control on the rail
-   rather than a seventh place to go. */
-.nav-sep {
-  align-self: stretch;
-  width: 1px;
-  margin: 0.15rem 0.3rem;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(74, 70, 52, 0.3),
-    transparent
-  );
+/* ---- The nav, as a scale down the right edge -------------------------
+   Six marks, one per section, the one you are in longer and lit in its
+   own tone. Hovering the scale brings the names in from the right.
+
+   **The tones are one ramp, not six choices.** Sky-deep at the head of
+   the page through meadow to forest at the foot, so colour says how far
+   down you are — six unrelated hues would have looked livelier and
+   meant nothing. They live in `Navbar.tsx` as `--tone` per link, since
+   they belong to the sections rather than to this rule.
+
+   **The names sit outside the rail's own width** (`right: 100%`), which
+   is what keeps the hover strip narrow. Reveal-on-hover normally forces
+   a choice between a wide invisible hit area that catches every stray
+   pointer, and a container that grows and shoves the page around;
+   taking the labels out of flow avoids both.
+
+   **The active name stays out at rest.** A rail of unlabelled marks
+   tells a reader the page has six parts and then refuses to say which
+   one they are reading.
+   -------------------------------------------------------------------- */
+.scale {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  /* The strip the pointer has to find. Narrow on purpose — the names
+     render to the left of it without widening it. */
+  padding: 0.6rem 1.15rem 0.6rem 0.9rem;
+  translate: 0 -50%;
 }
 
-/* Icon only. The name is on the button via aria-label, and the icon
-   itself says which way the switch is thrown — the speaker gains waves
-   when sound is on and an X when it is off, so the state does not rest
-   on colour alone. */
-.nav-sound {
-  color: var(--muted-fg);
+.scale-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.62rem;
 }
-.nav-sound svg {
+
+.scale-item {
+  position: relative;
+  display: block;
+  /* A taller invisible target than the mark it draws — a 3px line is
+     not something to ask anyone to hit. */
+  padding: 0.32rem 0;
+}
+
+/* The mark. Terminal-rule proportions: a short flat line, lengthening
+   and taking colour when it is the one you are on. */
+.scale-mark {
+  display: block;
+  width: 1.15rem;
+  height: 2px;
+  margin-left: auto;
+  border-radius: 1px;
+  background: rgba(97, 112, 35, 0.42);
+  transition: width 0.24s cubic-bezier(0.32, 0.72, 0.24, 1),
+    background 0.24s ease, box-shadow 0.24s ease;
+}
+.scale-item:hover .scale-mark {
+  width: 1.7rem;
+  background: var(--tone);
+}
+.scale-item[aria-current="page"] .scale-mark {
+  width: 2.4rem;
+  height: 3px;
+  background: var(--tone);
+  box-shadow: 0 0 8px -1px var(--tone);
+}
+
+/* Out of flow, so the rail stays narrow whatever the names are. */
+.scale-name {
+  position: absolute;
+  right: calc(100% + 0.6rem);
+  top: 50%;
+  translate: 0 -50%;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted-fg);
+  opacity: 0;
+  /* Parked a little to the right, so it arrives from under the rail —
+     which is where it looks like it was kept. */
+  translate: 0.4rem -50%;
+  transition: opacity 0.2s ease, translate 0.24s cubic-bezier(0.32, 0.72, 0.24, 1),
+    color 0.2s ease;
+}
+/* Slides in from the right on hover — from under the rail, which is
+   where it looks like it was kept. */
+.scale:hover .scale-name,
+.scale:has(.scale-item:focus-visible) .scale-name {
+  opacity: 1;
+  translate: 0 -50%;
+}
+/* The one you are on says so without being asked. */
+.scale-item[aria-current="page"] .scale-name {
+  opacity: 1;
+  translate: 0 -50%;
+  color: var(--tone);
+}
+.scale-item:hover .scale-name {
+  color: var(--tone);
+}
+
+.scale-item:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 3px;
+}
+
+/* Past a gap and drawn as a glyph, so it reads as a control rather than
+   a seventh stop on the scale. */
+.scale-sound {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.35rem;
+  color: var(--muted-fg);
+  opacity: 0.7;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+.scale-sound svg {
   display: block;
 }
-.nav-sound[aria-pressed="true"] {
+.scale:hover .scale-sound {
+  opacity: 1;
+}
+.scale-sound[aria-pressed="true"] {
   color: var(--meadow-deep);
 }
-.nav-sound[aria-pressed="true"]:hover,
-.nav-sound[aria-pressed="false"]:hover {
+.scale-sound:hover,
+.scale-sound[aria-pressed="true"]:hover {
   color: var(--terracotta-ink);
+  opacity: 1;
 }
-/* The keys get their ring from the browser default elsewhere in the
-   nav; this one has a background of its own on hover, so it is pinned. */
-.nav-sound:focus-visible {
+.scale-sound:focus-visible {
   outline: 2px solid var(--terracotta);
   outline-offset: 2px;
+  opacity: 1;
 }
 
-.retro-key[aria-current="page"] {
-  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
-  color: var(--cloud);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.32);
+/* ---- over the two dark sections ------------------------------------
+   The hero and Contact both run light-on-dark, so the scale flips its
+   palette rather than hiding. Each link carries a --lit twin of its
+   tone, stepped along the same ramp, so "colour says how far down you
+   are" survives the flip.
+
+   **The halo is doing the real work over the hero.** That section is a
+   photograph, and under its dim a bright patch composites to a mid
+   grey-green where neither a dark mark nor a light one clears 3:1 — no
+   fixed colour can, on an image that spans light to dark. A dark halo
+   under a light mark makes its own local contrast, which is how any
+   control sits over video. Contact needs none of this (its ground is
+   flat --crt-deep, 10-17:1) but takes the same treatment so the two
+   do not diverge.
+   -------------------------------------------------------------------- */
+.scale[data-ground="dark"] .scale-mark {
+  background: rgba(255, 253, 246, 0.55);
+  filter: drop-shadow(0 1px 2px rgba(16, 34, 24, 0.9));
 }
+.scale[data-ground="dark"] .scale-item:hover .scale-mark,
+.scale[data-ground="dark"] .scale-item[aria-current="page"] .scale-mark {
+  background: var(--lit);
+}
+/* A pale ring as well as the glow. The glow alone assumes the tone is
+   lighter than the ground, which stopped being true when Home went to a
+   dark blue — the ring is what separates a dark mark from a dark
+   ground, and it costs a light mark nothing. */
+.scale[data-ground="dark"] .scale-item[aria-current="page"] .scale-mark {
+  box-shadow:
+    0 0 0 1px rgba(255, 253, 246, 0.6),
+    0 0 9px -1px var(--lit);
+}
+
+.scale[data-ground="dark"] .scale-name {
+  color: rgba(255, 253, 246, 0.92);
+  text-shadow: 0 1px 3px rgba(16, 34, 24, 0.95);
+}
+/* The name stays cloud on a dark ground rather than taking the tone.
+   Tinting it was fine while every tone was pale; with Home dark it
+   would have put dark blue text on a dark photograph. The mark carries
+   the colour, the name carries the reading. */
+.scale[data-ground="dark"] .scale-item[aria-current="page"] .scale-name,
+.scale[data-ground="dark"] .scale-item:hover .scale-name {
+  color: var(--cloud);
+}
+
+.scale[data-ground="dark"] .scale-sound {
+  color: rgba(255, 253, 246, 0.85);
+  filter: drop-shadow(0 1px 2px rgba(16, 34, 24, 0.9));
+}
+.scale[data-ground="dark"] .scale-sound[aria-pressed="true"] {
+  color: #cfe07a;
+}
+
+/* The flip itself is a fade, not a cut — crossing from Skills into
+   Contact should not snap the whole rail to another palette. */
+.scale-mark,
+.scale-name,
+.scale-sound {
+  transition-property: width, background, box-shadow, color, opacity, translate, filter;
+  transition-duration: 0.24s;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scale,
+  .scale-mark,
+  .scale-name,
+  .scale-sound {
+    transition: none;
+  }
+}
+
 
 /* ------------------------------------------------------------
    Typography

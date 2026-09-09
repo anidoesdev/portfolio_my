@@ -4,13 +4,6 @@ import { useState } from "react";
 
 const experiences = [
   {
-    period: "May 2026 — Present",
-    title: "Open Source Contributer",
-    org: "Hugging Face",
-    location: "Remote",
-    details: ["The docstring of _get_train_sampler in GRPOTrainer comment to mention num_iterations > 1 fixed the existing issue."],
-  },
-  {
     period: "June 2026 - August 2026",
     title: "Web Developer",
     org: "WREN",
@@ -22,6 +15,15 @@ const experiences = [
         "Built the operator review console and the app's shared design-system components"
     ],
   },
+
+  {
+    period: "May 2026 — Present",
+    title: "Open Source Contributer",
+    org: "Hugging Face",
+    location: "Remote",
+    details: ["The docstring of _get_train_sampler in GRPOTrainer comment to mention num_iterations > 1 fixed the existing issue."],
+  },
+  
   {
     period: "Dec 2025 - May 2026",
     title: "Data Science Trainee",
