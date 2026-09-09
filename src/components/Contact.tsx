@@ -1,5 +1,5 @@
 import Image from "next/image";
-import meadow from "@/images/img.jpg";
+import footer from "@/images/footer.jpg";
 
 const EMAIL = "anikajain1307@gmail.com";
 
@@ -20,11 +20,12 @@ export default function Contact() {
 
   return (
     <section id="contact" className="contact-close">
-      {/* The same meadow as the hero, mirrored — but at dusk. The page
-          opens on this field in daylight and closes on it after dark,
-          which is the whole idea of the section. */}
+      {/* Dusk over still water, and the last thing on the page. It is
+          no longer the hero's photograph mirrored, so the mirroring
+          went with it — flipping an image that is not a reflection of
+          anything else is just a flipped image. */}
       <Image
-        src={meadow}
+        src={footer}
         alt=""
         fill
         sizes="100vw"

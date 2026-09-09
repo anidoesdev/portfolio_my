@@ -217,6 +217,11 @@ button.glass-badge:active {
    instead of behind a panel, so every token flips here.
    ------------------------------------------------------------ */
 #hero {
+  /* Behind the artwork. The image covers the frame so this is rarely
+     seen, but it is what paints while the file is still loading —
+     forest rather than the page cream, so the hero does not flash pale
+     before its own scrim arrives. */
+  background: var(--forest);
   --foreground: var(--cloud);
   --muted-fg: rgba(255, 253, 246, 0.88);
   --color-foreground: var(--cloud);
@@ -2277,10 +2282,17 @@ button.glass-badge:active {
    the photograph under 94% black, which was dim but not the hero's dim
    and threw the field away entirely.
 
-   Because the photograph now shows through, contrast cannot be measured
-   against a flat colour. Every figure below is measured against a
-   **pure white pixel** under the scrim — the worst case the image can
-   produce — so the text holds wherever it happens to land.
+   Because the artwork shows through, contrast cannot be measured
+   against a flat colour. Every figure is measured against the lightest
+   pixel in the picture under the scrim — the worst case it can produce.
+
+   The dim was lifted from 0.60/0.66 to 0.50/0.55 when the pastel dusk
+   image replaced the meadow: the old values crushed it to near-black
+   and there was no point having a picture there at all. 0.50/0.55 is
+   the **limit**, not a preference — one step further (0.42/0.46) and
+   the key labels drop to 3.5:1. A light terminal on a light picture is
+   not a thing that can be made to work; this is as far back as the
+   scrim goes while the text on it stays readable.
    -------------------------------------------------------------------- */
 .contact-close {
   position: relative;
@@ -2301,9 +2313,16 @@ button.glass-badge:active {
 
 .contact-field {
   object-fit: cover;
-  object-position: bottom;
-  /* Mirrored, so the field reads as the far side of the same place. */
-  transform: scaleX(-1);
+  /* The artwork is portrait and this section is a wide band, so `cover`
+     shows a horizontal slice of it. Centred, that slice is the train on
+     the waterline and its reflection — the half of the picture with
+     anything in it. Anchored at the bottom, as it was for the meadow,
+     it would be all empty water.
+
+     No mirroring any more: that existed because this was the hero's own
+     photograph flipped, and flipping an image that is not a reflection
+     of another one is just a flipped image. */
+  object-position: center;
 }
 
 /* Four layers, painted top down — the hero's recipe, inverted so the
@@ -2326,20 +2345,20 @@ button.glass-badge:active {
     ),
     radial-gradient(
       ellipse 68% 58% at 30% 52%,
-      rgba(16, 34, 24, 0.66),
+      rgba(16, 34, 24, 0.55),
       rgba(16, 34, 24, 0) 72%
     ),
     radial-gradient(
       ellipse 52% 46% at 78% 60%,
-      rgba(16, 34, 24, 0.66),
+      rgba(16, 34, 24, 0.55),
       rgba(16, 34, 24, 0) 74%
     ),
     linear-gradient(
       180deg,
-      rgba(33, 64, 45, 0.2) 0%,
-      rgba(33, 64, 45, 0.6) 20%,
-      rgba(33, 64, 45, 0.6) 78%,
-      rgba(33, 64, 45, 0.72) 100%
+      rgba(33, 64, 45, 0.18) 0%,
+      rgba(33, 64, 45, 0.5) 20%,
+      rgba(33, 64, 45, 0.5) 78%,
+      rgba(33, 64, 45, 0.62) 100%
     );
 }
 

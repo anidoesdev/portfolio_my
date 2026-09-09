@@ -1,5 +1,5 @@
 import Image from "next/image";
-import meadow from "@/images/img.jpg";
+import meadow from "@/images/img1.jpg";
 import HeroBoot from "./HeroBoot";
 
 const jumpLinks = [
@@ -41,14 +41,25 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex items-center px-6 overflow-hidden"
     >
+      {/* Edge to edge. The artwork is **portrait** (~9:16) and the hero
+          is landscape, so `cover` scales it until the width fills and
+          then shows a horizontal band of it — on a 1920x1080 screen
+          that band is about a third of the picture-s height.
+
+          Which third is the whole question. Centred, it lands on empty
+          sky and cuts off just above the cottage; held at 68% it keeps
+          the cottage, the path and the meadow, which is the half of
+          this painting worth showing. */}
       <Image
         src={meadow}
         alt=""
         fill
         sizes="100vw"
+        quality={90}
         placeholder="blur"
         preload
-        className="object-cover object-center"
+        className="object-cover"
+        style={{ objectPosition: "center 68%" }}
       />
 
       {/*
