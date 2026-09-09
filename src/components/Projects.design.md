@@ -387,40 +387,28 @@ look like it had stopped early. The `9rem` basis is the point below which two wi
 side by side: on a narrow column they wrap and each takes the full width instead of being
 squeezed. Labels are centred, because the label is no longer the width of the key.
 
-### The dots, which are also the keys
+### The stage switch
 
-At rest the stage nav is two dots. Hover the pair and they **become labelled keys** — `Flow`
-and `Demo` — with the one you are on filled in `--meadow-deep` (cloud-white, 5.4:1). Move away
-and they are dots again.
+A **two-position rocker** under the frame: `Flow` and `Demo` either side of a recessed track
+with a knob that travels between them. The knob-s place on the track *is* the state — the words
+report it rather than having to carry it alone.
 
-**One pair of buttons wearing two faces, not two sets of controls.** A row of dots plus a row
-of buttons doing the same job would be four tab stops for two choices, and a keyboard reader
-would meet each destination twice. The dot and the word are both `aria-hidden` decoration
-inside a single button whose `aria-label` never changes, so the swap alters appearance and
-nothing else.
+That is what the previous version got wrong. Dots that became labelled keys on hover asked two
+glyphs to hold the whole state and showed **neither label at rest**, so a reader had to hover
+before they could learn what either dot went to.
 
-Two things stop it flickering:
+**Square, not a pill.** Every corner on this site is 3-14px; a fully rounded track would have
+read as a generic app toggle dropped onto a machine panel. The knob is knurled with a
+repeating gradient — two hairlines from one background rather than two elements — because a
+thumb-slide that is perfectly smooth does not look like it is meant to be pushed.
 
-- **The group reserves a fixed `min-height`** (1.85rem, the taller state). Growing from a 9px
-  dot to a 28px key would otherwise change the row height and nudge the stage above it.
-- **Growing horizontally is safe on its own.** The pointer is inside the dots when the swap
-  fires and the keys are wider, so it stays inside. A swap that made the target *smaller*
-  would oscillate; this one cannot.
+**The track takes no pointer events**, and the two labels- padding runs underneath it
+(`padding-right: 2rem` on the first, `padding-left: 2rem` on the second). So the whole switch
+is covered by one control or the other: a reader aiming at the knob — which is exactly what a
+switch invites — lands on a real button instead of a dead strip in the middle.
 
-The faces swap with `display`, not opacity: a zero-opacity dot still takes its 9px, so every
-key would carry that as invisible padding.
-
-Focus opens the expanded face too, via `:has(.stage-key:focus-visible)` rather than
-`:focus-within` — focus-within also fires on click, which would pin the pair open in its
-expanded state after every press.
-
-An earlier version made this a hover panel of thumbnails (a still `Schematic` beside the
-demo's YouTube poster). Good pictures, but they made the reader hover *and then look* to work
-out what a dot did.
-
-> `Schematic`'s `still` prop is left over from that: it rendered the non-animating thumbnail
-> and nothing uses it now. It stays, as does the `useId()` marker-id fix that shipped with it —
-> that one fixed a real collision and is load-bearing regardless.
+The knob travels by **exactly its own width** (`translate: 100%`), so nothing has to be kept
+in step with the track-s size if either changes.
 
 ### The description is justified
 

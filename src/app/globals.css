@@ -230,6 +230,124 @@ button.glass-badge:active {
   background: linear-gradient(90deg, var(--sun), rgba(255, 253, 246, 0.55));
 }
 
+/* ---- The hero, as a plate -------------------------------------------
+   Fields rather than sentences. A hero is the one place a reader has no
+   context yet, and "AI Engineer" answers a question where "passionate
+   about building" answers none.
+
+   Ranged left, not centred: a centred stack is the hero layout every
+   portfolio already has, and left alignment is what lets the plate read
+   as a column of values rather than six lines of poetry.
+
+   Everything runs light-on-dark here — `#hero` flips the foreground
+   tokens, so `--muted-fg` is already the cloud-white variant.
+   -------------------------------------------------------------------- */
+.slate-role {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #f7e7bd;
+}
+
+.slate-name {
+  margin-top: 0.7rem;
+  font-family: var(--font-crt);
+  font-weight: 400;
+  font-size: clamp(3.2rem, 11vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  color: var(--cloud);
+}
+
+.slate-lede {
+  margin-top: 1.1rem;
+  max-width: 32rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  color: rgba(255, 253, 246, 0.88);
+}
+@media (min-width: 640px) {
+  .slate-lede {
+    font-size: 0.875rem;
+  }
+}
+
+/* The plate itself. Hairlines and a fixed label column, the same set as
+   the Skills spec sheet — the two are the page's only tabular blocks
+   and they should read as the same kind of object. */
+.slate {
+  margin-top: 2rem;
+  max-width: 34rem;
+  border-top: 1px solid rgba(255, 253, 246, 0.22);
+}
+
+.slate-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.15rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 253, 246, 0.14);
+}
+@media (min-width: 640px) {
+  .slate-row {
+    /* Fixed, so every value starts on the same line down the plate —
+       which is the whole point of setting this as fields. */
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: baseline;
+  }
+}
+
+.slate-row dt {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 253, 246, 0.6);
+}
+
+.slate-row dd {
+  font-family: var(--font-crt);
+  font-size: 1.15rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: var(--cloud);
+}
+.slate-row dd a {
+  border-bottom: 1px solid rgba(255, 253, 246, 0.35);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.slate-row dd a:hover {
+  color: #e6ecb4;
+  border-bottom-color: #e6ecb4;
+}
+.slate-row dd a:focus-visible {
+  outline: 2px solid var(--sun);
+  outline-offset: 3px;
+}
+
+.slate-jump {
+  margin-top: 2.2rem;
+}
+.slate-jump ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+/* CRT type, like every other control on the site. No font-weight: VT323
+   ships a single 400 and faux-bolding fills in the bitmap counters. */
+.slate-jump .glass-btn {
+  display: inline-block;
+  padding: 0.4rem 1.1rem 0.45rem;
+  font-family: var(--font-crt);
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* Translucent frosted pill — the hero's three jump links */
 /* The hero's three jump keys. The fill went from a 13% cloud film to a
    dark one, which *raises* the contrast of the cloud-white label over
@@ -918,131 +1036,115 @@ button.glass-badge:active {
   margin-top: 0.5rem;
 }
 
-/* ---- The dots, which are also the keys -----------------------------
-   At rest: two dots. Hover the pair and they become labelled keys —
-   `Flow` and `Demo` — with the one you are on lit. Move away and they
-   are dots again.
+/* ---- The stage switch ----------------------------------------------
+   A two-position rocker under the frame. The knob's place on the track
+   *is* the state; the words either side report it rather than having to
+   carry it alone, which is what the previous dots-that-become-keys were
+   asking two glyphs to do while showing neither label at rest.
 
-   It is one pair of buttons wearing two faces, not two sets of
-   controls. A row of dots plus a row of buttons doing the same job
-   would be four tab stops for two choices; here the dot and the word
-   are both decoration inside a single button whose label never changes.
+   Square, not a pill. Every corner on this site is 3-14px, and a fully
+   rounded track would have read as a generic app toggle dropped onto a
+   machine panel.
 
-   Two things stop the swap flickering:
-
-     - The group holds a fixed `min-height`, so growing from a 9px dot
-       to a 28px key never changes the row's height and never nudges the
-       stage above it.
-     - Growing *horizontally* is safe on its own: the pointer is inside
-       the dots when the swap fires and the keys are wider, so it stays
-       inside. A swap that made the target smaller would oscillate — this
-       one cannot.
-
-   `:has(...:focus-visible)` rather than `:focus-within`, so clicking a
-   key does not pin the pair open in its expanded state.
+   The track takes no pointer events and the two labels' padding runs
+   underneath it, so the whole switch is covered by one control or the
+   other — a reader aiming at the knob, which is exactly what a switch
+   invites, lands on a real button instead of a gap.
    -------------------------------------------------------------------- */
-.stage-peek {
+.stage-switch {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  /* The taller of the two states. Reserved always, so nothing moves. */
-  min-height: 1.85rem;
-  border: 1px solid transparent;
-  border-radius: var(--r-sm);
-  transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-/* Hovered, the group becomes the frame the keys sit in. */
-.stage-peek:hover,
-.stage-peek:has(.stage-key:focus-visible) {
-  border-color: var(--case-edge);
-  background: linear-gradient(180deg, #efeadb, #dcd6c0);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.85),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.26);
-}
-
-.stage-key {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-  padding: 0 0.2rem;
-  border-radius: calc(var(--r-sm) - 1px);
-  color: var(--muted-fg);
-  transition: padding 0.16s ease, color 0.14s ease, background 0.14s ease;
-}
-.stage-peek:hover .stage-key,
-.stage-peek:has(.stage-key:focus-visible) .stage-key {
-  padding: 0 0.8rem;
-}
-.stage-peek:hover .stage-key + .stage-key,
-.stage-peek:has(.stage-key:focus-visible) .stage-key + .stage-key {
-  border-left: 1px solid var(--case-edge);
-}
-.stage-key:focus-visible {
-  outline: 2px solid var(--terracotta);
-  outline-offset: -2px;
-}
-
-/* ---- face one: the dot ---- */
-.stage-key .dot {
-  /* A flex item shrinks by default, and this one has no content to hold
-     it open — its size *is* its width and height. */
-  flex: none;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: rgba(97, 112, 35, 0.28);
-  transition: background 0.2s ease;
-}
-.stage-key[data-on="true"] .dot {
-  background: var(--meadow-deep);
-  box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
-}
-.stage-key:hover .dot {
-  background: rgba(97, 112, 35, 0.55);
-}
-
-/* ---- face two: the word ---- */
-.stage-key .txt {
-  display: none;
+.stage-pos {
+  padding: 0.3rem 0.55rem 0.34rem;
   font-family: var(--font-crt);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.2;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  white-space: nowrap;
+  color: var(--muted-fg);
+  opacity: 0.72;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
-
-/* The swap itself. `display` rather than opacity, so the hidden face
-   takes no width — the keys have to size to the word alone, and a
-   zero-opacity dot sitting beside it would pad every key by 9px. */
-.stage-peek:hover .stage-key .dot,
-.stage-peek:has(.stage-key:focus-visible) .stage-key .dot {
-  display: none;
+/* Reaches under the track, so there is no dead strip in the middle. */
+.stage-pos:first-child {
+  padding-right: 2rem;
 }
-.stage-peek:hover .stage-key .txt,
-.stage-peek:has(.stage-key:focus-visible) .stage-key .txt {
-  display: block;
+.stage-pos:last-of-type {
+  padding-left: 2rem;
 }
-
-/* Where you are, in the expanded face. Cloud on --meadow-deep is 5.4:1. */
-.stage-peek:hover .stage-key[data-on="true"],
-.stage-peek:has(.stage-key:focus-visible) .stage-key[data-on="true"] {
-  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.3);
-  color: var(--cloud);
-}
-.stage-peek:hover .stage-key:not([data-on="true"]):hover {
+.stage-pos:hover {
+  opacity: 1;
   color: var(--terracotta-ink);
+}
+.stage-pos[data-on="true"] {
+  opacity: 1;
+  color: var(--forest);
+}
+.stage-pos:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: -1px;
+  border-radius: var(--r-xs);
+}
+
+/* Recessed: the knob has to look like it sits *in* something. */
+.stage-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 2.9rem;
+  height: 1.15rem;
+  border: 1px solid rgba(74, 70, 52, 0.34);
+  border-radius: var(--r-sm);
+  background: rgba(74, 70, 52, 0.13);
+  box-shadow: inset 0 1px 3px rgba(74, 70, 52, 0.4);
+  pointer-events: none;
+}
+
+/* Raised, and it travels by exactly its own width — so its left edge
+   lands where the track's inner right edge is, with no arithmetic that
+   has to be kept in step with the track's size. */
+.stage-track .knob {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  border-radius: var(--r-xs);
+  background: linear-gradient(180deg, #8f9a3c, var(--meadow-deep));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    0 1px 0 rgba(48, 58, 14, 0.55);
+  transition: translate 0.28s cubic-bezier(0.32, 0.72, 0.24, 1);
+}
+/* Grip lines, the way a real thumb-slide is knurled. Two hairlines from
+   one gradient rather than two elements. */
+.stage-track .knob::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 5px,
+    rgba(255, 253, 246, 0.34) 5px 6px
+  );
+  background-position: center;
+  background-size: 11px 100%;
+  background-repeat: no-repeat;
+  border-radius: inherit;
+}
+
+.stage-switch[data-at="1"] .knob {
+  translate: 100% 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stage-peek,
-  .stage-key,
-  .stage-key .dot {
+  .stage-pos,
+  .stage-track .knob {
     transition: none;
   }
 }

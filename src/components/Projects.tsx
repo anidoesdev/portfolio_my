@@ -595,40 +595,43 @@ export default function Projects() {
                           controls. Projects without a reel say so instead. */}
                       {reel ? (
                       <div className="stage-nav">
-                          {/* One pair of buttons wearing two faces. At
-                              rest they are dots; hovering the group
-                              turns them into labelled keys, and moving
-                              off turns them back.
+                          {/* A two-position rocker. The knob's place on
+                              the track *is* the state — the labels
+                              either side report it, they do not have to
+                              carry it on their own.
 
-                              Deliberately not two sets of controls. A
-                              row of dots plus a row of buttons doing the
-                              same thing would be four tab stops for two
-                              choices, and a keyboard reader would meet
-                              each destination twice. The dot and the
-                              word are both `aria-hidden` decoration
-                              inside one button whose `aria-label` never
-                              changes, so what the swap alters is
-                              appearance and nothing else. */}
-                          <span className="stage-peek">
+                              The track is decoration and takes no
+                              pointer events; the two labels are the
+                              controls and their padding runs underneath
+                              it, so clicking anywhere on the left half
+                              throws it left and anywhere on the right
+                              half throws it right. A reader aiming at
+                              the knob — which is what a switch invites —
+                              hits a real control rather than a gap. */}
+                          <span
+                            className="stage-switch"
+                            data-at={onDemo ? "1" : "0"}
+                          >
                             {STAGES.map((label, n) => {
                               const here = (onDemo ? 1 : 0) === n;
                               return (
                                 <button
                                   key={label}
                                   type="button"
-                                  className="stage-key"
+                                  className="stage-pos"
                                   data-on={here}
                                   aria-current={here ? "true" : undefined}
                                   aria-label={`Show the ${label}`}
                                   onClick={() => !here && goStage(n)}
                                 >
-                                  <span className="dot" aria-hidden="true" />
-                                  <span className="txt" aria-hidden="true">
-                                    {STAGE_KEYS[n]}
-                                  </span>
+                                  {STAGE_KEYS[n]}
                                 </button>
                               );
                             })}
+
+                            <span className="stage-track" aria-hidden="true">
+                              <i className="knob" />
+                            </span>
                           </span>
 
                           <span className="sr-only" aria-live="polite">
