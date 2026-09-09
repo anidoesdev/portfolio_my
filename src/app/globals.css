@@ -295,81 +295,86 @@ button.glass-badge:active {
   );
 }
 
-/* ---- Skills, grouped -----------------------------------------------
-   One panel per category rather than one flat run of pills. Same
-   bevel-and-title-bar language as the project folders, so the two
-   sections read as parts of the same machine.
+/* ---- Skills, as a spec sheet ---------------------------------------
+   The page every machine shipped with.
+
+   Three earlier versions drew each of the 29 entries as its own
+   bordered object — pills, then chips in a rack, then keycaps on a
+   deck. Each of those is roughly 45 decorated elements on one screen,
+   and *that* is what read as clutter, not the arrangement. Nothing here
+   has a border. The type does the work.
+
+   Unpanelled on purpose, like the quest log: Achievements and the repo
+   board are both bevelled-panel grids, and a third frame in the same
+   stretch of page is what stops a reader telling those sections apart.
    -------------------------------------------------------------------- */
-
-.skill-group {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--case-edge);
-  border-radius: var(--r-md);
-  background: linear-gradient(180deg, #fffdf6, #f3efe1);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 2px 0 rgba(74, 70, 52, 0.18),
-    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+.spec {
+  max-width: 54rem;
+  border-top: 1px solid rgba(97, 112, 35, 0.26);
 }
 
-.skill-head {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.6rem 0.32rem;
-  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
-  background: linear-gradient(180deg, #ecead9, #dcd7c3);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  font-family: var(--font-crt);
-  font-size: 1.0625rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
+.spec-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.3rem;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid rgba(97, 112, 35, 0.18);
+}
+@media (min-width: 640px) {
+  .spec-row {
+    /* A fixed label column, so every entry starts on the same line down
+       the page — which is the whole point of a spec sheet and the thing
+       a wrapping label column would destroy. */
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: baseline;
+  }
+}
+
+.spec-term h3 {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--forest);
-}
-.skill-head i {
-  flex: none;
-  font-size: 0.85rem;
-  line-height: 1;
-  color: var(--meadow-deep);
-}
-.skill-head .name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.skill-head .count {
-  margin-left: auto;
-  flex: none;
-  color: var(--amber-ink);
-  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  color: var(--muted-fg);
 }
 
-.skill-list {
+/* The entries carry the section, so they are set at display size in the
+   terminal face rather than as small labels on chips. */
+.spec-def ul {
   display: flex;
   flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 0.3rem;
-  padding: 0.6rem;
-  /* Groups hold 4-6 entries. Letting the list grow keeps every panel in
-     a row the same height instead of leaving ragged bottoms. */
-  flex: 1;
+  align-items: baseline;
+  font-family: var(--font-crt);
+  font-size: 1.3rem;
+  line-height: 1.45;
+  letter-spacing: 0.03em;
+  color: var(--forest);
+}
+@media (min-width: 640px) {
+  .spec-def ul {
+    font-size: 1.45rem;
+  }
 }
 
-.skill-chip {
-  padding: 0.08rem 0.45rem 0.12rem;
-  border: 1px solid rgba(97, 112, 35, 0.3);
-  border-radius: var(--r-sm);
-  background: rgba(255, 253, 246, 0.75);
-  font-family: var(--font-crt);
-  font-size: 0.9375rem;
-  line-height: 1.35;
-  letter-spacing: 0.05em;
+/* A separator between entries, not a box around each. Generated content
+   because a real character per gap would be 23 spans doing nothing. */
+.spec-def li + li::before {
+  content: "·";
+  margin: 0 0.55rem;
+  color: rgba(97, 112, 35, 0.55);
+}
+
+.spec-foot {
+  margin-top: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted-fg);
+  opacity: 0.7;
 }
 
 
@@ -826,26 +831,6 @@ button.glass-badge:active {
 /* The countdown, made visible. It turns the automatic advance into
    something a reader can see coming and stop, instead of something that
    happens to them. It is removed from the DOM the moment they interact. */
-.stage-timer {
-  height: 2px;
-  margin-top: 0.4rem;
-  border-radius: var(--r-xs);
-  overflow: hidden;
-  background: rgba(97, 112, 35, 0.16);
-}
-.stage-timer i {
-  display: block;
-  width: 0;
-  height: 100%;
-  background: var(--meadow-deep);
-  animation: stageCount var(--ms, 3000ms) linear forwards;
-}
-@keyframes stageCount {
-  to {
-    width: 100%;
-  }
-}
-
 .stage-note {
   margin-top: 0.5rem;
   font-family: var(--font-crt);
@@ -924,151 +909,133 @@ button.glass-badge:active {
   margin-top: 0.5rem;
 }
 
-.stage-dots {
-  display: inline-flex;
-  gap: 0.3rem;
-}
+/* ---- The dots, which are also the keys -----------------------------
+   At rest: two dots. Hover the pair and they become labelled keys —
+   `Flow` and `Demo` — with the one you are on lit. Move away and they
+   are dots again.
 
-/* ---- What is behind the dots ---------------------------------------
-   One panel for the pair, not one per dot. Hovering anywhere on the
-   dots opens both stages side by side, and the one you are already on
-   is marked — so it answers "which of these two am I choosing
-   between", which is the question the dots actually pose. Opening them
-   one at a time never showed that, because the comparison was never on
-   screen at once.
+   It is one pair of buttons wearing two faces, not two sets of
+   controls. A row of dots plus a row of buttons doing the same job
+   would be four tab stops for two choices; here the dot and the word
+   are both decoration inside a single button whose label never changes.
 
-   Pictures only. The two thumbnails are recognisable on sight — a
-   block diagram and a video frame do not look alike — so a word under
-   each was naming what the reader could already see, and dropping it
-   bought the pictures the room to be twice the size.
+   Two things stop the swap flickering:
 
-   Sharp corners — no radius at all, on the panel or the thumbnails.
-   A fully rounded capsule was tried first and would have been the only
-   round object on a site whose every corner is 2-3px; this went the
-   other way instead, and the right angles are what make it read as an
-   instrument readout rather than a tooltip.
+     - The group holds a fixed `min-height`, so growing from a 9px dot
+       to a 28px key never changes the row's height and never nudges the
+       stage above it.
+     - Growing *horizontally* is safe on its own: the pointer is inside
+       the dots when the swap fires and the keys are wider, so it stays
+       inside. A swap that made the target smaller would oscillate — this
+       one cannot.
 
-   The demo half is the point: a video otherwise costs an iframe to find
-   out anything about, and this answers whether advancing is worth it
-   for the price of a poster frame.
-
-   `:has(...:focus-visible)` rather than `:focus-within` — focus-within
-   also fires when a dot is *clicked*, which would pin the panel open
-   over the frame the reader just asked to see.
+   `:has(...:focus-visible)` rather than `:focus-within`, so clicking a
+   key does not pin the pair open in its expanded state.
    -------------------------------------------------------------------- */
 .stage-peek {
-  position: relative;
   display: inline-flex;
-}
-
-.stage-preview {
-  position: absolute;
-  bottom: calc(100% + 0.6rem);
-  left: 50%;
-  z-index: 5;
-  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  width: max-content;
-  max-width: min(24rem, calc(100vw - 2rem));
-  padding: 0.4rem;
-  border: 1px solid var(--case-edge);
-  /* Sharp. No radius anywhere in here, panel or thumbnails — this is
-     the one element on the page drawn with true right angles. */
-  border-radius: var(--r-md);
-  background: linear-gradient(180deg, #fffdf6, #f1ecdd);
+  /* The taller of the two states. Reserved always, so nothing moves. */
+  min-height: 1.85rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+/* Hovered, the group becomes the frame the keys sit in. */
+.stage-peek:hover,
+.stage-peek:has(.stage-key:focus-visible) {
+  border-color: var(--case-edge);
+  background: linear-gradient(180deg, #efeadb, #dcd6c0);
   box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 14px 30px -12px rgba(33, 64, 45, 0.55);
-  opacity: 0;
-  visibility: hidden;
-  translate: -50% 4px;
-  transition: opacity 0.14s ease, translate 0.14s ease, visibility 0.14s;
-  pointer-events: none;
-}
-.stage-peek:hover .stage-preview,
-.stage-peek:has(.stage-dot:focus-visible) .stage-preview {
-  opacity: 1;
-  visibility: visible;
-  translate: -50% 0;
+    inset 1px 1px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 0 rgba(74, 70, 52, 0.26);
 }
 
-.stage-preview::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
-  translate: -50% -0.28rem;
-  rotate: 45deg;
-  border-right: 1px solid var(--case-edge);
-  border-bottom: 1px solid var(--case-edge);
-  background: #f1ecdd;
-}
-
-.stage-preview .pv {
-  display: flex;
-  min-width: 0;
-}
-
-/* 16:9, matching the stage itself, so each thumbnail is a picture of
-   the frame rather than a differently-shaped crop of it. */
-.stage-preview .art {
-  flex: none;
-  display: flex;
+.stage-key {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  width: 7.5rem;
-  aspect-ratio: 16 / 9;
-  padding: 0.2rem;
-  border: 1px solid rgba(97, 112, 35, 0.28);
-  border-radius: var(--r-sm);
-  background: rgba(255, 253, 246, 0.85);
-  box-shadow: inset 0 1px 3px rgba(74, 70, 52, 0.18);
+  align-self: stretch;
+  padding: 0 0.2rem;
+  border-radius: calc(var(--r-sm) - 1px);
+  color: var(--muted-fg);
+  transition: padding 0.16s ease, color 0.14s ease, background 0.14s ease;
 }
-.stage-preview .art .schem-svg {
-  width: 100%;
-  height: auto;
+.stage-peek:hover .stage-key,
+.stage-peek:has(.stage-key:focus-visible) .stage-key {
+  padding: 0 0.8rem;
 }
-.stage-preview .poster {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--r-xs);
+.stage-peek:hover .stage-key + .stage-key,
+.stage-peek:has(.stage-key:focus-visible) .stage-key + .stage-key {
+  border-left: 1px solid var(--case-edge);
 }
-
-/* Which of the two you are on. With the labels gone this is the only
-   thing carrying that, so it is a lit border and a ring rather than the
-   hairline shift it was when a caption said it too. */
-.stage-preview .pv[data-on="true"] .art {
-  border-color: var(--meadow-deep);
-  box-shadow:
-    inset 0 1px 3px rgba(74, 70, 52, 0.18),
-    0 0 0 2px rgba(157, 165, 65, 0.45);
+.stage-key:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: -2px;
 }
 
-.stage-dot {
+/* ---- face one: the dot ---- */
+.stage-key .dot {
+  /* A flex item shrinks by default, and this one has no content to hold
+     it open — its size *is* its width and height. */
+  flex: none;
   width: 0.55rem;
   height: 0.55rem;
-  border: 0;
   border-radius: 999px;
   background: rgba(97, 112, 35, 0.28);
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: background 0.2s ease;
 }
-.stage-dot:hover {
-  background: rgba(97, 112, 35, 0.55);
-  transform: scale(1.15);
-}
-.stage-dot[data-on="true"] {
+.stage-key[data-on="true"] .dot {
   background: var(--meadow-deep);
   box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
 }
-.stage-dot:focus-visible {
-  outline: 2px solid var(--terracotta);
-  outline-offset: 2px;
+.stage-key:hover .dot {
+  background: rgba(97, 112, 35, 0.55);
+}
+
+/* ---- face two: the word ---- */
+.stage-key .txt {
+  display: none;
+  font-family: var(--font-crt);
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The swap itself. `display` rather than opacity, so the hidden face
+   takes no width — the keys have to size to the word alone, and a
+   zero-opacity dot sitting beside it would pad every key by 9px. */
+.stage-peek:hover .stage-key .dot,
+.stage-peek:has(.stage-key:focus-visible) .stage-key .dot {
+  display: none;
+}
+.stage-peek:hover .stage-key .txt,
+.stage-peek:has(.stage-key:focus-visible) .stage-key .txt {
+  display: block;
+}
+
+/* Where you are, in the expanded face. Cloud on --meadow-deep is 5.4:1. */
+.stage-peek:hover .stage-key[data-on="true"],
+.stage-peek:has(.stage-key:focus-visible) .stage-key[data-on="true"] {
+  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+  color: var(--cloud);
+}
+.stage-peek:hover .stage-key:not([data-on="true"]):hover {
+  color: var(--terracotta-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-peek,
+  .stage-key,
+  .stage-key .dot {
+    transition: none;
+  }
 }
 
 .schem-svg {
@@ -1219,7 +1186,6 @@ button.glass-badge:active {
   .proj-key,
   .stage,
   .stage-arrow,
-  .stage-dot,
   .fold-tab,
   .fold-tab::before {
     transition: none;
@@ -1227,22 +1193,11 @@ button.glass-badge:active {
   .fold-body > [role="tabpanel"]:not([hidden]) {
     animation: none;
   }
-  /* Nothing advances on its own, so nothing counts down. */
-  .stage-timer {
-    display: none;
-  }
   /* The deployed light stays on rather than pulsing. It still reads as
      lit against the dim pip of a source-only project, so nothing is
      lost but the movement. */
   .fold-tab .pip[data-on="true"] {
     animation: none;
-  }
-  /* The preview still opens, it just stops sliding. Removing it
-     outright would take away information, which is not what a motion
-     preference asks for. */
-  .stage-preview {
-    transition: none;
-    translate: -50% 0;
   }
   /* The swap is skipped in JS as well, so this is belt and braces. */
   .stage[data-swapping="true"] .stage-inner {
@@ -1855,29 +1810,61 @@ button.glass-badge:active {
   font-variant-numeric: tabular-nums;
 }
 
-.quest-active {
-  margin-left: 0.6rem;
-  padding: 0.05rem 0.35rem 0.08rem;
-  border: 1px solid rgba(97, 112, 35, 0.55);
-  border-radius: var(--r-sm);
-  color: var(--meadow-deep);
-  letter-spacing: 0.14em;
+/* A key, not a glyph. The dropdown was a VT323 `▾` — its weight, its
+   size and where it sat on the line were all whatever the bitmap face
+   decided, and it could not be squared up against anything else in the
+   row. This is a drawn plus that loses its upright stroke on open, in a
+   bevelled square that matches every other control on the site.
+
+   The `Active` chip that used to sit in the meta line is gone. The lit
+   node on the rail already says a role is current, and so do the dates
+   beside it.
+   -------------------------------------------------------------------- */
+.quest-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(97, 112, 35, 0.42);
+  border-radius: var(--r-xs);
+  background: rgba(255, 253, 246, 0.72);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.85);
+  color: var(--muted-fg);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
-.quest-caret {
-  flex: none;
-  margin-top: 0.55rem;
-  font-family: var(--font-crt);
-  font-size: 1.4rem;
-  line-height: 1;
-  color: var(--muted-fg);
-  transition: transform 0.25s ease, color 0.15s ease;
+.quest-toggle svg {
+  width: 0.7rem;
+  height: 0.7rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: square;
 }
-.quest-head:hover .quest-caret {
+
+/* Only the upright stroke moves. `transform-box: fill-box` so the
+   origin is the stroke's own centre and not the SVG viewport's. */
+.quest-toggle .bar {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+.quest-item[data-open="true"] .quest-toggle .bar {
+  transform: scaleY(0);
+}
+
+.quest-head:hover .quest-toggle {
+  border-color: rgba(181, 86, 24, 0.6);
   color: var(--terracotta-ink);
 }
-.quest-item[data-open="true"] .quest-caret {
-  transform: rotate(180deg);
+/* Open reads as pressed: the key fills and the bevel inverts. */
+.quest-item[data-open="true"] .quest-toggle {
+  border-color: rgba(48, 58, 14, 0.7);
+  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.28);
+  color: var(--cloud);
 }
 
 .quest-body {
@@ -1901,7 +1888,8 @@ button.glass-badge:active {
 
 @media (prefers-reduced-motion: reduce) {
   .quest-body,
-  .quest-caret {
+  .quest-toggle,
+  .quest-toggle .bar {
     transition: none;
   }
 }

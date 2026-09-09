@@ -39,7 +39,11 @@ const experiences = [
 ];
 
 /* A role that has not ended yet, read off the period rather than stored
-   separately so it cannot contradict the dates printed beside it. */
+   separately so it cannot contradict the dates printed beside it.
+
+   This drives the lit node on the rail, and nothing else. There used to
+   be an 'Active' chip in the meta line saying the same thing a few
+   pixels away from the dates that already said it. */
 function isCurrent(period: string): boolean {
   return /present|current/i.test(period);
 }
@@ -89,12 +93,20 @@ export default function Experience() {
                       <span className="date">{item.period}</span>
                       <span aria-hidden="true"> · </span>
                       {item.location}
-                      {current && <span className="quest-active">Active</span>}
                     </span>
                   </span>
 
-                  <span className="quest-caret" aria-hidden="true">
-                    ▾
+                  {/* A plus that becomes a minus: the upright stroke
+                      collapses on open. Drawn rather than typed — the
+                      caret was a VT323 glyph, so its weight and its
+                      position on the line were whatever the face
+                      decided, and it could not be aligned with anything
+                      around it. */}
+                  <span className="quest-toggle" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" focusable="false">
+                      <path d="M3.5 8h9" />
+                      <path className="bar" d="M8 3.5v9" />
+                    </svg>
                   </span>
                 </button>
 

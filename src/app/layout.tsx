@@ -45,10 +45,6 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${amarante.variable} ${plexMono.variable} ${vt323.variable} h-full antialiased`}
     >
-      <head>
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css" />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {/* Renders nothing. Attaches the one delegated listener that
             gives every button and link on the site its click. */}

@@ -186,11 +186,23 @@ nothing. Three cases:
 
 All three clear `paused`, so a countdown is armed every time.
 
-### It arms again every time the diagram runs
+### It runs once per folder, and only once
 
-`paused` cancels the countdown **in flight**, not the feature. Going back to the diagram, or
-clicking the folder's own name tag, starts the animation over and arms a fresh countdown — so
-the swap follows the pipeline every time the pipeline runs, not only the first time.
+The jump to the demo is an **introduction, not a behaviour**. Each folder makes it the first
+time it is open and on screen; after that it never fires again for that folder, however many
+times the diagram is replayed.
+
+It used to re-arm on every run, and that was wrong in a specific way: a diagram you had gone
+*back* to in order to read would take itself away again while you were still reading it. The
+one thing the reader had just asked for was the one thing the countdown then undid.
+
+`introduced` is a `useRef<Set<string>>` keyed by project title — a ref because writing it must
+not re-render and nothing on screen derives from it. A title is added **before** the timer is
+set rather than inside it, so a countdown that gets cancelled still counts as the
+introduction having been offered; otherwise leaving the folder and coming back would arm it
+again, which is the thing being fixed.
+
+`paused` still cancels a countdown in flight — it just has nothing to re-arm afterwards.
 
 There was a `Run` key beside `Source` and `Launch` for this. It was removed: clicking the open
 folder's tag already replays the diagram (`open()` has no `i === active` early return, which is
@@ -219,15 +231,15 @@ Papyrus runs for about 2s, so its sequence lands at about **3 seconds**.
 Advancing mounts the player; it does not start it. `autoplay` is deliberately absent from
 the iframe's `allow` list, so arriving at stage 2 can never make noise on its own.
 
-### The countdown is visible
+### The countdown is not visible
 
-A thin progress line runs under the stage while an advance is pending. It exists only while
-a countdown is actually armed, so it vanishes the instant the reader interacts — which makes
-the "hover and it stops" behaviour discoverable rather than something you notice by
-accident. An advance you can see coming and cancel is a different thing from one that
-happens to you.
+There was a thin progress line under the stage while an advance was pending. It is gone,
+along with `.stage-timer` and the `stageCount` keyframes.
 
-It is `aria-hidden`: the `sr-only` live region in the nav already announces the change.
+It was earning its place when the advance fired on every run — a thing that happens to you
+repeatedly needs to be something you can see coming and stop. Now that it happens **once per
+folder**, a permanent bar advertising a one-time event is more chrome than the event is
+worth, and the `sr-only` live region still announces the change either way.
 
 ### No reel yet
 
@@ -269,11 +281,23 @@ keyboard. So the arrows are also:
 Without both, the only route to the demo on touch would be to wait out the auto-advance, and
 with a keyboard there would be none at all.
 
-### It arms again every time the diagram runs
+### It runs once per folder, and only once
 
-`paused` cancels the countdown **in flight**, not the feature. Going back to the diagram, or
-clicking the folder's own name tag, starts the animation over and arms a fresh countdown — so
-the swap follows the pipeline every time the pipeline runs, not only the first time.
+The jump to the demo is an **introduction, not a behaviour**. Each folder makes it the first
+time it is open and on screen; after that it never fires again for that folder, however many
+times the diagram is replayed.
+
+It used to re-arm on every run, and that was wrong in a specific way: a diagram you had gone
+*back* to in order to read would take itself away again while you were still reading it. The
+one thing the reader had just asked for was the one thing the countdown then undid.
+
+`introduced` is a `useRef<Set<string>>` keyed by project title — a ref because writing it must
+not re-render and nothing on screen derives from it. A title is added **before** the timer is
+set rather than inside it, so a countdown that gets cancelled still counts as the
+introduction having been offered; otherwise leaving the folder and coming back would arm it
+again, which is the thing being fixed.
+
+`paused` still cancels a countdown in flight — it just has nothing to re-arm afterwards.
 
 There was a `Run` key beside `Source` and `Launch` for this. It was removed: clicking the open
 folder's tag already replays the diagram (`open()` has no `i === active` early return, which is
@@ -302,15 +326,15 @@ Papyrus runs for about 2s, so its sequence lands at about **3 seconds**.
 Advancing mounts the player; it does not start it. `autoplay` is deliberately absent from
 the iframe's `allow` list, so arriving at stage 2 can never make noise on its own.
 
-### The countdown is visible
+### The countdown is not visible
 
-A thin progress line runs under the stage while an advance is pending. It exists only while
-a countdown is actually armed, so it vanishes the instant the reader interacts — which makes
-the "hover and it stops" behaviour discoverable rather than something you notice by
-accident. An advance you can see coming and cancel is a different thing from one that
-happens to you.
+There was a thin progress line under the stage while an advance was pending. It is gone,
+along with `.stage-timer` and the `stageCount` keyframes.
 
-It is `aria-hidden`: the `sr-only` live region in the nav already announces the change.
+It was earning its place when the advance fired on every run — a thing that happens to you
+repeatedly needs to be something you can see coming and stop. Now that it happens **once per
+folder**, a permanent bar advertising a one-time event is more chrome than the event is
+worth, and the `sr-only` live region still announces the change either way.
 
 ### No reel yet
 
@@ -363,35 +387,40 @@ look like it had stopped early. The `9rem` basis is the point below which two wi
 side by side: on a narrow column they wrap and each takes the full width instead of being
 squeezed. Labels are centred, because the label is no longer the width of the key.
 
-### The dots preview what is behind them
+### The dots, which are also the keys
 
-Hovering the dots opens **one panel showing both stages side by side**: a still copy of the
-schematic, and the demo's **poster frame** pulled from `img.youtube.com`.
+At rest the stage nav is two dots. Hover the pair and they **become labelled keys** — `Flow`
+and `Demo` — with the one you are on filled in `--meadow-deep` (cloud-white, 5.4:1). Move away
+and they are dots again.
 
-One panel, not one card per dot. Opening them individually put each thumbnail on screen
-alone, which never answered the question the dots actually pose — *which of these two am I
-choosing between*. Seeing them together does.
+**One pair of buttons wearing two faces, not two sets of controls.** A row of dots plus a row
+of buttons doing the same job would be four tab stops for two choices, and a keyboard reader
+would meet each destination twice. The dot and the word are both `aria-hidden` decoration
+inside a single button whose `aria-label` never changes, so the swap alters appearance and
+nothing else.
 
-**Pictures only, square corners.** Two shapes were tried and dropped:
+Two things stop it flickering:
 
-- **The captions.** A block diagram and a video frame do not look alike, so a word under each
-  was naming what the reader could already see. Dropping them bought the pictures room to be
-  half again as large (`7.5rem` a side). The full stage names stay on the dots'
-  `aria-label`s, which is where they were doing real work.
-- **A rounded capsule.** It would have been the only fully round object on a site whose every
-  corner is 2-3px. It went the other way instead: **no radius at all**, on the panel or the
-  thumbnails. The right angles are what make it read as an instrument readout rather than a
-  tooltip, and it is the one element on the page drawn with true corners.
+- **The group reserves a fixed `min-height`** (1.85rem, the taller state). Growing from a 9px
+  dot to a 28px key would otherwise change the row height and nudge the stage above it.
+- **Growing horizontally is safe on its own.** The pointer is inside the dots when the swap
+  fires and the keys are wider, so it stays inside. A swap that made the target *smaller*
+  would oscillate; this one cannot.
 
-With the labels gone, the lit border on a thumbnail is the *only* thing saying which stage
-you are on, so it carries more weight than it did when a caption said it too: a
-`--meadow-deep` border plus a ring rather than a hairline shift.
+The faces swap with `display`, not opacity: a zero-opacity dot still takes its 9px, so every
+key would carry that as invisible padding.
 
-Focus opens it as well as hover — a preview only a mouse can reach is a preview half the
-readers never get. The selector is `:has(.stage-dot:focus-visible)` rather than
-`:focus-within`, because focus-within also fires when a dot is *clicked*, which would pin the
-card open over the very frame the reader just asked to see. Under `prefers-reduced-motion` it still opens — it just stops sliding;
-removing it would take away information, which is not what a motion preference asks for.
+Focus opens the expanded face too, via `:has(.stage-key:focus-visible)` rather than
+`:focus-within` — focus-within also fires on click, which would pin the pair open in its
+expanded state after every press.
+
+An earlier version made this a hover panel of thumbnails (a still `Schematic` beside the
+demo's YouTube poster). Good pictures, but they made the reader hover *and then look* to work
+out what a dot did.
+
+> `Schematic`'s `still` prop is left over from that: it rendered the non-animating thumbnail
+> and nothing uses it now. It stays, as does the `useId()` marker-id fix that shipped with it —
+> that one fixed a real collision and is load-bearing regardless.
 
 ### The description is justified
 

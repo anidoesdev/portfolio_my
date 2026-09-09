@@ -21,11 +21,6 @@ const achievements: Achievement[] = [
     scope: "All India",
     detail: "Data Science and Artificial Intelligence (DA)",
   },
-  {
-    label: "Agents Course",
-    issuer: "Hugging Face",
-    detail: "Completed",
-  },
 ];
 
 /* Thousands separators, done by hand. `toLocaleString()` reads the

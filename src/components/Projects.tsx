@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import Image from "next/image";
 import Schematic, { runDuration } from "./Schematic";
 import { ARCHITECTURES, DRAFT } from "./architectures";
 
@@ -95,14 +94,6 @@ function getEmbedUrl(url: string): string {
     : url;
 }
 
-/* mqdefault is 320x180 — exactly 16:9, and the smallest frame YouTube
-   serves that is not letterboxed. The host is whitelisted in
-   next.config.ts. */
-function getPosterUrl(url: string): string | null {
-  const id = getVideoId(url);
-  return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
-}
-
 /* Counted from the data rather than written down, so the lede cannot
    drift out of step when a project is added. */
 const TOTAL = productionProjects.length;
@@ -129,6 +120,9 @@ const SWAP_MS = 380;
 
 /* What each dot goes to, in order. Also the accessible names for them. */
 const STAGES = ["architecture diagram", "demo video"];
+/* What the hover readout says. The long names above stay on the dots'
+   aria-labels, where there is no width to run out of. */
+const STAGE_KEYS = ["Flow", "Demo"];
 
 function pad(n: number): string {
   return String(n).padStart(2, "0");
@@ -166,6 +160,16 @@ export default function Projects() {
   const swappingRef = useRef(false);
   const stageRef = useRef(0);
   const [inView, setInView] = useState(false);
+  /* Which folders have already shown themselves off. The jump to the
+     demo is an introduction, not a behaviour: it happens once per
+     folder, the first time that folder is open and on screen, and after
+     that the reader drives. It used to re-arm on every run, which meant
+     a diagram you had gone back to in order to read would take itself
+     away again while you were still reading it.
+
+     A ref, not state: writing it must not re-render, and nothing on
+     screen is derived from it. */
+  const introduced = useRef<Set<string>>(new Set());
   const baseId = useId();
 
   /* The auto-advance is gated on the folder actually being on screen.
@@ -243,20 +247,28 @@ export default function Projects() {
     };
   }, []);
 
+  /* The animation's own length plus a pause, so a deeper pipeline gets
+     proportionally longer rather than being cut off by a fixed clock.
+     Papyrus lands at about 3 seconds. */
   const countdownMs = currentDiagram ? (runDuration(currentDiagram) + HOLD) * 1000 : 0;
-  /* Whether a countdown is running right now. Drives the progress line
-     under the stage, so the advance is something you can see coming and
-     stop, rather than something that happens to you. */
-  const counting = !paused && stage === 0 && inView && currentReel && Boolean(currentDiagram);
 
   useEffect(() => {
     if (paused || stage !== 0 || !inView || !currentReel || !currentDiagram) return;
     /* Never move content on its own for anyone who asked for less motion. */
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const title = productionProjects[active].title;
+    /* Once per folder. Marked before the timer is set rather than inside
+       it, so a countdown that gets cancelled still counts as the
+       introduction having been offered — otherwise leaving the folder
+       and coming back would arm it again, which is the thing being
+       fixed. */
+    if (introduced.current.has(title)) return;
+    introduced.current.add(title);
+
     const t = window.setTimeout(() => swapTo(1), countdownMs);
     return () => window.clearTimeout(t);
-  }, [paused, stage, inView, currentReel, currentDiagram, countdownMs, swapTo]);
+  }, [paused, stage, inView, active, currentReel, currentDiagram, countdownMs, swapTo]);
 
   const tabId = (i: number) => `${baseId}-tab-${i}`;
   const panelId = (i: number) => `${baseId}-panel-${i}`;
@@ -269,9 +281,10 @@ export default function Projects() {
      the click, so it should not need a second one. Stage and hold both
      reset: a freshly opened folder starts at its diagram and is free to
      advance again. */
-  /* Clicking a name tag always restarts that folder's sequence: the
-     diagram runs from the beginning and a fresh countdown is armed, so
-     the jump to the demo follows every click and not only the first.
+  /* Clicking a name tag replays that folder's diagram from the start.
+     It does *not* re-arm the jump to the demo — that runs once per
+     folder and is not on offer again, so a replay is a replay and
+     nothing takes the diagram away mid-read.
 
      There is deliberately no `i === active` early return. Clicking the
      folder you are already in is a request to play it again, and
@@ -315,10 +328,10 @@ export default function Projects() {
   }
 
   function goStage(next: number, direction?: number) {
-    /* Returning to the diagram restarts its animation, so it arms a new
-       countdown — that is what makes the swap follow every run rather
-       than only the first. Going the other way there is nothing left to
-       count down to. */
+    /* Reaching the demo by hand ends the countdown for good; going back
+       to the diagram lifts the pause, but the once-per-folder gate means
+       nothing re-arms. `paused` now only cancels a countdown that is
+       actually in flight. */
     setPaused(next === 1);
     swapTo(next, direction);
   }
@@ -414,7 +427,6 @@ export default function Projects() {
           {productionProjects.map((p, i) => {
             const live = isLive(p.liveUrl);
             const reel = hasDemo(p.youtubeUrl);
-            const poster = p.youtubeUrl ? getPosterUrl(p.youtubeUrl) : null;
             const diagram = ARCHITECTURES[p.title];
             const onDemo = i === active && stage === 1;
 
@@ -579,72 +591,46 @@ export default function Projects() {
                         )}
                       </div>
 
-                      {/* The progress line only exists while a countdown is
-                          actually running, so it disappears the instant the
-                          reader takes over. */}
-                      {i === active && counting && (
-                        <div className="stage-timer" aria-hidden="true">
-                          <i style={{ ["--ms" as string]: `${countdownMs}ms` }} />
-                        </div>
-                      )}
-
                       {/* A two-step nav on a one-step folder is two dead
                           controls. Projects without a reel say so instead. */}
                       {reel ? (
                       <div className="stage-nav">
-                          {/* One panel for the pair, not one per dot.
-                              Both stages side by side is the comparison
-                              a reader actually wants — "which of these
-                              two am I choosing between" — and opening
-                              them one at a time never showed it.
+                          {/* One pair of buttons wearing two faces. At
+                              rest they are dots; hovering the group
+                              turns them into labelled keys, and moving
+                              off turns them back.
 
-                              aria-hidden: the dots already name their
-                              stages, and a screen reader gains nothing
-                              from a second copy of the diagram it has
-                              just had described to it. */}
+                              Deliberately not two sets of controls. A
+                              row of dots plus a row of buttons doing the
+                              same thing would be four tab stops for two
+                              choices, and a keyboard reader would meet
+                              each destination twice. The dot and the
+                              word are both `aria-hidden` decoration
+                              inside one button whose `aria-label` never
+                              changes, so what the swap alters is
+                              appearance and nothing else. */}
                           <span className="stage-peek">
-                            <span className="stage-dots">
-                              {STAGES.map((label, n) => {
-                                const here = (onDemo ? 1 : 0) === n;
-                                return (
-                                  <button
-                                    key={label}
-                                    type="button"
-                                    className="stage-dot"
-                                    data-on={here}
-                                    aria-current={here ? "true" : undefined}
-                                    aria-label={`Show the ${label}`}
-                                    onClick={() => !here && goStage(n)}
-                                  />
-                                );
-                              })}
-                            </span>
-
-                            <span className="stage-preview" aria-hidden="true">
-                              {STAGES.map((label, n) => {
-                                const here = (onDemo ? 1 : 0) === n;
-                                return (
-                                  <span key={label} className="pv" data-on={here}>
-                                    <span className="art">
-                                      {n === 0 ? (
-                                        <Schematic diagram={diagram} still />
-                                      ) : (
-                                        poster && (
-                                          <Image
-                                            src={poster}
-                                            alt=""
-                                            width={320}
-                                            height={180}
-                                            className="poster"
-                                          />
-                                        )
-                                      )}
-                                    </span>
+                            {STAGES.map((label, n) => {
+                              const here = (onDemo ? 1 : 0) === n;
+                              return (
+                                <button
+                                  key={label}
+                                  type="button"
+                                  className="stage-key"
+                                  data-on={here}
+                                  aria-current={here ? "true" : undefined}
+                                  aria-label={`Show the ${label}`}
+                                  onClick={() => !here && goStage(n)}
+                                >
+                                  <span className="dot" aria-hidden="true" />
+                                  <span className="txt" aria-hidden="true">
+                                    {STAGE_KEYS[n]}
                                   </span>
-                                );
-                              })}
-                            </span>
+                                </button>
+                              );
+                            })}
                           </span>
+
                           <span className="sr-only" aria-live="polite">
                             Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}
                           </span>
