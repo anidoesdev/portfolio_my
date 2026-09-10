@@ -19,8 +19,10 @@ export default async function Contributions() {
           <h2 className="section-heading">GitHub Activity</h2>
         </div>
 
-        <div className="glass-card p-6 overflow-x-auto">
-          <ContributionGraph username={USERNAME} />
+        <div className="glass-card contrib-card">
+          <div className="contrib-scroll">
+            <ContributionGraph username={USERNAME} />
+          </div>
         </div>
 
         {/* Dropped entirely when the fetch failed or came back empty —

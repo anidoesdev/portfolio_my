@@ -1,11 +1,11 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const experiences = [
   {
     period: "June 2026 - August 2026",
-    title: "Web Developer",
+    title: "Full Stack Engineer",
     org: "WREN",
     location: "United Kingdom · Remote · Full-time",
     details: [
@@ -38,20 +38,94 @@ const experiences = [
         "Conducted rigorous model evaluation, hyperparameter optimization, and ablation studies, establishing highly reliable baselines and improving overall inference accuracy by 18% for downstream analytical tasks.",
     ],
   },
+  {
+    period: "Jul 2025 - Dec 2025",
+    title: "Full Stack Engineer",
+    org: "TripHexa",
+    location: "Remote · Full-time",
+    details: [
+        "Took the product from zero to a working MVP in 3 months, owning the organizer dashboard, data model, and deployment pipeline.",
+        "Designed a Trip Template + Cohorts data model enabling organizers to manage dozens of departures, prices, and occupancies per template with zero data duplication.",
+        "Built a custom abstraction layer over Firebase/Firestore providing ACID-like transactional guarantees and schema validation on a NoSQL store (no ORM available).",
+        "Shipped lead capture, booking, and payment flows that replaced manual spreadsheet workflows and readied the product for Razorpay and WhatsApp integrations.",
+        "Built a reusable Next.js + Tailwind component library, cutting new dashboard view delivery from days to hours.",
+    ],
+  },
 ];
 
 /* A role that has not ended yet, read off the period rather than stored
    separately so it cannot contradict the dates printed beside it.
 
-   This drives the lit node on the rail, and nothing else. There used to
-   be an 'Active' chip in the meta line saying the same thing a few
-   pixels away from the dates that already said it. */
+   There used to be an 'Active' chip in the meta line saying the same
+   thing a few pixels away from the dates that already said it. */
 function isCurrent(period: string): boolean {
   return /present|current/i.test(period);
 }
 
+/* How long after a role ends it still counts as live. */
+const RECENT_MONTHS = 2;
+
+const MONTHS = [
+  "jan", "feb", "mar", "apr", "may", "jun",
+  "jul", "aug", "sep", "oct", "nov", "dec",
+];
+
+/* The closing date of a period string, as a timestamp — read off the
+   same human text that is printed beside it ("Dec 2025 - May 2026"),
+   for the reason isCurrent() is: a separate machine-readable field is
+   one more thing that can drift out of agreement with the dates on
+   screen.
+
+   The period names a month, not a day, so this returns the *last*
+   moment of that month: a role listed as ending "August 2026" was
+   still running on the 31st. Null when the tail is not a month and a
+   year — "Present" lands here, and isCurrent() has already caught it. */
+function periodEnd(period: string): number | null {
+  const tail = period.split(/[-–—]/).pop()?.trim() ?? "";
+  const parsed = /^([A-Za-z]+)\s+(\d{4})$/.exec(tail);
+  if (!parsed) return null;
+
+  const month = MONTHS.indexOf(parsed[1].slice(0, 3).toLowerCase());
+  if (month < 0) return null;
+
+  /* Day 0 of the following month is the last day of this one, and the
+     Date constructor rolls month 12 over into the next January on its
+     own, so December needs no special case. */
+  return new Date(Number(parsed[2]), month + 1, 0, 23, 59, 59, 999).getTime();
+}
+
+/* Live = still running, or finished inside the last RECENT_MONTHS.
+
+   Both collapse into one comparison: an end date at or past the cutoff
+   covers the recently-finished roles, and also covers a role whose
+   listed end is still in the future, which is running now whatever the
+   period text says. */
+function isLive(period: string, now: number): boolean {
+  if (isCurrent(period)) return true;
+
+  const end = periodEnd(period);
+  if (end === null) return false;
+
+  const cutoff = new Date(now);
+  cutoff.setMonth(cutoff.getMonth() - RECENT_MONTHS);
+  return end >= cutoff.getTime();
+}
+
 export default function Experience() {
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  /* Null until mounted, so the server renders the one thing that cannot
+     disagree with the client: the roles whose period says "Present".
+     This page is prerendered and revalidates hourly, so its HTML can be
+     up to an hour older than the browser reading it — and a build from
+     the far side of a month boundary would otherwise light a different
+     set of nodes than hydration does. The recently-finished roles join
+     in on the first client render instead. */
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setNow(Date.now()), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
     <section id="experience" className="py-24 px-6 section-divider band-sky">
@@ -71,10 +145,10 @@ export default function Experience() {
         <ol className="quest">
           {experiences.map((item) => {
             const isOpen = expanded === item.org;
-            const current = isCurrent(item.period);
+            const live = now === null ? isCurrent(item.period) : isLive(item.period, now);
 
             return (
-              <li key={item.org} className="quest-item" data-open={isOpen} data-current={current}>
+              <li key={item.org} className="quest-item" data-open={isOpen} data-live={live}>
                 <span className="quest-node" aria-hidden="true" />
 
                 <button

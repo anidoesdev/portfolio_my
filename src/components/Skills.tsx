@@ -92,8 +92,6 @@ export default function Skills() {
           ))}
         </dl>
 
-        <p className="spec-foot">{TOTAL} entries · no duplicates</p>
-
       </div>
     </section>
   );

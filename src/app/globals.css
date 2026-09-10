@@ -6,35 +6,35 @@
    ============================================================ */
 :root {
   /* Raw palette */
-  --paper:       #faf7ea;
-  --paper-warm:  #f1edda;
+  --paper:       #f4ead6;
+  --paper-warm:  #ecdfc2;
   --cloud:       #fffdf6;
 
-  --sky-pale:    #e1f2f4;
-  --sky:         #90ccd5;
-  --sky-deep:    #4496a6;
+  --sky-pale:    #dfeef7;
+  --sky:         #7fc0dd;
+  --sky-deep:    #2e7397;
 
-  --meadow-pale: #eff2d9;
-  --meadow:      #9da541;
-  --meadow-deep: #617023;
-  --forest:      #21402d;
+  --meadow-pale: #e9efd8;
+  --meadow:      #9fbc55;
+  --meadow-deep: #4d7526;
+  --forest:      #274a30;
 
-  --stone:       #b8a97e;
-  --terracotta:  #b55618;
+  --stone:       #cbbda6;
+  --terracotta:  #b3714a;
   /* Small 11px eyebrow text needs more contrast than the roof colour
      itself can carry on the band tints — this is that same hue, darkened
      just enough to clear WCAG AA. */
-  --terracotta-ink: #9e4c15;
-  --poppy:       #d56138;
-  --sun:         #e8cf43;
+  --terracotta-ink: #85492a;
+  --poppy:       #c9756a;
+  --sun:         #e3c35d;
 
   /* Semantic tokens */
   --background:  var(--paper);
   --foreground:  var(--forest);
   --card:        rgba(255, 253, 246, 0.72);
   --muted:       var(--stone);
-  --muted-fg:    #4f6147;
-  --border:      rgba(97, 112, 35, 0.24);
+  --muted-fg:    #4c5b46;
+  --border:      rgba(77, 117, 38, 0.24);
   --primary:     var(--meadow-deep);
   --accent:      var(--terracotta);
   /* Corner radii, as one scale rather than a literal per rule. The site
@@ -79,9 +79,9 @@
 body {
   background-color: var(--paper);
   background-image:
-    radial-gradient(1100px 620px at 12% 0%, rgba(68, 150, 166, 0.16), transparent 62%),
-    radial-gradient(1000px 700px at 88% 38%, rgba(157, 165, 65, 0.17), transparent 66%),
-    radial-gradient(900px 560px at 50% 100%, rgba(232, 207, 67, 0.16), transparent 62%);
+    radial-gradient(1100px 620px at 12% 0%, rgba(46, 115, 151, 0.16), transparent 62%),
+    radial-gradient(1000px 700px at 88% 38%, rgba(159, 188, 85, 0.17), transparent 66%),
+    radial-gradient(900px 560px at 50% 100%, rgba(227, 195, 93, 0.16), transparent 62%);
   background-repeat: no-repeat;
   color: var(--foreground);
   font-family: var(--font-mono);
@@ -171,45 +171,45 @@ body::-webkit-scrollbar {
   border-radius: var(--r-md);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.85),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.24),
-    0 2px 0 rgba(74, 70, 52, 0.18),
-    0 14px 26px -18px rgba(33, 64, 45, 0.4);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.24),
+    0 2px 0 rgba(82, 72, 58, 0.18),
+    0 14px 26px -18px rgba(39, 74, 48, 0.4);
 }
 
 .card-hover {
   transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  border-color: rgba(181, 86, 24, 0.6);
+  border-color: rgba(179, 113, 74, 0.6);
   transform: translateY(-2px);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.95),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 4px 0 rgba(74, 70, 52, 0.18),
-    0 18px 30px -18px rgba(33, 64, 45, 0.45);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.22),
+    0 4px 0 rgba(82, 72, 58, 0.18),
+    0 18px 30px -18px rgba(39, 74, 48, 0.45);
 }
 
 /* A key cap */
 .glass-badge {
-  background: linear-gradient(180deg, #efeadb, #dcd6c0);
+  background: linear-gradient(180deg, #f3e8d1, #e2d5b7);
   border: 1px solid var(--case-edge);
   border-radius: var(--r-sm);
   color: var(--muted-fg);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.85),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.28);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.28);
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 a.glass-badge:hover,
 button.glass-badge:hover {
-  border-color: rgba(181, 86, 24, 0.6);
+  border-color: rgba(179, 113, 74, 0.6);
   color: var(--terracotta-ink);
 }
 a.glass-badge:active,
 button.glass-badge:active {
   box-shadow:
     inset -1px -1px 0 rgba(255, 255, 255, 0.6),
-    inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+    inset 1px 1px 0 rgba(82, 72, 58, 0.3);
 }
 
 /* ------------------------------------------------------------
@@ -229,7 +229,7 @@ button.glass-badge:active {
 }
 
 #hero .eyebrow {
-  color: #f7e7bd;
+  color: #f2e2b8;
 }
 #hero .eyebrow::before {
   background: linear-gradient(90deg, var(--sun), rgba(255, 253, 246, 0.55));
@@ -252,7 +252,7 @@ button.glass-badge:active {
   font-size: 0.6875rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #f7e7bd;
+  color: #f2e2b8;
 }
 
 .slate-name {
@@ -325,8 +325,8 @@ button.glass-badge:active {
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 .slate-row dd a:hover {
-  color: #e6ecb4;
-  border-bottom-color: #e6ecb4;
+  color: #dbe7a8;
+  border-bottom-color: #dbe7a8;
 }
 .slate-row dd a:focus-visible {
   outline: 2px solid var(--sun);
@@ -398,7 +398,7 @@ button.glass-badge:active {
    Spec and tuning notes: src/components/Projects.design.md
    ------------------------------------------------------------ */
 :root {
-  --case-edge: rgba(74, 70, 52, 0.42);
+  --case-edge: rgba(82, 72, 58, 0.42);
 
   /* One per project, used for the row's index chip and its rule. */
   --label-a: var(--terracotta);
@@ -433,7 +433,7 @@ button.glass-badge:active {
    -------------------------------------------------------------------- */
 .spec {
   max-width: 54rem;
-  border-top: 1px solid rgba(97, 112, 35, 0.26);
+  border-top: 1px solid rgba(77, 117, 38, 0.26);
 }
 
 .spec-row {
@@ -441,7 +441,7 @@ button.glass-badge:active {
   grid-template-columns: 1fr;
   gap: 0.3rem;
   padding: 1.05rem 0;
-  border-bottom: 1px solid rgba(97, 112, 35, 0.18);
+  border-bottom: 1px solid rgba(77, 117, 38, 0.18);
 }
 @media (min-width: 640px) {
   .spec-row {
@@ -487,7 +487,7 @@ button.glass-badge:active {
 .spec-def li + li::before {
   content: "·";
   margin: 0 0.55rem;
-  color: rgba(97, 112, 35, 0.55);
+  color: rgba(77, 117, 38, 0.55);
 }
 
 .spec-foot {
@@ -540,7 +540,7 @@ button.glass-badge:active {
      tab-s 14px ones. Clipping makes them concentric by construction, at
      any radius. */
   overflow: hidden;
-  background: linear-gradient(180deg, #e7e2d2, #d5d0bc);
+  background: linear-gradient(180deg, #ebdfc7, #dacdb0);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   font-family: var(--font-crt);
   font-size: 1.0625rem;
@@ -566,7 +566,7 @@ button.glass-badge:active {
 }
 
 .fold-tab:hover {
-  background: linear-gradient(180deg, #efeadb, #ddd8c4);
+  background: linear-gradient(180deg, #f3e8d1, #ddd8c4);
   color: var(--terracotta-ink);
 }
 
@@ -593,7 +593,7 @@ button.glass-badge:active {
   height: 0.4rem;
   border-radius: 999px;
   background: var(--meadow-deep);
-  box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
+  box-shadow: 0 0 4px rgba(159, 188, 85, 0.7);
 }
 /* A deployed project's tab has a light on. It breathes rather than
    strobes: one cycle every 1.6s, nowhere near the three-per-second
@@ -604,18 +604,18 @@ button.glass-badge:active {
   animation: pipBlink 1.6s ease-in-out infinite;
 }
 .fold-tab .pip[data-on="false"] {
-  background: rgba(97, 112, 35, 0.28);
+  background: rgba(77, 117, 38, 0.28);
   box-shadow: none;
 }
 
 @keyframes pipBlink {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 4px rgba(157, 165, 65, 0.7);
+    box-shadow: 0 0 4px rgba(159, 188, 85, 0.7);
   }
   50% {
     opacity: 0.35;
-    box-shadow: 0 0 1px rgba(157, 165, 65, 0.3);
+    box-shadow: 0 0 1px rgba(159, 188, 85, 0.3);
   }
 }
 
@@ -631,12 +631,12 @@ button.glass-badge:active {
 .fold-body {
   border: 1px solid var(--case-edge);
   border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg);
-  background: linear-gradient(180deg, #fffdf6, #f3efe1);
+  background: linear-gradient(180deg, #fffdf6, #f6edda);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 2px 0 rgba(74, 70, 52, 0.18),
-    0 18px 32px -22px rgba(33, 64, 45, 0.4);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.22),
+    0 2px 0 rgba(82, 72, 58, 0.18),
+    0 18px 32px -22px rgba(39, 74, 48, 0.4);
 }
 
 @keyframes foldOpen {
@@ -721,7 +721,7 @@ button.glass-badge:active {
 }
 .proj-tag {
   padding: 0.06rem 0.4rem 0.1rem;
-  border: 1px solid rgba(97, 112, 35, 0.3);
+  border: 1px solid rgba(77, 117, 38, 0.3);
   border-radius: var(--r-sm);
   background: rgba(255, 253, 246, 0.75);
   font-family: var(--font-crt);
@@ -760,10 +760,10 @@ button.glass-badge:active {
   padding: 0.5rem 0.9rem 0.55rem;
   border: 1px solid var(--case-edge);
   border-radius: var(--r-sm);
-  background: linear-gradient(180deg, #efeadb, #dcd6c0);
+  background: linear-gradient(180deg, #f3e8d1, #e2d5b7);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.26);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.26);
   font-family: var(--font-crt);
   font-size: 1.0625rem;
   letter-spacing: 0.08em;
@@ -779,7 +779,7 @@ button.glass-badge:active {
 .proj-key:active {
   box-shadow:
     inset -1px -1px 0 rgba(255, 255, 255, 0.7),
-    inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+    inset 1px 1px 0 rgba(82, 72, 58, 0.3);
 }
 
 /* Straight segments, square caps, no curves — the same hand that drew
@@ -805,21 +805,21 @@ button.glass-badge:active {
    *darker* downward, never lighter: cloud-white on --meadow-deep clears
    AA at 5.4, and a lighter top would drop it under 4.5. */
 .proj-key[data-lit="true"] {
-  border-color: rgba(48, 58, 14, 0.75);
-  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
+  border-color: rgba(38, 58, 19, 0.75);
+  background: linear-gradient(180deg, var(--meadow-deep), #3d6a1e);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.26),
     inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-    0 2px 0 rgba(48, 58, 14, 0.55);
+    0 2px 0 rgba(38, 58, 19, 0.55);
   color: var(--cloud);
 }
 .proj-key[data-lit="true"]:hover {
-  background: linear-gradient(180deg, var(--terracotta), #8e4212);
-  border-color: rgba(120, 55, 12, 0.8);
+  background: linear-gradient(180deg, var(--terracotta), #74452a);
+  border-color: rgba(116, 68, 41, 0.8);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.28),
     inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-    0 2px 0 rgba(120, 55, 12, 0.6);
+    0 2px 0 rgba(116, 68, 41, 0.6);
   color: var(--cloud);
 }
 .proj-key[data-lit="true"]:active {
@@ -843,7 +843,7 @@ button.glass-badge:active {
 .proj-key[aria-expanded="true"] {
   background: linear-gradient(180deg, var(--terracotta), var(--terracotta-ink));
   color: var(--cloud);
-  border-color: rgba(120, 55, 12, 0.8);
+  border-color: rgba(116, 68, 41, 0.8);
 }
 
 /* ---- The demo well ------------------------------------------------
@@ -855,11 +855,11 @@ button.glass-badge:active {
   margin: 0 0.85rem 0.85rem;
   border-radius: var(--r-md);
   overflow: hidden;
-  background: #eaeddb;
+  background: #eee4d0;
   box-shadow:
-    inset 1px 1px 0 rgba(74, 70, 52, 0.32),
+    inset 1px 1px 0 rgba(82, 72, 58, 0.32),
     inset -1px -1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 2px 7px rgba(74, 70, 52, 0.22);
+    inset 0 2px 7px rgba(82, 72, 58, 0.22);
 }
 
 /* pointer-events: none — a live YouTube player sits underneath this. */
@@ -889,7 +889,7 @@ button.glass-badge:active {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 1px solid rgba(97, 112, 35, 0.26);
+  border: 1px solid rgba(77, 117, 38, 0.26);
   border-radius: var(--r-md);
   background: rgba(255, 253, 246, 0.7);
 }
@@ -954,9 +954,9 @@ button.glass-badge:active {
 .stage-video {
   position: absolute;
   inset: 0;
-  background: #eaeddb;
+  background: #eee4d0;
   box-shadow:
-    inset 1px 1px 0 rgba(74, 70, 52, 0.32),
+    inset 1px 1px 0 rgba(82, 72, 58, 0.32),
     inset -1px -1px 0 rgba(255, 255, 255, 0.9);
 }
 
@@ -992,7 +992,7 @@ button.glass-badge:active {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border: 1px solid rgba(74, 70, 52, 0.22);
+  border: 1px solid rgba(82, 72, 58, 0.22);
   border-radius: var(--r-sm);
   /* Only the fill fades. The chevron stays solid. */
   background: rgba(255, 253, 246, 0.34);
@@ -1020,8 +1020,8 @@ button.glass-badge:active {
   border-color: var(--case-edge);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.26),
-    0 2px 5px rgba(33, 64, 45, 0.28);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.26),
+    0 2px 5px rgba(39, 74, 48, 0.28);
 }
 .stage-arrow:focus-visible {
   outline: 2px solid var(--terracotta);
@@ -1030,7 +1030,7 @@ button.glass-badge:active {
 .stage-arrow:active {
   box-shadow:
     inset -1px -1px 0 rgba(255, 255, 255, 0.7),
-    inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+    inset 1px 1px 0 rgba(82, 72, 58, 0.3);
 }
 
 .stage-nav {
@@ -1102,10 +1102,10 @@ button.glass-badge:active {
   translate: -50% -50%;
   width: 2.9rem;
   height: 1.15rem;
-  border: 1px solid rgba(74, 70, 52, 0.34);
+  border: 1px solid rgba(82, 72, 58, 0.34);
   border-radius: var(--r-sm);
-  background: rgba(74, 70, 52, 0.13);
-  box-shadow: inset 0 1px 3px rgba(74, 70, 52, 0.4);
+  background: rgba(82, 72, 58, 0.13);
+  box-shadow: inset 0 1px 3px rgba(82, 72, 58, 0.4);
   pointer-events: none;
 }
 
@@ -1119,11 +1119,11 @@ button.glass-badge:active {
   left: 2px;
   width: calc(50% - 2px);
   border-radius: var(--r-xs);
-  background: linear-gradient(180deg, #8f9a3c, var(--meadow-deep));
+  background: linear-gradient(180deg, #86a344, var(--meadow-deep));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(0, 0, 0, 0.28),
-    0 1px 0 rgba(48, 58, 14, 0.55);
+    0 1px 0 rgba(38, 58, 19, 0.55);
   transition: translate 0.28s cubic-bezier(0.32, 0.72, 0.24, 1);
 }
 /* Grip lines, the way a real thumb-slide is knurled. Two hairlines from
@@ -1162,12 +1162,12 @@ button.glass-badge:active {
 
 .schem-box rect {
   fill: rgba(255, 253, 246, 0.95);
-  stroke: rgba(74, 70, 52, 0.55);
+  stroke: rgba(82, 72, 58, 0.55);
   stroke-width: 1;
 }
 .schem-box-dim rect {
-  fill: rgba(97, 112, 35, 0.09);
-  stroke: rgba(74, 70, 52, 0.3);
+  fill: rgba(77, 117, 38, 0.09);
+  stroke: rgba(82, 72, 58, 0.3);
   stroke-dasharray: 3 2;
 }
 
@@ -1194,12 +1194,12 @@ button.glass-badge:active {
 
 .schem-link {
   fill: none;
-  stroke: rgba(74, 70, 52, 0.55);
+  stroke: rgba(82, 72, 58, 0.55);
   stroke-width: 1.2;
 }
 .schem-tie {
   fill: none;
-  stroke: rgba(74, 70, 52, 0.4);
+  stroke: rgba(82, 72, 58, 0.4);
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
@@ -1207,7 +1207,7 @@ button.glass-badge:active {
 /* The arrowhead. Named apart from any caption class: one class doing
    both jobs painted caption text with a fill meant for an SVG marker. */
 .schem-arrow {
-  fill: rgba(74, 70, 52, 0.55);
+  fill: rgba(82, 72, 58, 0.55);
   stroke: none;
 }
 
@@ -1216,7 +1216,7 @@ button.glass-badge:active {
   display: inline-block;
   margin-bottom: 0.35rem;
   padding: 0 0.32rem 0.04rem;
-  border: 1px solid rgba(125, 92, 15, 0.55);
+  border: 1px solid rgba(109, 80, 16, 0.55);
   border-radius: var(--r-sm);
   font-family: var(--font-crt);
   font-size: 0.9375rem;
@@ -1272,12 +1272,12 @@ button.glass-badge:active {
   0%,
   100% {
     fill: rgba(255, 253, 246, 0.95);
-    stroke: rgba(74, 70, 52, 0.55);
+    stroke: rgba(82, 72, 58, 0.55);
   }
   18%,
   55% {
-    fill: rgba(157, 165, 65, 0.32);
-    stroke: rgba(97, 112, 35, 0.95);
+    fill: rgba(159, 188, 85, 0.32);
+    stroke: rgba(77, 117, 38, 0.95);
   }
 }
 
@@ -1337,9 +1337,9 @@ button.glass-badge:active {
   border-radius: var(--r-lg);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.25),
-    0 3px 0 rgba(74, 70, 52, 0.2),
-    0 20px 40px -24px rgba(33, 64, 45, 0.5);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.25),
+    0 3px 0 rgba(82, 72, 58, 0.2),
+    0 20px 40px -24px rgba(39, 74, 48, 0.5);
 }
 
 /* ------------------------------------------------------------
@@ -1348,21 +1348,21 @@ button.glass-badge:active {
 .icon-btn {
   border: 1px solid var(--case-edge);
   border-radius: var(--r-sm);
-  background: linear-gradient(180deg, #efeadb, #dcd6c0);
+  background: linear-gradient(180deg, #f3e8d1, #e2d5b7);
   color: var(--meadow-deep);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.85),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.28);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.28);
   transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.12s ease;
 }
 .icon-btn:hover {
-  border-color: rgba(181, 86, 24, 0.6);
+  border-color: rgba(179, 113, 74, 0.6);
   color: var(--terracotta-ink);
 }
 .icon-btn:active {
   box-shadow:
     inset -1px -1px 0 rgba(255, 255, 255, 0.6),
-    inset 1px 1px 0 rgba(74, 70, 52, 0.3);
+    inset 1px 1px 0 rgba(82, 72, 58, 0.3);
 }
 
 /* The one solid key on the board. The gradient runs *darker* downward,
@@ -1370,24 +1370,24 @@ button.glass-badge:active {
    lighter top would drop it below 4.5. Light comes from the inset
    highlight instead of from the fill. */
 .btn-primary {
-  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
-  border: 1px solid rgba(48, 58, 14, 0.75);
+  background: linear-gradient(180deg, var(--meadow-deep), #3d6a1e);
+  border: 1px solid rgba(38, 58, 19, 0.75);
   border-radius: var(--r-sm);
   color: var(--cloud);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.26),
     inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-    0 2px 0 rgba(48, 58, 14, 0.55);
+    0 2px 0 rgba(38, 58, 19, 0.55);
   transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease,
     box-shadow 0.12s ease;
 }
 .btn-primary:hover {
-  background: linear-gradient(180deg, var(--terracotta), #8e4212);
-  border-color: rgba(120, 55, 12, 0.8);
+  background: linear-gradient(180deg, var(--terracotta), #74452a);
+  border-color: rgba(116, 68, 41, 0.8);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.28),
     inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-    0 2px 0 rgba(120, 55, 12, 0.6);
+    0 2px 0 rgba(116, 68, 41, 0.6);
 }
 .btn-primary:active {
   transform: translateY(2px);
@@ -1454,7 +1454,7 @@ button.glass-badge:active {
   height: 2px;
   margin-left: auto;
   border-radius: 1px;
-  background: rgba(97, 112, 35, 0.42);
+  background: rgba(77, 117, 38, 0.42);
   transition: width 0.24s cubic-bezier(0.32, 0.72, 0.24, 1),
     background 0.24s ease, box-shadow 0.24s ease;
 }
@@ -1559,7 +1559,7 @@ button.glass-badge:active {
    -------------------------------------------------------------------- */
 .scale[data-ground="dark"] .scale-mark {
   background: rgba(255, 253, 246, 0.55);
-  filter: drop-shadow(0 1px 2px rgba(16, 34, 24, 0.9));
+  filter: drop-shadow(0 1px 2px rgba(22, 40, 28, 0.9));
 }
 .scale[data-ground="dark"] .scale-item:hover .scale-mark,
 .scale[data-ground="dark"] .scale-item[aria-current="page"] .scale-mark {
@@ -1577,7 +1577,7 @@ button.glass-badge:active {
 
 .scale[data-ground="dark"] .scale-name {
   color: rgba(255, 253, 246, 0.92);
-  text-shadow: 0 1px 3px rgba(16, 34, 24, 0.95);
+  text-shadow: 0 1px 3px rgba(22, 40, 28, 0.95);
 }
 /* The name stays cloud on a dark ground rather than taking the tone.
    Tinting it was fine while every tone was pale; with Home dark it
@@ -1590,7 +1590,7 @@ button.glass-badge:active {
 
 .scale[data-ground="dark"] .scale-sound {
   color: rgba(255, 253, 246, 0.85);
-  filter: drop-shadow(0 1px 2px rgba(16, 34, 24, 0.9));
+  filter: drop-shadow(0 1px 2px rgba(22, 40, 28, 0.9));
 }
 .scale[data-ground="dark"] .scale-sound[aria-pressed="true"] {
   color: #cfe07a;
@@ -1679,9 +1679,9 @@ button.glass-badge:active {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(97, 112, 35, 0.30),
-    rgba(232, 207, 67, 0.60),
-    rgba(97, 112, 35, 0.30),
+    rgba(77, 117, 38, 0.30),
+    rgba(227, 195, 93, 0.60),
+    rgba(77, 117, 38, 0.30),
     transparent
   );
 }
@@ -1699,7 +1699,7 @@ button.glass-badge:active {
 :root {
   /* Amber is unreadable on cream at any small size, so timestamps on
      light ground use this darkened version instead. 5.6:1 on --paper. */
-  --amber-ink: #7d5c0f;
+  --amber-ink: #6d5010;
 
   /* Screen colours, for the two places that are a *screen* rather than a
      case: the hero boot sequence and the closing terminal.
@@ -1738,12 +1738,12 @@ button.glass-badge:active {
   overflow: hidden;
   border: 1px solid var(--case-edge);
   border-radius: var(--r-md);
-  background: linear-gradient(180deg, #fffdf6, #f3efe1);
+  background: linear-gradient(180deg, #fffdf6, #f6edda);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 2px 0 rgba(74, 70, 52, 0.18),
-    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.22),
+    0 2px 0 rgba(82, 72, 58, 0.18),
+    0 14px 26px -20px rgba(39, 74, 48, 0.4);
 }
 
 .ach-bar {
@@ -1751,8 +1751,8 @@ button.glass-badge:active {
   align-items: center;
   gap: 0.5rem;
   padding: 0.3rem 0.65rem 0.32rem;
-  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
-  background: linear-gradient(180deg, #ecead9, #dcd7c3);
+  border-bottom: 1px solid rgba(77, 117, 38, 0.3);
+  background: linear-gradient(180deg, #f0e4cb, #e1d2b3);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
   font-family: var(--font-crt);
   font-size: 1.0625rem;
@@ -1763,7 +1763,11 @@ button.glass-badge:active {
 .ach-bar .tag {
   margin-left: auto;
   flex: none;
-  color: var(--meadow-deep);
+  /* A step darker than --meadow-deep, which sits at 3.9:1 against the
+     dark stop of the bar it prints on. This was under AA before the
+     repaint too (3.78:1) — the new palette did not cause it, it just
+     made it worth measuring. */
+  color: #3d5f1b;
   letter-spacing: 0.12em;
 }
 
@@ -1785,14 +1789,14 @@ button.glass-badge:active {
   margin-top: 0.6rem;
   border-radius: var(--r-sm);
   overflow: hidden;
-  background: rgba(97, 112, 35, 0.16);
-  box-shadow: inset 0 1px 2px rgba(74, 70, 52, 0.25);
+  background: rgba(77, 117, 38, 0.16);
+  box-shadow: inset 0 1px 2px rgba(82, 72, 58, 0.25);
 }
 .ach-meter i {
   display: block;
   height: 100%;
   border-radius: var(--r-sm);
-  background: linear-gradient(180deg, #74853a, var(--meadow-deep));
+  background: linear-gradient(180deg, #6b8c33, var(--meadow-deep));
 }
 
 .ach-note {
@@ -1856,12 +1860,12 @@ button.glass-badge:active {
   overflow: hidden;
   border: 1px solid var(--case-edge);
   border-radius: var(--r-md);
-  background: linear-gradient(180deg, #fffdf6, #f3efe1);
+  background: linear-gradient(180deg, #fffdf6, #f6edda);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 2px 0 rgba(74, 70, 52, 0.18),
-    0 14px 26px -20px rgba(33, 64, 45, 0.4);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.22),
+    0 2px 0 rgba(82, 72, 58, 0.18),
+    0 14px 26px -20px rgba(39, 74, 48, 0.4);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 /* A key being pressed: the card drops onto its own 2px shadow rather
@@ -1871,9 +1875,9 @@ button.glass-badge:active {
   transform: translateY(1px);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.9),
-    inset -1px -1px 0 rgba(74, 70, 52, 0.22),
-    0 1px 0 rgba(74, 70, 52, 0.18),
-    0 10px 20px -18px rgba(33, 64, 45, 0.45);
+    inset -1px -1px 0 rgba(82, 72, 58, 0.22),
+    0 1px 0 rgba(82, 72, 58, 0.18),
+    0 10px 20px -18px rgba(39, 74, 48, 0.45);
 }
 .repo-card:focus-visible {
   outline: 2px solid var(--terracotta);
@@ -1885,8 +1889,8 @@ button.glass-badge:active {
   align-items: center;
   gap: 0.5rem;
   padding: 0.3rem 0.6rem 0.32rem;
-  border-bottom: 1px solid rgba(97, 112, 35, 0.3);
-  background: linear-gradient(180deg, #ecead9, #dcd7c3);
+  border-bottom: 1px solid rgba(77, 117, 38, 0.3);
+  background: linear-gradient(180deg, #f0e4cb, #e1d2b3);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
   font-family: var(--font-crt);
   font-size: 1.0625rem;
@@ -1969,7 +1973,7 @@ button.glass-badge:active {
 /* ---- The quest log -------------------------------------------------
    Experience as a run of entries on a dashed rail: the role and employer
    large, the dates and place as a quiet readout underneath, a hollow
-   node per entry that lights while the role is still running.
+   node per entry that lights and blinks while the role is live.
 
    Unpanelled on purpose. Projects and Skills are boxed, but the air
    between these entries is what makes the hierarchy work, and a frame
@@ -1994,7 +1998,7 @@ button.glass-badge:active {
   width: 1px;
   background: repeating-linear-gradient(
     180deg,
-    rgba(97, 112, 35, 0.5) 0 3px,
+    rgba(77, 117, 38, 0.5) 0 3px,
     transparent 3px 7px
   );
 }
@@ -2005,7 +2009,7 @@ button.glass-badge:active {
   display: none;
 }
 
-/* Hollow by default, lit while the role is still running. A square
+/* Hollow by default, lit while the role is live. A square
    rather than a circle: it belongs to the same drawing as the rest of
    the page. */
 .quest-node {
@@ -2014,14 +2018,45 @@ button.glass-badge:active {
   top: 0.72rem;
   width: 0.65rem;
   height: 0.65rem;
-  border: 1px solid rgba(97, 112, 35, 0.6);
+  border: 1px solid rgba(77, 117, 38, 0.6);
   border-radius: var(--r-xs);
   background: var(--paper);
 }
-.quest-item[data-current="true"] .quest-node {
+/* Lit for a role that is either still running or only just finished —
+   see isLive() in Experience.tsx for where the line falls.
+
+   The square itself never changes: solid green, always. Only the glow
+   around it swells and falls, so the node reads as something with power
+   running through it without the box ever going dark. Nothing in the
+   keyframes touches background or border-color, which is what keeps the
+   square solid — and it is also why the rail never loses a node to a
+   gap, the way an on/off blink did.
+
+   1.6s ease-in-out: slow enough to read as a glow rather than a flash,
+   and nowhere near the three-per-second ceiling that makes flashing a
+   seizure risk. */
+.quest-item[data-live="true"] .quest-node {
   background: var(--meadow-deep);
   border-color: var(--meadow-deep);
-  box-shadow: 0 0 7px rgba(157, 165, 65, 0.85);
+  box-shadow: 0 0 7px rgba(159, 188, 85, 0.85);
+  animation: questNodeGlow 1.6s ease-in-out infinite;
+}
+
+@keyframes questNodeGlow {
+  0%, 100% {
+    box-shadow: 0 0 2px rgba(159, 188, 85, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 11px 1px rgba(159, 188, 85, 1);
+  }
+}
+
+/* Still lit — the node's job is to say "this one is live", and that is
+   carried by the colour. Only the movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  .quest-item[data-live="true"] .quest-node {
+    animation: none;
+  }
 }
 
 .quest-head {
@@ -2094,7 +2129,7 @@ button.glass-badge:active {
   width: 1.45rem;
   height: 1.45rem;
   margin-top: 0.5rem;
-  border: 1px solid rgba(97, 112, 35, 0.42);
+  border: 1px solid rgba(77, 117, 38, 0.42);
   border-radius: var(--r-xs);
   background: rgba(255, 253, 246, 0.72);
   box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.85);
@@ -2123,13 +2158,13 @@ button.glass-badge:active {
 }
 
 .quest-head:hover .quest-toggle {
-  border-color: rgba(181, 86, 24, 0.6);
+  border-color: rgba(179, 113, 74, 0.6);
   color: var(--terracotta-ink);
 }
 /* Open reads as pressed: the key fills and the bevel inverts. */
 .quest-item[data-open="true"] .quest-toggle {
-  border-color: rgba(48, 58, 14, 0.7);
-  background: linear-gradient(180deg, var(--meadow-deep), #4c5a1a);
+  border-color: rgba(38, 58, 19, 0.7);
+  background: linear-gradient(180deg, var(--meadow-deep), #3d6a1e);
   box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.28);
   color: var(--cloud);
 }
@@ -2159,6 +2194,35 @@ button.glass-badge:active {
   .quest-toggle .bar {
     transition: none;
   }
+}
+
+/* ---- The contribution grid ------------------------------------------
+   The calendar is the densest object on the page — 53 columns of 11px
+   squares, with month labels riding above them and a legend under. At
+   the p-6 the sparser cards use, that grid ran almost edge to edge and
+   sat right against the bevel, so it read as cramped where the same
+   padding looks generous around a paragraph.
+   ------------------------------------------------------------------ */
+.contrib-card {
+  padding: 1.9rem 1.6rem;
+}
+@media (min-width: 768px) {
+  .contrib-card {
+    padding: 2.6rem 2.4rem;
+  }
+}
+
+/* The scroll lives on this inner wrapper rather than on the card, so a
+   grid too wide for the viewport slides *within* the padding instead of
+   under it.
+
+   Not a stylistic preference: a scroll container's own padding-right is
+   not part of its scrollable overflow in Chrome, so putting overflow on
+   the padded card means the right-hand gap silently disappears the
+   moment the grid is wide enough to actually scroll — which, at 53
+   columns, is every screen narrower than about 900px. */
+.contrib-scroll {
+  overflow-x: auto;
 }
 
 /* ---- A log line -------------------------------------------------
@@ -2196,7 +2260,7 @@ button.glass-badge:active {
   flex: 1;
   min-width: 1.25rem;
   align-self: center;
-  border-bottom: 1px dotted rgba(74, 70, 52, 0.55);
+  border-bottom: 1px dotted rgba(82, 72, 58, 0.55);
 }
 
 .log-status {
@@ -2239,7 +2303,7 @@ button.glass-badge:active {
   content: ">";
   position: absolute;
   left: 0;
-  color: rgba(97, 112, 35, 0.75);
+  color: rgba(77, 117, 38, 0.75);
 }
 
 /* The spine down the left of the log */
@@ -2248,7 +2312,7 @@ button.glass-badge:active {
   min-height: 1.5rem;
   background: repeating-linear-gradient(
     180deg,
-    rgba(97, 112, 35, 0.5) 0 3px,
+    rgba(77, 117, 38, 0.5) 0 3px,
     transparent 3px 6px
   );
 }
@@ -2258,7 +2322,7 @@ button.glass-badge:active {
   height: 0.5rem;
   border-radius: 999px;
   background: var(--meadow-deep);
-  box-shadow: 0 0 5px rgba(157, 165, 65, 0.7);
+  box-shadow: 0 0 5px rgba(159, 188, 85, 0.7);
 }
 
 @media (max-width: 639px) {
@@ -2298,7 +2362,30 @@ button.glass-badge:active {
   position: relative;
   overflow: hidden;
   padding: 9rem 1.5rem 7rem;
-  background: var(--crt-deep);
+
+  /* The join used to be a flat #f4ead6 wash painted over the photograph.
+     That looked like a bright line, because the paper it was matching is
+     not flat: the body carries a fixed warm radial at 50% 100%, so the
+     real paper arriving from Contributions is nearer #f1e4c3. A cool
+     cream band butted against warm paper is a visible edge.
+
+     So nothing paints the join now. Every layer of this section — the
+     photograph, the dim, the scanlines, the ground under them — is
+     masked in over the same distance, and the top of the section is
+     literally the page's own paper, whatever the body wash has made it.
+     Nothing to mismatch. */
+  --contact-join: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.35) 7%,
+    rgba(0, 0, 0, 1) 17%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(14, 24, 17, 0) 0%,
+    rgba(14, 24, 17, 0.35) 7%,
+    var(--crt-deep) 17%
+  );
 
   /* A step brighter than the global --phosphor, which is tuned for the
      boot screen's near-black ground. This one sits on a lit photograph
@@ -2323,42 +2410,43 @@ button.glass-badge:active {
      photograph flipped, and flipping an image that is not a reflection
      of another one is just a flipped image. */
   object-position: center;
+
+  -webkit-mask-image: var(--contact-join);
+  mask-image: var(--contact-join);
 }
 
-/* Four layers, painted top down — the hero's recipe, inverted so the
-   cream join is at the head instead of the foot:
-     1. cream fade, so arriving from Contributions is a dissolve
-     2. a pool under the left column
-     3. a pool under the readout
-     4. the flat forest dim itself
+/* Three layers, painted top down:
+     1. a pool under the left column
+     2. a pool under the readout
+     3. the flat forest dim itself
    The pools are what make the text legible; without them the same copy
-   runs at 1.1-3.3:1 over a bright frame. */
+   runs at 1.1-3.3:1 over a bright frame.
+
+   The cream fade that used to head this list is gone — it was the join,
+   and the join is a mask on the whole section now, not a colour painted
+   on one layer of it. */
 .contact-dim {
   position: absolute;
   inset: 0;
+  -webkit-mask-image: var(--contact-join);
+  mask-image: var(--contact-join);
   background:
-    linear-gradient(
-      180deg,
-      rgba(250, 247, 234, 0.98) 0%,
-      rgba(250, 247, 234, 0.35) 7%,
-      rgba(250, 247, 234, 0) 17%
-    ),
     radial-gradient(
       ellipse 68% 58% at 30% 52%,
-      rgba(16, 34, 24, 0.55),
-      rgba(16, 34, 24, 0) 72%
+      rgba(22, 40, 28, 0.55),
+      rgba(22, 40, 28, 0) 72%
     ),
     radial-gradient(
       ellipse 52% 46% at 78% 60%,
-      rgba(16, 34, 24, 0.55),
-      rgba(16, 34, 24, 0) 74%
+      rgba(22, 40, 28, 0.55),
+      rgba(22, 40, 28, 0) 74%
     ),
     linear-gradient(
       180deg,
-      rgba(33, 64, 45, 0.18) 0%,
-      rgba(33, 64, 45, 0.5) 20%,
-      rgba(33, 64, 45, 0.5) 78%,
-      rgba(33, 64, 45, 0.62) 100%
+      rgba(39, 74, 48, 0.18) 0%,
+      rgba(39, 74, 48, 0.5) 20%,
+      rgba(39, 74, 48, 0.5) 78%,
+      rgba(39, 74, 48, 0.62) 100%
     );
 }
 
@@ -2370,6 +2458,8 @@ button.glass-badge:active {
   background-image: var(--scanlines);
   opacity: 0.22;
   pointer-events: none;
+  -webkit-mask-image: var(--contact-join);
+  mask-image: var(--contact-join);
 }
 
 /* Scattered rather than stacked. One centred column of everything was
@@ -2620,7 +2710,7 @@ button.glass-badge:active {
   flex: 1;
   min-width: 1rem;
   align-self: center;
-  border-bottom: 1px dotted rgba(157, 165, 65, 0.5);
+  border-bottom: 1px dotted rgba(159, 188, 85, 0.5);
 }
 .boot-line .ok {
   color: var(--amber);
@@ -2635,7 +2725,7 @@ button.glass-badge:active {
   right: 1.25rem;
   bottom: 1.25rem;
   padding: 0.25rem 0.6rem;
-  border: 1px solid rgba(157, 165, 65, 0.5);
+  border: 1px solid rgba(159, 188, 85, 0.5);
   border-radius: var(--r-sm);
   background: rgba(0, 0, 0, 0.35);
   color: var(--phosphor);
@@ -2653,5 +2743,73 @@ button.glass-badge:active {
 @media (prefers-reduced-motion: reduce) {
   .boot {
     display: none;
+  }
+}
+
+/* ============================================================
+   Small screens
+
+   The page is fluid everywhere already — every grid uses
+   `minmax(0, …)`, so nothing blows its track out — and this is the
+   handful of places where fluid is not enough on a phone.
+   ============================================================ */
+@media (max-width: 639px) {
+  /* ---- the section nav has to stop sitting on the text ----------
+     The scale is `position: fixed` against the right edge, so it is
+     over the content at every width; on a desktop it lands in the
+     margin outside `max-w-5xl` and nobody notices, but a phone has no
+     margin to spare. Two halves to the fix: make the rail narrower,
+     and give the page a gutter wide enough to clear what is left. */
+  main > section {
+    padding-right: 2.75rem;
+  }
+  /* Contact sets its padding as a shorthand on a class, which outranks
+     the element selector above — so it needs saying again here or it
+     is the one section still running under the rail. */
+  .contact-close {
+    padding-right: 2.75rem;
+  }
+
+  .scale {
+    gap: 0.5rem;
+    padding: 0.5rem 0.55rem 0.5rem 0.7rem;
+  }
+  .scale-list {
+    gap: 0.35rem;
+  }
+  /* A 2px rule is not a tap target. The mark stays thin; the button
+     around it grows to something a thumb can actually land on. */
+  .scale-item {
+    padding: 0.55rem 0;
+  }
+  .scale-mark {
+    width: 0.85rem;
+  }
+  .scale-item[aria-current="page"] .scale-mark {
+    width: 1.5rem;
+  }
+  /* Hidden, not shrunk. There is no hover on a touch screen, so five
+     of the six names could never be reached anyway — and the sixth,
+     the active one, renders *left* of the rail, which is exactly where
+     the text it would cover lives. */
+  .scale-name {
+    display: none;
+  }
+
+  /* ---- long words on a narrow measure ---------------------------
+     An employer's name is not something the page gets to choose the
+     length of, and `nowrap` on a 320px column pushes it off the side
+     rather than wrapping it. */
+  .quest-org {
+    white-space: normal;
+  }
+
+  /* Company names, URLs and package names have no spaces to break at.
+     Anywhere is right for these: they are identifiers, not prose, and
+     a broken identifier is better than a horizontal scrollbar. */
+  .contact-row .v,
+  .spec-def li,
+  .slate-row dd {
+    overflow-wrap: anywhere;
   }
 }

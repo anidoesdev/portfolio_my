@@ -73,8 +73,8 @@ export default function Hero() {
         className="absolute inset-0"
         style={{
           background: [
-            "linear-gradient(180deg, rgba(250,247,234,0) 80%, rgba(250,247,234,0.30) 92%, rgba(250,247,234,0.96) 100%)",
-            "radial-gradient(ellipse 72% 58% at 50% 46%, rgba(16,34,24,0.50), rgba(16,34,24,0) 72%)",
+            "linear-gradient(180deg, rgba(244,234,214,0) 80%, rgba(244,234,214,0.30) 92%, rgba(244,234,214,0.96) 100%)",
+            "radial-gradient(ellipse 72% 58% at 50% 46%, rgba(22,40,28,0.50), rgba(22,40,28,0) 72%)",
             "linear-gradient(180deg, rgba(33,64,45,0.56) 0%, rgba(33,64,45,0.44) 42%, rgba(33,64,45,0.5) 72%, rgba(33,64,45,0.22) 92%, rgba(33,64,45,0) 100%)",
           ].join(", "),
         }}
