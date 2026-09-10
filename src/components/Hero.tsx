@@ -39,7 +39,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center px-6 overflow-hidden"
+      className="hero-close relative min-h-screen flex items-center px-6 overflow-hidden"
     >
       {/* Edge to edge. The artwork is **portrait** (~9:16) and the hero
           is landscape, so `cover` scales it until the width fills and
@@ -58,22 +58,27 @@ export default function Hero() {
         quality={90}
         placeholder="blur"
         preload
-        className="object-cover"
+        className="object-cover hero-field"
         style={{ objectPosition: "center 68%" }}
       />
 
       {/*
-        Three stacked layers, painted top-down:
-          1. cream fade at the foot, so the hero dissolves into the page
-          2. a soft centre pool, guaranteeing text contrast over the bright
+        Two stacked layers, painted top-down:
+          1. a soft centre pool, guaranteeing text contrast over the bright
              clouds without flattening the corners of the artwork
-          3. the flat dim itself
+          2. the flat dim itself
+
+        The cream fade that used to head this list is gone. It painted a
+        flat #f4ead6 over the foot of the photograph to dissolve into the
+        page, but the page paper is not flat — the body carries three
+        fixed washes — so it ended brighter than the paper it met and the
+        join read as a bright line. The dissolve is a mask now, shared
+        with the photograph above; see .hero-close in globals.css.
       */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 hero-dim"
         style={{
           background: [
-            "linear-gradient(180deg, rgba(244,234,214,0) 80%, rgba(244,234,214,0.30) 92%, rgba(244,234,214,0.96) 100%)",
             "radial-gradient(ellipse 72% 58% at 50% 46%, rgba(22,40,28,0.50), rgba(22,40,28,0) 72%)",
             "linear-gradient(180deg, rgba(33,64,45,0.56) 0%, rgba(33,64,45,0.44) 42%, rgba(33,64,45,0.5) 72%, rgba(33,64,45,0.22) 92%, rgba(33,64,45,0) 100%)",
           ].join(", "),

@@ -126,13 +126,27 @@ body::-webkit-scrollbar {
 /* ------------------------------------------------------------
    Section bands — alternating tints keep the scroll from
    flattening into one sheet of cream.
+
+   Every band fades to nothing at both its own edges, so what shows at a
+   seam is the bare paper underneath and the join itself is continuous.
+   What made it read as harsh was how far the tints sat from that paper:
+   band-sky at 0.66 composited to a cool grey-green, and arriving at it
+   from the warm cream trough between two bands was a hue swing as much
+   as a brightness one.
+
+   Two changes, and the alternation survives both. The plateaus come down
+   — band-sky now lands within a couple of steps of the paper instead of
+   turning it cool — and the ramps are twice as long, so the crossfade is
+   spread over a fifth of each section rather than a tenth. Lowering the
+   alpha is what fixes the hue: these are the same three colours, just
+   mixed less far from the ground they sit on.
    ------------------------------------------------------------ */
 .band-sky {
   background: linear-gradient(
     180deg,
     rgba(225, 242, 244, 0) 0%,
-    rgba(225, 242, 244, 0.66) 10%,
-    rgba(225, 242, 244, 0.66) 90%,
+    rgba(225, 242, 244, 0.42) 20%,
+    rgba(225, 242, 244, 0.42) 80%,
     rgba(225, 242, 244, 0) 100%
   );
 }
@@ -141,8 +155,8 @@ body::-webkit-scrollbar {
   background: linear-gradient(
     180deg,
     rgba(239, 242, 217, 0) 0%,
-    rgba(239, 242, 217, 0.75) 10%,
-    rgba(239, 242, 217, 0.75) 90%,
+    rgba(239, 242, 217, 0.46) 20%,
+    rgba(239, 242, 217, 0.46) 80%,
     rgba(239, 242, 217, 0) 100%
   );
 }
@@ -151,10 +165,64 @@ body::-webkit-scrollbar {
   background: linear-gradient(
     180deg,
     rgba(255, 253, 246, 0) 0%,
-    rgba(255, 253, 246, 0.72) 10%,
-    rgba(255, 253, 246, 0.72) 90%,
+    rgba(255, 253, 246, 0.46) 20%,
+    rgba(255, 253, 246, 0.46) 80%,
     rgba(255, 253, 246, 0) 100%
   );
+}
+
+
+/* ---- The hero's foot ------------------------------------------------
+   The same join as the foot of the page, and it had the same fault.
+
+   A cream layer used to be painted over the photograph here, ending at
+   rgba(244,234,214,0.96) — which composited to about L* 92 while the page
+   paper it butted against measures L* 85.5 to 90.8, depending which of
+   the body's three fixed washes falls there. A hard step of up to 6.4 L*,
+   with the hero side always the brighter one: the bright line. The 0.96
+   made it worse by leaving 4% of the photograph showing right at the
+   boundary, so the section ended on picture rather than on paper.
+
+   Nothing is painted now. The photograph and its dim are masked out
+   instead, which is the same operation as a cream veil except that the
+   cream is the page's actual paper — whatever the washes have made it —
+   rather than a colour guessed in a stylesheet.
+
+   Alpha is solved so L* falls evenly across the fade rather than
+   linearly, for the reason set out at .contact-close.
+
+   Measured in pixels from the foot, not in percent. This section is
+   min-h-screen, so a percentage is a share of the viewport: at 22% of a
+   1080px hero the fade ran 240px, and that much of the picture held at a
+   middling lightness stops reading as a dissolve and starts reading as a
+   flat wash laid over the foot. Spreading the change evenly is what
+   makes a fade smooth, and also what makes an over-long one look solid.
+   160px fixes the distance whatever the viewport does — about 15% of a
+   tall screen, proportionally more of a short one, which is where the
+   length is actually needed. It is close to what the head of Contact
+   uses, so both joins dissolve over the same run.
+   ------------------------------------------------------------------ */
+.hero-close {
+  --hero-join: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0.031) 16px,
+    rgba(0, 0, 0, 0.113) 32px,
+    rgba(0, 0, 0, 0.232) 48px,
+    rgba(0, 0, 0, 0.374) 64px,
+    rgba(0, 0, 0, 0.525) 80px,
+    rgba(0, 0, 0, 0.672) 96px,
+    rgba(0, 0, 0, 0.802) 112px,
+    rgba(0, 0, 0, 0.906) 128px,
+    rgba(0, 0, 0, 0.975) 144px,
+    rgba(0, 0, 0, 1) 160px
+  );
+}
+
+.hero-field,
+.hero-dim {
+  -webkit-mask-image: var(--hero-join);
+  mask-image: var(--hero-join);
 }
 
 /* ------------------------------------------------------------
@@ -1670,6 +1738,24 @@ button.glass-badge:active {
 .section-divider {
   position: relative;
 }
+/* One quiet warm rule, not a lit seam.
+
+   This used to run meadow → sun → meadow, and the sun stop at 0.60 put a
+   saturated gold streak across the middle of every section boundary. On
+   a cream page that is the brightest thing in the gap between two bands,
+   and it read as a hard edge rather than a join.
+
+   It is the brown-grey of the chassis bevels now, and it never holds a
+   value: the profile is a raised cosine, so the alpha is changing at
+   every point along the rule and is at its faintest at both ends. It
+   previously sat flat at one alpha across the middle 44%, which is a
+   solid line however low you set it — a constant stretch is exactly what
+   the eye resolves as an edge. A cosine has zero slope at the ends *and*
+   at the peak, so there is no stop anywhere for it to catch on.
+
+   Peak is 0.085 against paper, down from 0.13, and it runs 12% in from
+   each side rather than 16% so the falloff has more length to happen
+   over. Present when you look for it; gone when you are reading past. */
 .section-divider::before {
   content: "";
   position: absolute;
@@ -1678,11 +1764,17 @@ button.glass-badge:active {
   height: 1px;
   background: linear-gradient(
     90deg,
-    transparent,
-    rgba(77, 117, 38, 0.30),
-    rgba(227, 195, 93, 0.60),
-    rgba(77, 117, 38, 0.30),
-    transparent
+    rgba(82, 72, 58, 0) 0%,
+    rgba(82, 72, 58, 0.0081) 10%,
+    rgba(82, 72, 58, 0.0294) 20%,
+    rgba(82, 72, 58, 0.0556) 30%,
+    rgba(82, 72, 58, 0.0769) 40%,
+    rgba(82, 72, 58, 0.085) 50%,
+    rgba(82, 72, 58, 0.0769) 60%,
+    rgba(82, 72, 58, 0.0556) 70%,
+    rgba(82, 72, 58, 0.0294) 80%,
+    rgba(82, 72, 58, 0.0081) 90%,
+    rgba(82, 72, 58, 0) 100%
   );
 }
 
@@ -2373,18 +2465,46 @@ button.glass-badge:active {
      photograph, the dim, the scanlines, the ground under them — is
      masked in over the same distance, and the top of the section is
      literally the page's own paper, whatever the body wash has made it.
-     Nothing to mismatch. */
+     Nothing to mismatch.
+
+     The shape of that ramp matters as much as its length, and two things
+     were wrong with it.
+
+     It interpolated alpha linearly, but perceived lightness is not
+     linear in alpha: a straight ramp from paper to this photograph loses
+     ~16 L* per step through the middle and only ~3 at the ends, so the
+     change piles up in one place and that place reads as an edge. These
+     stops are solved the other way round — alpha chosen so *L** moves
+     evenly, on a smoothstep so it also leaves and arrives with zero
+     slope. Worst step is now ~5 L*, and no stop has a slope break for
+     the eye to catch (a Mach band).
+
+     And the section no longer paints a dark ground of its own. It used
+     to, while the layers above were masked with this same alpha — which
+     composited the paper twice, so at alpha 0.5 the paper contributed a
+     quarter rather than a half and the stack went dark faster than any
+     single ramp could predict. The ground was redundant regardless: the
+     photograph is `fill` + `cover` and covers it completely. Now the
+     blend is just photograph over the page's own paper, which is what
+     the numbers above describe.
+
+     Length is capped by the copy: the <h2> is the first thing on this
+     ground, at 11rem of padding plus its own margin, so it has to be
+     dark by roughly 186px. 26% clears that at any plausible height for
+     this section. */
   --contact-join: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.35) 7%,
-    rgba(0, 0, 0, 1) 17%
-  );
-  background: linear-gradient(
-    180deg,
-    rgba(14, 24, 17, 0) 0%,
-    rgba(14, 24, 17, 0.35) 7%,
-    var(--crt-deep) 17%
+    rgba(0, 0, 0, 0.029) 2.6%,
+    rgba(0, 0, 0, 0.108) 5.2%,
+    rgba(0, 0, 0, 0.224) 7.8%,
+    rgba(0, 0, 0, 0.363) 10.4%,
+    rgba(0, 0, 0, 0.512) 13%,
+    rgba(0, 0, 0, 0.659) 15.6%,
+    rgba(0, 0, 0, 0.792) 18.2%,
+    rgba(0, 0, 0, 0.901) 20.8%,
+    rgba(0, 0, 0, 0.973) 23.4%,
+    rgba(0, 0, 0, 1) 26%
   );
 
   /* A step brighter than the global --phosphor, which is tuned for the
