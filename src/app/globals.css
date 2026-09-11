@@ -171,6 +171,45 @@ body::-webkit-scrollbar {
   );
 }
 
+/* ------------------------------------------------------------
+   One section per screen. Every section is at least a viewport
+   tall, so arriving at one — from the rail or by scrolling to its
+   top — shows that section alone, with the next one held below
+   the fold instead of peeking up under the last line.
+
+   svh, with a vh fallback: on a phone that is the viewport with
+   the browser chrome showing, so the content is never centred
+   behind the URL bar. When the bar collapses the viewport grows
+   a little and the next section's top padding shows — padding,
+   so nothing with content in it.
+
+   The py-24 each section already carries stays. It is the floor
+   for Projects, which runs taller than a screen on most displays,
+   and for any section on a short one; min-height only adds room,
+   it never takes any away.
+   ------------------------------------------------------------ */
+.section-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* A flex item with auto side margins shrinks to its content, which
+   would collapse every mx-auto max-w-5xl column to the width of its
+   longest line. Full width first; the max-width still caps it. */
+.section-screen > * {
+  width: 100%;
+}
+/* Sections whose height changes under the reader's hand stay pinned to
+   the top. Centred, opening an Experience entry grows the list in both
+   directions, so the heading just clicked slides up away from the
+   pointer by half of whatever opened beneath it — and switching Project
+   folders of different lengths bounces the whole section. */
+.section-screen[data-align="top"] {
+  justify-content: flex-start;
+}
+
 
 /* ---- The hero's foot ------------------------------------------------
    The same join as the foot of the page, and it had the same fault.
@@ -1119,10 +1158,10 @@ button.glass-badge:active {
    rounded track would have read as a generic app toggle dropped onto a
    machine panel.
 
-   The track takes no pointer events and the two labels' padding runs
-   underneath it, so the whole switch is covered by one control or the
-   other — a reader aiming at the knob, which is exactly what a switch
-   invites, lands on a real button instead of a gap.
+   The whole thing is one button and any press on it throws the switch.
+   It was two, one per label, and each did nothing when its own side was
+   already on; the knob always sits on the side that is on, so pressing
+   the knob — exactly what a switch invites — hit a dead control.
    -------------------------------------------------------------------- */
 .stage-switch {
   position: relative;
@@ -1141,14 +1180,19 @@ button.glass-badge:active {
   opacity: 0.72;
   transition: color 0.2s ease, opacity 0.2s ease;
 }
-/* Reaches under the track, so there is no dead strip in the middle. */
+/* Clears room for the track, which sits centred over the join. */
 .stage-pos:first-child {
   padding-right: 2rem;
 }
-.stage-pos:last-of-type {
+/* The label after the first, not `:last-of-type` — the labels and the
+   track are all spans, so last-of-type lands on the track and the second
+   label loses its clearance and slides under the knob. */
+.stage-pos + .stage-pos {
   padding-left: 2rem;
 }
-.stage-pos:hover {
+/* Hovering anywhere lights the side a press will go to — never the one
+   already on, since that is not where the click takes you. */
+.stage-switch:hover .stage-pos[data-on="false"] {
   opacity: 1;
   color: var(--terracotta-ink);
 }
@@ -1156,9 +1200,9 @@ button.glass-badge:active {
   opacity: 1;
   color: var(--forest);
 }
-.stage-pos:focus-visible {
+.stage-switch:focus-visible {
   outline: 2px solid var(--terracotta);
-  outline-offset: -1px;
+  outline-offset: 2px;
   border-radius: var(--r-xs);
 }
 
@@ -1698,10 +1742,22 @@ button.glass-badge:active {
 
 /* VT323 reads small for its em, so headings run larger than the
    Amarante scale they replace. */
+/* Sized against the longest word, not the longest heading. VT323
+   advances 0.4em a glyph, 0.46em with this tracking, so ACHIEVEMENTS is
+   5.5em wide and cannot wrap: a fixed phone size big enough to fill a
+   400px screen overflows a 320px one. Below 640 it tracks the viewport
+   instead — 13vw keeps that word inside the px-6 gutters from 320 up —
+   floored at 2.75rem and capped at 3.2rem.
+
+   Above that the longest heading, WORK EXPERIENCE at 6.9em, fits on one
+   line at both steps: 508px of 592 at 640, 635px of 976 at 1024. The
+   640 step is the tighter one — past about 5.3rem there that heading
+   starts breaking in two, which it is allowed to do, but it is worth
+   knowing where. */
 .section-heading {
   font-family: var(--font-crt);
   font-weight: 400;
-  font-size: 2.9rem;
+  font-size: clamp(2.75rem, 13vw, 3.2rem);
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1710,7 +1766,12 @@ button.glass-badge:active {
 
 @media (min-width: 640px) {
   .section-heading {
-    font-size: 4.4rem;
+    font-size: 4.2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-heading {
+    font-size: 5.7rem;
   }
 }
 
@@ -2634,16 +2695,21 @@ button.glass-badge:active {
   margin-top: 0.6rem;
   font-family: var(--font-crt);
   font-weight: 400;
-  font-size: 3.4rem;
+  font-size: 3.5rem;
   line-height: 0.98;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--cloud);
   text-wrap: balance;
 }
+/* In step with the section headings, but held below them: this one
+   shares a row with the readout from 900px, and LET'S CONNECT has to fit
+   that column — 4.8rem is 439px of about 528 on a full-width screen, with
+   room to spare. Narrower than that it breaks, and balance splits it
+   evenly. */
 @media (min-width: 640px) {
   .contact-title {
-    font-size: 4.6rem;
+    font-size: 4.8rem;
   }
 }
 

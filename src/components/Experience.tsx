@@ -128,7 +128,7 @@ export default function Experience() {
   }, []);
 
   return (
-    <section id="experience" className="py-24 px-6 section-divider band-sky">
+    <section id="experience" className="py-24 px-6 section-divider band-sky section-screen" data-align="top">
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-12">

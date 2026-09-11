@@ -49,7 +49,7 @@ const TOTAL = skills.reduce((n, g) => n + g.items.length, 0);
 
 export default function Skills() {
   return (
-    <section id="about" className="py-24 px-6 section-divider band-leaf">
+    <section id="about" className="py-24 px-6 section-divider band-leaf section-screen">
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-10">

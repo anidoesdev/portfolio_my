@@ -19,7 +19,7 @@ export default function Contact() {
   const year = new Date().getFullYear();
 
   return (
-    <section id="contact" className="contact-close">
+    <section id="contact" className="contact-close section-screen">
       {/* Dusk over still water, and the last thing on the page. It is
           no longer the hero's photograph mirrored, so the mirroring
           went with it — flipping an image that is not a reflection of

@@ -37,16 +37,17 @@ function group(n: number): string {
   return out;
 }
 
-/* Where a rank sits in the field, as a percentage. One decimal: 7.9%
-   says something 5472 does not, and the raw numbers stay on the card
-   underneath for anyone who wants to check the arithmetic. */
-function topPercent(rank: number, outOf: number): number {
-  return Math.round((rank / outOf) * 1000) / 10;
+/* The share of the field placed below this rank, as a percentile. Reads
+   the same way as the bar under it: more is better, so a strong result
+   fills the meter rather than leaving it nearly empty the way "top 7.9%"
+   did. One decimal, rounded to nearest — 92.097 is 92.1. */
+function percentile(rank: number, outOf: number): number {
+  return Math.round(((outOf - rank) / outOf) * 1000) / 10;
 }
 
 export default function Achievements() {
   return (
-    <section id="achievements" className="py-24 px-6 section-divider band-paper">
+    <section id="achievements" className="py-24 px-6 section-divider band-paper section-screen">
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-8">
@@ -57,7 +58,7 @@ export default function Achievements() {
         <ul className="ach">
           {achievements.map((a) => {
             const ranked = a.rank !== undefined && a.outOf !== undefined;
-            const pct = ranked ? topPercent(a.rank!, a.outOf!) : null;
+            const pct = ranked ? percentile(a.rank!, a.outOf!) : null;
 
             return (
               <li key={a.label} className="ach-card">
@@ -70,20 +71,19 @@ export default function Achievements() {
                   {ranked ? (
                     <>
                       <p className="ach-figure">
-                        Top {pct}%
-                        <span className="sr-only">
-                          {" "}
-                          of {group(a.outOf!)} candidates
-                        </span>
+                        {pct} percentile
                       </p>
 
-                      {/* The filled slice is the percentile itself, so the
-                          bar is short precisely because the placing is
-                          good. Decorative — the numbers below say it. */}
+                      {/* Filled to the percentile, so the bar is long
+                          because the placing is good. Decorative — the
+                          figure above and the note below say it. */}
                       <div className="ach-meter" aria-hidden="true">
                         <i style={{ width: `${pct}%` }} />
                       </div>
 
+                      {/* The rank itself, under the percentile it was
+                          worked out from — the number people quote, with
+                          the field it was placed in. */}
                       <p className="ach-note">
                         {a.scope} rank <b>{group(a.rank!)}</b> of {group(a.outOf!)}
                       </p>

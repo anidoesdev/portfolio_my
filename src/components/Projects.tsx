@@ -118,10 +118,10 @@ const HOLD = 1;
    layers are both on screen for. */
 const SWAP_MS = 380;
 
-/* What each dot goes to, in order. Also the accessible names for them. */
+/* The two stages, in order, by their long names — the switch's accessible
+   name is built from the second. */
 const STAGES = ["architecture diagram", "demo video"];
-/* What the hover readout says. The long names above stay on the dots'
-   aria-labels, where there is no width to run out of. */
+/* The short labels printed either side of the switch's track. */
 const STAGE_KEYS = ["Flow", "Demo"];
 
 function pad(n: number): string {
@@ -353,7 +353,7 @@ export default function Projects() {
   }
 
   return (
-    <section id="projects" className="py-24 px-6 section-divider band-paper">
+    <section id="projects" className="py-24 px-6 section-divider band-paper section-screen" data-align="top">
       <div className="mx-auto max-w-5xl">
 
         {/* The sound switch used to sit to the right of this lede, which
@@ -600,39 +600,39 @@ export default function Projects() {
                               either side report it, they do not have to
                               carry it on their own.
 
-                              The track is decoration and takes no
-                              pointer events; the two labels are the
-                              controls and their padding runs underneath
-                              it, so clicking anywhere on the left half
-                              throws it left and anywhere on the right
-                              half throws it right. A reader aiming at
-                              the knob — which is what a switch invites —
-                              hits a real control rather than a gap. */}
-                          <span
+                              One button, and any press anywhere on it
+                              throws the switch. It used to be two
+                              buttons, one per label, each of which did
+                              nothing when its own side was already on —
+                              and the knob always sits on the side that
+                              is already on, so pressing the knob, which
+                              is exactly what a switch invites, landed on
+                              a dead control. With two positions there is
+                              only ever one place to go, so every press
+                              can go there. */}
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={onDemo}
+                            aria-label={`Show the ${STAGES[1]}`}
                             className="stage-switch"
                             data-at={onDemo ? "1" : "0"}
+                            onClick={() => goStage(onDemo ? 0 : 1)}
                           >
-                            {STAGES.map((label, n) => {
-                              const here = (onDemo ? 1 : 0) === n;
-                              return (
-                                <button
-                                  key={label}
-                                  type="button"
-                                  className="stage-pos"
-                                  data-on={here}
-                                  aria-current={here ? "true" : undefined}
-                                  aria-label={`Show the ${label}`}
-                                  onClick={() => !here && goStage(n)}
-                                >
-                                  {STAGE_KEYS[n]}
-                                </button>
-                              );
-                            })}
+                            {STAGE_KEYS.map((key, n) => (
+                              <span
+                                key={key}
+                                className="stage-pos"
+                                data-on={(onDemo ? 1 : 0) === n}
+                              >
+                                {key}
+                              </span>
+                            ))}
 
                             <span className="stage-track" aria-hidden="true">
                               <i className="knob" />
                             </span>
-                          </span>
+                          </button>
 
                           <span className="sr-only" aria-live="polite">
                             Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}

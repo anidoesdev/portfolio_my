@@ -12,7 +12,7 @@ export default async function Contributions() {
   const { source, repos } = await getRepos(USERNAME);
 
   return (
-    <section id="contributions" className="py-24 px-6 section-divider band-sky">
+    <section id="contributions" className="py-24 px-6 section-divider band-sky section-screen">
       <div className="mx-auto max-w-5xl">
 
         <div className="mb-10">
