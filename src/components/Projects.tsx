@@ -33,14 +33,14 @@ const productionProjects: Project[] = [
     youtubeUrl: "https://youtu.be/x2GqQqP2aSU",
   },
   {
-    title: "Sentinel",
-    kicker: "Anomaly detection on factory sensors",
+    title: "Runnel",
+    kicker: "A workflow automation platform, built from scratch",
     description:
-      "Real-time anomaly detection across vibration, audio, and log streams from industrial equipment. Fuses a VAE on time-series sensors, a CNN on mel-spectrograms, and a text classifier on machine logs into a late-fusion ensemble with SHAP explanations. Kafka ingestion, Triton serving, TimescaleDB storage, and Evidently drift monitoring.",
-    tags: ["Anomaly Detection", "Variational Autoencoder (VAE)", "Convolutional Neural Networks", "Apache Kafka", "Time-Series Databases"],
-    liveUrl: "https://sentinel.anidoes.dev",
-    codeUrl: "https://github.com/anidoesdev/Sentinel.git",
-    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+      "A self-hosted workflow automation platform in a 9-package TypeScript monorepo. A Vue 3 canvas drives a custom graph execution engine with a hand-written expression language and a sandboxed Code node. An AI assistant builds and repairs workflows on a draft copy through validated tools, and only a person can apply that draft to the live workflow.",
+    tags: ["Graph Execution Engine", "Expression Language Parser", "Agentic AI", "Human-in-the-Loop", "TypeScript Monorepo"],
+    liveUrl: "https://runnel.anidoes.dev",
+    codeUrl: "https://github.com/anidoesdev/Runnel.git",
+    youtubeUrl: "https://youtu.be/rJjDvglWWPY",
   },
   {
     title: "Distill",

@@ -56,8 +56,8 @@ export type Diagram = {
   links: Link[];
 };
 
-/* One hop per step. Distill and Synthesis are the deepest at six hops,
-   so a full run is about 2.8s. */
+/* One hop per step. Runnel is the deepest at seven hops, so a full run
+   is about 3.2s; Distill and Synthesis are six, about 2.8s. */
 const STEP = 0.38;
 const PULSE = 0.5;
 

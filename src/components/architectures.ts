@@ -2,8 +2,10 @@ import type { Diagram } from "./Schematic";
 
 /* One schematic per project, keyed by title.
 
-   Each was drafted from the project's own written description and then
-   confirmed by the owner, so all four are published without a stamp.
+   Each was drafted — the first four from the project's own written
+   description, Runnel's from its repository (README, design.md and the
+   source) — and then confirmed by the owner, so all are published
+   without a stamp.
 
    The mechanism stays in place for whatever comes next: a diagram is a
    claim about work someone did, and it is the kind of claim that gets
@@ -71,6 +73,53 @@ export const ARCHITECTURES: Record<string, Diagram> = {
       { from: "cnn", to: "fu" },
       { from: "txt", to: "fu" },
       { from: "fu", to: "sh" },
+    ],
+  },
+
+  /* Two ways into one workflow. The assistant's path runs along the top
+     and the human's along the bottom, and they meet at the workflow
+     itself — the draft reaches it only through Apply, which is the claim
+     the whole design rests on: the agent has no tool that writes the live
+     graph, so Apply is a step only a person can take. (The approval gates
+     in the code are a different mechanism — a pause before destructive
+     tool calls inside the loop — and are not what this edge shows.)
+
+     Links only run rightward or down, so the applied draft wraps down
+     into the workflow rather than the canvas reaching up to it. */
+  Runnel: {
+    w: 560,
+    h: 194,
+    alt:
+      "Two paths into one workflow. Along the top, a prompt goes to the assistant's " +
+      "agent loop, which edits a copy-on-write draft through validated tools; the draft " +
+      "only reaches the workflow once a person applies it. Along the bottom, the Vue 3 " +
+      "canvas edits the same workflow directly. The engine walks the workflow graph in " +
+      "dependency order across 23 node types. Underneath sit the expression language, " +
+      "the Code node's vm sandbox, AES-256-GCM credential encryption and TypeORM storage.",
+    boxes: [
+      { id: "pr", x: 6, y: 12, w: 84, h: 32, label: "Prompt" },
+      { id: "ag", x: 108, y: 12, w: 88, h: 32, label: "Agent", sub: "loop" },
+      { id: "tl", x: 214, y: 12, w: 96, h: 32, label: "Tools", sub: "validated" },
+      { id: "dr", x: 328, y: 12, w: 108, h: 32, label: "Draft", sub: "copy-on-write" },
+      { id: "ap", x: 454, y: 12, w: 100, h: 32, label: "Apply", sub: "human only" },
+      { id: "cv", x: 6, y: 104, w: 100, h: 32, label: "Canvas", sub: "Vue 3" },
+      { id: "wf", x: 139, y: 104, w: 112, h: 32, label: "Workflow", sub: "graph" },
+      { id: "en", x: 284, y: 104, w: 124, h: 32, label: "Engine", sub: "dep. order" },
+      { id: "nd", x: 441, y: 104, w: 112, h: 32, label: "Nodes", sub: "23 types" },
+      { id: "k1", x: 6, y: 156, w: 126, h: 26, label: "Expressions", dim: true },
+      { id: "k2", x: 146, y: 156, w: 126, h: 26, label: "vm sandbox", dim: true },
+      { id: "k3", x: 286, y: 156, w: 126, h: 26, label: "AES-256-GCM", dim: true },
+      { id: "k4", x: 426, y: 156, w: 126, h: 26, label: "TypeORM", dim: true },
+    ],
+    links: [
+      { from: "pr", to: "ag" },
+      { from: "ag", to: "tl" },
+      { from: "tl", to: "dr" },
+      { from: "dr", to: "ap" },
+      { from: "ap", to: "wf", route: "wrap", corridor: 74 },
+      { from: "cv", to: "wf" },
+      { from: "wf", to: "en" },
+      { from: "en", to: "nd" },
     ],
   },
 
