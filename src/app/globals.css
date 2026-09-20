@@ -2037,7 +2037,9 @@ button.glass-badge:active {
   outline-offset: 3px;
 }
 
-.repo-bar {
+/* Shared with the contributions card, which wears the same bar. */
+.repo-bar,
+.contrib-bar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -2051,7 +2053,8 @@ button.glass-badge:active {
   text-transform: uppercase;
   color: var(--forest);
 }
-.repo-bar .name {
+.repo-bar .name,
+.contrib-bar .name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2350,32 +2353,78 @@ button.glass-badge:active {
 }
 
 /* ---- The contribution grid ------------------------------------------
-   The calendar is the densest object on the page — 53 columns of 11px
-   squares, with month labels riding above them and a legend under. At
-   the p-6 the sparser cards use, that grid ran almost edge to edge and
-   sat right against the bevel, so it read as cramped where the same
-   padding looks generous around a paragraph.
+   A panelled card like the repo and achievement ones: a moulded title
+   bar, then the year's grid in a padded body.
+
+   The calendar is the densest object on the page — 53 columns of blocks
+   with month labels above and a legend under — so the body carries more
+   padding than the sparser cards, where the same figure looks generous
+   around a paragraph.
    ------------------------------------------------------------------ */
 .contrib-card {
-  padding: 1.9rem 1.6rem;
+  padding: 0;
+  /* The bar runs to the card's edges, so its corners have to be clipped
+     back to the card's radius. */
+  overflow: hidden;
+}
+
+.contrib-bar .who {
+  margin-left: auto;
+  flex: none;
+  color: var(--amber-ink);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.contrib-bar .who:hover {
+  color: var(--terracotta-ink);
+  text-decoration: underline;
+}
+.contrib-bar .who:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+.contrib-body {
+  padding: 1.6rem 1.4rem 1.4rem;
 }
 @media (min-width: 768px) {
-  .contrib-card {
-    padding: 2.6rem 2.4rem;
+  .contrib-body {
+    padding: 2.2rem 2rem 1.8rem;
   }
 }
 
-/* The scroll lives on this inner wrapper rather than on the card, so a
-   grid too wide for the viewport slides *within* the padding instead of
-   under it.
-
-   Not a stylistic preference: a scroll container's own padding-right is
-   not part of its scrollable overflow in Chrome, so putting overflow on
-   the padded card means the right-hand gap silently disappears the
-   moment the grid is wide enough to actually scroll — which, at 53
-   columns, is every screen narrower than about 900px. */
 .contrib-scroll {
   overflow-x: auto;
+}
+
+/* Filled to the card rather than parked in the middle of it.
+
+   The library sizes itself `width: max-content` — "Calendar should not
+   grow" — which pinned the grid at its natural 791px and left a third
+   of a wide card empty beside it. Stretching the root is what spreads
+   the footer too: the count sits at one end and the Less/More legend at
+   the other, because the legend's own margin-left: auto only has slack
+   to work with once the row is as wide as the card.
+
+   The width is set inline by the library, so this is one of the few
+   places on the page that has to out-rank an inline style. */
+.contrib-scroll .react-activity-calendar {
+  width: 100% !important;
+}
+
+/* The grid is an SVG with a viewBox, so giving it a percentage width
+   scales the whole drawing — blocks, gaps and month labels together —
+   instead of leaving 11px squares adrift in a wider box.
+
+   min-width is the floor: below it the drawing stops shrinking and the
+   library's own scroll container takes over, so on a phone the squares
+   stay legible and the year scrolls rather than compressing into
+   pinstripes. */
+.contrib-scroll .react-activity-calendar__calendar {
+  width: 100%;
+  height: auto;
+  min-width: 720px;
 }
 
 /* ---- A log line -------------------------------------------------

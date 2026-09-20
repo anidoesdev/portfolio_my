@@ -20,8 +20,28 @@ export default async function Contributions() {
         </div>
 
         <div className="glass-card contrib-card">
-          <div className="contrib-scroll">
-            <ContributionGraph username={USERNAME} />
+          {/* The same moulded title bar the repo and achievement cards
+              carry, so the panel belongs to the page rather than to the
+              calendar library. The handle doubles as the way out to the
+              profile — the grid is the only thing on this card that
+              could be mistaken for a link, and it is not one. */}
+          <div className="contrib-bar">
+            <span className="name">Contributions</span>
+            <a
+              className="who"
+              href={`https://github.com/${USERNAME}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @{USERNAME}
+              <span aria-hidden="true"> ↗</span>
+            </a>
+          </div>
+
+          <div className="contrib-body">
+            <div className="contrib-scroll">
+              <ContributionGraph username={USERNAME} />
+            </div>
           </div>
         </div>
 

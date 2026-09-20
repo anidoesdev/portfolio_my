@@ -50,7 +50,7 @@ const productionProjects: Project[] = [
     tags: ["Fine-Tuning", "Qwen 2.5", "TRL", "Paged Attention", "MLOps"],
     liveUrl: "",
     codeUrl: "https://github.com/anidoesdev/distill.git",
-    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+    youtubeUrl: "https://youtu.be/W04V_AVxU6E",
   },
   {
     title: "Synthesis",
@@ -60,7 +60,7 @@ const productionProjects: Project[] = [
     tags: ["Multi-Agent Systems", "Agentic AI", "Hallucination Detection", "Distributed Tracing"],
     liveUrl: "",
     codeUrl: "https://github.com/anidoesdev/synthesis.git",
-    youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+    youtubeUrl: "https://youtu.be/t_CoEtQ6FMA",
   },
 ];
 
