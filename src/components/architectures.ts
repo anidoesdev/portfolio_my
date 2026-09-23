@@ -2,9 +2,10 @@ import type { Diagram } from "./Schematic";
 
 /* One schematic per project, keyed by title.
 
-   Each was drafted — the first four from the project's own written
-   description, Runnel's from its repository (README, design.md and the
-   source) — and then confirmed by the owner, so all are published
+   Each was drafted from what the project itself says — the first four
+   from their written descriptions, Runnel's and MemNest's from their
+   repositories (README, design notes and the source) — and then checked
+   by the owner against the real architecture, so all are published
    without a stamp.
 
    The mechanism stays in place for whatever comes next: a diagram is a
@@ -175,6 +176,56 @@ export const ARCHITECTURES: Record<string, Diagram> = {
       { from: "rd", to: "mem", route: "tie" },
       { from: "cr", to: "sy", route: "wrap", corridor: 88 },
       { from: "sy", to: "an" },
+    ],
+  },
+
+  /* Write along the top, read along the bottom, and the store is the
+     hinge: Memories is the last box of the write path and, with the
+     query, one of the two inputs to recall — which is what the engine
+     actually does, search the accumulated memories for a query.
+
+     Resolve is the box worth reading twice. It is the difference
+     between this and a vector store: a new fact is classified against
+     the ones already held rather than simply appended, and the one it
+     supersedes is kept. */
+  MemNest: {
+    w: 560,
+    h: 194,
+    alt:
+      "Along the top, a document is turned into atomic facts by extraction, screened by " +
+      "deterministic checks, and resolved against what is already stored — each new fact " +
+      "either updates, extends, duplicates or joins the memories, and nothing it " +
+      "supersedes is deleted. Along the bottom, a query and those memories both feed " +
+      "recall, which runs lexical and vector search, fuses the two, packs the result to " +
+      "a token budget and returns a trace of what was kept and what was dropped. " +
+      "Underneath: SQLite and Postgres with pgvector as the stores, and the MCP server " +
+      "and dashboard as the ways in.",
+    boxes: [
+      { id: "dc", x: 6, y: 12, w: 88, h: 32, label: "Document" },
+      { id: "ex", x: 112, y: 12, w: 96, h: 32, label: "Extract", sub: "facts" },
+      { id: "sc", x: 226, y: 12, w: 92, h: 32, label: "Screen", sub: "checked" },
+      { id: "rs", x: 336, y: 12, w: 112, h: 32, label: "Resolve", sub: "updates/extends" },
+      { id: "mem", x: 466, y: 12, w: 88, h: 32, label: "Memories", sub: "versioned" },
+      { id: "qy", x: 6, y: 104, w: 84, h: 32, label: "Query" },
+      { id: "rc", x: 101, y: 104, w: 128, h: 32, label: "Recall", sub: "lexical + vector" },
+      { id: "rf", x: 240, y: 104, w: 84, h: 32, label: "RRF", sub: "fused" },
+      { id: "bd", x: 335, y: 104, w: 108, h: 32, label: "Budget", sub: "token pack" },
+      { id: "tr", x: 454, y: 104, w: 100, h: 32, label: "Trace", sub: "kept / dropped" },
+      { id: "k1", x: 6, y: 156, w: 126, h: 26, label: "SQLite", dim: true },
+      { id: "k2", x: 146, y: 156, w: 126, h: 26, label: "pgvector", dim: true },
+      { id: "k3", x: 286, y: 156, w: 126, h: 26, label: "MCP server", dim: true },
+      { id: "k4", x: 426, y: 156, w: 126, h: 26, label: "Dashboard", dim: true },
+    ],
+    links: [
+      { from: "dc", to: "ex" },
+      { from: "ex", to: "sc" },
+      { from: "sc", to: "rs" },
+      { from: "rs", to: "mem" },
+      { from: "mem", to: "rc", route: "wrap", corridor: 74 },
+      { from: "qy", to: "rc" },
+      { from: "rc", to: "rf" },
+      { from: "rf", to: "bd" },
+      { from: "bd", to: "tr" },
     ],
   },
 };

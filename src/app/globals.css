@@ -512,6 +512,11 @@ button.glass-badge:active {
   --label-b: var(--meadow-deep);
   --label-c: #2f7080;
   --label-d: #7a4a12;
+  /* A fifth folder wraps around to --label-a otherwise, and two tabs in
+     one row wearing the same strip read as a mistake. Plum, because it
+     is the one hue the other four leave open: the strip is 3px at 0.45
+     opacity with no text on it, so this only has to be told apart. */
+  --label-e: #6d4468;
 
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular,
     "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -2828,13 +2833,23 @@ button.glass-badge:active {
 /* The one lit control on a dark screen. Outlined rather than filled, so
    it belongs to the terminal instead of importing the cream key caps
    from the rest of the page onto a night field. */
-.contact-cta {
+/* The pair of actions. The grid slot and the spacing above belong to
+   the row, so either button can be removed without the other losing its
+   place. */
+.contact-actions {
   grid-area: cta;
   justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.contact-cta {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  margin-top: 1.2rem;
   padding: 0.5rem 1.25rem 0.55rem;
   border: 1px solid var(--screen-lit);
   border-radius: var(--r-sm);
@@ -2858,15 +2873,34 @@ button.glass-badge:active {
   outline: 2px solid var(--amber);
   outline-offset: 3px;
 }
+/* The second action, one step back. Same size and shape as the lit one
+   — they sit side by side, and a smaller twin would read as less
+   important rather than less loud — but it borrows the body text's
+   colour instead of the phosphor, and only lights up on hover. */
+.contact-cta[data-tone="ghost"] {
+  border-color: rgba(255, 253, 246, 0.34);
+  background: transparent;
+  color: rgba(255, 253, 246, 0.92);
+}
+.contact-cta[data-tone="ghost"]:hover {
+  border-color: var(--screen-lit);
+  background: rgba(185, 226, 106, 0.12);
+  color: var(--screen-lit);
+  box-shadow: none;
+}
+
 .contact-cta .arrow {
   font-size: 0.8em;
 }
 
+/* A stack now rather than one line: the notice, the counter and the
+   sign-off each get their own row. */
 .contact-foot {
   grid-area: foot;
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
   margin-top: 5rem;
   padding-top: 1.4rem;
   border-top: 1px solid rgba(255, 253, 246, 0.16);
@@ -2878,6 +2912,46 @@ button.glass-badge:active {
 
 /* The cursor left sitting at the end of the last line. It is the only
    thing on the page that is still moving when you reach the bottom. */
+/* The counter, as a row of stamped cells. Padded to four digits in the
+   markup, so the row does not jump a whole cell wider the day the count
+   crosses a thousand. */
+.visits {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.odometer {
+  display: inline-flex;
+  gap: 2px;
+}
+.odometer .digit {
+  min-width: 0.95rem;
+  padding: 0.1rem 0.18rem 0.12rem;
+  border: 1px solid rgba(255, 253, 246, 0.18);
+  border-radius: var(--r-xs);
+  background: rgba(10, 18, 12, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
+  font-family: var(--font-crt);
+  font-size: 1.05rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--screen-lit);
+  font-variant-numeric: tabular-nums;
+}
+/* Inherits the footer's own 0.72 rather than going dimmer. Over this
+   ground that is already near the contrast floor the scrim was tuned
+   against — the green digits and prompt carry the hierarchy instead. */
+
+/* The last line on the page, and the only one still moving. */
+.foot-sign {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.foot-sign .prompt {
+  color: var(--screen-lit);
+}
+
 .contact-foot .caret {
   width: 0.45rem;
   height: 0.95rem;

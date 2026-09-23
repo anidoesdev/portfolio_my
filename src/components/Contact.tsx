@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Visitors from "./Visitors";
 import footer from "@/images/footer.jpg";
 
 const EMAIL = "anikajain1307@gmail.com";
@@ -65,15 +66,49 @@ export default function Contact() {
           ))}
         </ul>
 
-        <a className="contact-cta" href={`mailto:${EMAIL}`}>
-          Say hello
-          <span className="arrow" aria-hidden="true">▸</span>
-        </a>
+        {/* Two ways to act on the page, in the order they are usually
+            wanted: write to me, or read what I have done. The résumé is
+            the quieter of the pair — outlined rather than lit, so the
+            two do not compete for the same attention. */}
+        <div className="contact-actions">
+          <a className="contact-cta" href={`mailto:${EMAIL}`}>
+            Say hello
+            <span className="arrow" aria-hidden="true">▸</span>
+          </a>
 
-        <p className="contact-foot">
-          © {year} Anika Jain — built with Next.js and Tailwind CSS
-          <span className="caret" aria-hidden="true" />
-        </p>
+          {/* Served from `public/`, and named for what it is: that file
+              name is what ends up in the reader's downloads folder. */}
+          <a
+            className="contact-cta"
+            data-tone="ghost"
+            href="/anika-jain-resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Résumé
+            <span className="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        {/* Three lines, quietest last: what this is, how many people
+            have seen it, and the cursor the page ends on. The framework
+            credit that used to sit here said what it was built *with*;
+            this says what was actually done, which is the part a reader
+            of a portfolio is being asked to judge. */}
+        <div className="contact-foot">
+          <p className="foot-line">
+            © {year} Anika Jain - designed and built from scratch
+          </p>
+
+          {/* Renders nothing at all until it has a real number. */}
+          <Visitors />
+
+          <p className="foot-sign">
+            <span className="prompt" aria-hidden="true">&gt;</span>
+            end of transmission
+            <span className="caret" aria-hidden="true" />
+          </p>
+        </div>
       </div>
     </section>
   );

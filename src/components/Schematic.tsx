@@ -56,8 +56,8 @@ export type Diagram = {
   links: Link[];
 };
 
-/* One hop per step. Runnel is the deepest at seven hops, so a full run
-   is about 3.2s; Distill and Synthesis are six, about 2.8s. */
+/* One hop per step. MemNest is the deepest at eight hops, so a full run
+   is about 3.5s; Runnel is seven, and Distill and Synthesis six. */
 const STEP = 0.38;
 const PULSE = 0.5;
 
@@ -184,8 +184,9 @@ export default function Schematic({
   /* Per-instance, because the arrowhead is referenced by `url(#id)` and
      two diagrams sharing an id is two elements answering to the same
      name. It used to be keyed on the viewBox size, which held only
-     because all four diagrams happen to differ in height — and stopped
-     holding the moment a still copy of one was drawn beside it. The
+     because the diagrams then in the file happened to differ in height —
+     three of them share one now — and stopped holding the moment a still
+     copy of one was drawn beside it. The
      sanitising matters: useId() returns a value wrapped in characters
      that have no business inside a url() reference. */
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");

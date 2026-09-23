@@ -62,6 +62,16 @@ const productionProjects: Project[] = [
     codeUrl: "https://github.com/anidoesdev/synthesis.git",
     youtubeUrl: "https://youtu.be/t_CoEtQ6FMA",
   },
+  {
+    title: "MemNest",
+    kicker: "Long-term memory for AI agents",
+    description:
+      "A self-hostable memory engine for AI agents. Rather than returning chunks that merely resemble a query, it extracts atomic facts from raw content and decides how each one relates to what is already known — replacing, extending or reinforcing it — and a superseded fact is kept and stays traceable rather than deleted. Recall fuses lexical and vector search, packs the result to a token budget, and returns a trace saying what was dropped and why.",
+    tags: ["Atomic Fact Extraction", "Hybrid Retrieval", "pgvector + HNSW", "MCP Server", "Memory Lineage"],
+    liveUrl: "https://memnest.anidoes.dev",
+    codeUrl: "https://github.com/anidoesdev/MemNest.git",
+    youtubeUrl: "https://youtu.be/wX1XcWigqes",
+  },
 ];
 
 function hasDemo(url?: string): boolean {
@@ -105,6 +115,7 @@ const TYPE_COLOUR = [
   "var(--label-b)",
   "var(--label-c)",
   "var(--label-d)",
+  "var(--label-e)",
 ];
 
 /* How long the finished diagram sits before the demo takes over, added
