@@ -22,6 +22,26 @@ type Project = {
 };
 
 const productionProjects: Project[] = [
+   {
+    title: "Runnel",
+    kicker: "A workflow automation platform, built from scratch",
+    description:
+      "A self-hosted workflow automation platform in a 9-package TypeScript monorepo. A Vue 3 canvas drives a custom graph execution engine with a hand-written expression language and a sandboxed Code node. An AI assistant builds and repairs workflows on a draft copy through validated tools, and only a person can apply that draft to the live workflow.",
+    tags: ["Graph Execution Engine", "Expression Language Parser", "Agentic AI", "Human-in-the-Loop", "TypeScript Monorepo"],
+    liveUrl: "https://runnel.anidoes.dev",
+    codeUrl: "https://github.com/anidoesdev/Runnel.git",
+    youtubeUrl: "https://youtu.be/rJjDvglWWPY",
+  },
+  {
+    title: "MemNest",
+    kicker: "Long-term memory for AI agents",
+    description:
+      "A self-hostable memory engine for AI agents. Rather than returning chunks that merely resemble a query, it extracts atomic facts from raw content and decides how each one relates to what is already known — replacing, extending or reinforcing it — and a superseded fact is kept and stays traceable rather than deleted. Recall fuses lexical and vector search, packs the result to a token budget, and returns a trace saying what was dropped and why.",
+    tags: ["Atomic Fact Extraction", "Hybrid Retrieval", "pgvector + HNSW", "MCP Server", "Memory Lineage"],
+    liveUrl: "https://memnest.anidoes.dev",
+    codeUrl: "https://github.com/anidoesdev/MemNest.git",
+    youtubeUrl: "https://youtu.be/wX1XcWigqes",
+  },
   {
     title: "Papyrus",
     kicker: "Cited answers from scientific papers",
@@ -31,16 +51,6 @@ const productionProjects: Project[] = [
     liveUrl: "https://papyrus.anidoes.dev",
     codeUrl: "https://github.com/anidoesdev/scientific-rag-assistant.git",
     youtubeUrl: "https://youtu.be/x2GqQqP2aSU",
-  },
-  {
-    title: "Runnel",
-    kicker: "A workflow automation platform, built from scratch",
-    description:
-      "A self-hosted workflow automation platform in a 9-package TypeScript monorepo. A Vue 3 canvas drives a custom graph execution engine with a hand-written expression language and a sandboxed Code node. An AI assistant builds and repairs workflows on a draft copy through validated tools, and only a person can apply that draft to the live workflow.",
-    tags: ["Graph Execution Engine", "Expression Language Parser", "Agentic AI", "Human-in-the-Loop", "TypeScript Monorepo"],
-    liveUrl: "https://runnel.anidoes.dev",
-    codeUrl: "https://github.com/anidoesdev/Runnel.git",
-    youtubeUrl: "https://youtu.be/rJjDvglWWPY",
   },
   {
     title: "Distill",
@@ -62,16 +72,7 @@ const productionProjects: Project[] = [
     codeUrl: "https://github.com/anidoesdev/synthesis.git",
     youtubeUrl: "https://youtu.be/t_CoEtQ6FMA",
   },
-  {
-    title: "MemNest",
-    kicker: "Long-term memory for AI agents",
-    description:
-      "A self-hostable memory engine for AI agents. Rather than returning chunks that merely resemble a query, it extracts atomic facts from raw content and decides how each one relates to what is already known — replacing, extending or reinforcing it — and a superseded fact is kept and stays traceable rather than deleted. Recall fuses lexical and vector search, packs the result to a token budget, and returns a trace saying what was dropped and why.",
-    tags: ["Atomic Fact Extraction", "Hybrid Retrieval", "pgvector + HNSW", "MCP Server", "Memory Lineage"],
-    liveUrl: "https://memnest.anidoes.dev",
-    codeUrl: "https://github.com/anidoesdev/MemNest.git",
-    youtubeUrl: "https://youtu.be/wX1XcWigqes",
-  },
+  
 ];
 
 function hasDemo(url?: string): boolean {

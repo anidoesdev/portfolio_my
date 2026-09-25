@@ -595,8 +595,16 @@ button.glass-badge:active {
 }
 
 /* A separator between entries, not a box around each. Generated content
-   because a real character per gap would be 23 spans doing nothing. */
-.spec-def li + li::before {
+   because a real character per gap would be 23 spans doing nothing.
+
+   It trails its own entry rather than leading the next one. Each entry
+   is a flex item and wraps whole, so as a ::before the dot travelled
+   with the entry it preceded: every wrapped line opened with "· Word"
+   while the line above opened with "Word", leaving dots hanging in the
+   left margin and each wrapped line's first word set a character and a
+   half in from the one above it. Trailing, a line break falls after the
+   dot, so every line starts with a word on the same vertical. */
+.spec-def li:not(:last-child)::after {
   content: "·";
   margin: 0 0.55rem;
   color: rgba(77, 117, 38, 0.55);
@@ -738,6 +746,45 @@ button.glass-badge:active {
 }
 .fold-tab[aria-selected="true"] .fold-num {
   color: var(--terracotta-ink);
+}
+
+/* ---- The rack on a narrow screen -----------------------------------
+   Five tabs want about 600px and a phone has about 330, so the row
+   wrapped — and wrapping broke the one thing the rack has to get right.
+   An open tab drops the border it shares with the body to read as one
+   piece of card with it; on a second row of tabs there is nothing below
+   it to merge with, so it erased its edge against another tab and the
+   whole block looked out of true.
+
+   One row that scrolls instead. The open tab is always sitting on the
+   body's edge, whichever tab it is.
+   ------------------------------------------------------------------ */
+@media (max-width: 767px) {
+  .fold-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    /* The page hides its own scrollbar; this is a separate scroller and
+       has to be told again. */
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    /* Space for a focus ring on the first and last tab: an outline is
+       clipped by the scroll container, not drawn over it. */
+    padding-inline: 0.4rem;
+  }
+  .fold-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .fold-tab {
+    /* Without this they share out the width instead of keeping it, and
+       five squashed tabs is the layout this rule exists to avoid. */
+    flex: none;
+    scroll-snap-align: start;
+    padding: 0.4rem 0.62rem 0.42rem;
+    font-size: 0.95rem;
+  }
+  .fold-tab[aria-selected="true"] {
+    padding-top: 0.56rem;
+  }
 }
 
 .fold-body {
@@ -3120,5 +3167,31 @@ button.glass-badge:active {
   .spec-def li,
   .slate-row dd {
     overflow-wrap: anywhere;
+  }
+
+  /* Two columns, not a flowing line.
+
+     Wrapped, the entries pack left and each line breaks wherever the
+     previous one ran out of room, so the second entry on every line
+     starts at a different x — 29 entries and no two lines agreeing.
+     Laid into two tracks they start on one of two verticals, and the
+     29 read as 15 tidy rows rather than a paragraph of nouns.
+
+     The dots go with the change: the columns are the separation now,
+     and a dot inside a cell would only be a mark with nothing on the
+     other side of it.
+
+     Two tracks fit at the section's own type size. Every entry but one
+     is under 110px against a ~130-155px track; "Model Serving (vLLM,
+     TorchServe)" is the exception and wraps inside its own cell, which
+     costs that row a line and still leaves both columns aligned. */
+  .spec-def ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.9rem;
+    row-gap: 0.1rem;
+  }
+  .spec-def li:not(:last-child)::after {
+    content: none;
   }
 }
