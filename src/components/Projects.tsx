@@ -155,6 +155,12 @@ export default function Projects() {
   const [runs, setRuns] = useState<Record<string, number>>({});
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const bodyRef = useRef<HTMLDivElement | null>(null);
+  /* The rack scrolls on a phone — five tags need about 520px and a
+     handset has around 330 — so two things have to be managed that the
+     wrapped desktop row never needed: which tag is in view, and whether
+     a tag is hanging half-cut at an edge. */
+  const rackRef = useRef<HTMLDivElement | null>(null);
+  const [edge, setEdge] = useState<"" | "start" | "end" | "both">("");
   /* True while the stage is mid-swap. The content changes at the pinch
      point, where nothing is visible, so the diagram never dissolves
      into the video — and the iframe's own first paint is hidden too. */
@@ -289,6 +295,71 @@ export default function Projects() {
     setRuns((r) => ({ ...r, [title]: (r[title] ?? 0) + 1 }));
   }
 
+  /* Bring the open tag fully inside the rack.
+
+     Not scrollIntoView: that walks up the ancestors and will scroll the
+     page itself, so choosing a folder would yank the section around
+     under the reader. Setting the rack's own scrollLeft moves the one
+     box that should move. */
+  useEffect(() => {
+    const rack = rackRef.current;
+    const tab = tabRefs.current[active];
+    if (!rack || !tab) return;
+
+    const slack = rack.scrollWidth - rack.clientWidth;
+    if (slack <= 1) return;
+
+    /* .fold-tabs is position: relative, so a tag's offsetLeft is already
+       measured from the rack's own padding edge. */
+    const left = tab.offsetLeft;
+    const right = left + tab.offsetWidth;
+    /* Has to clear the fade, not just the edge: --fade in globals.css is
+       2.2rem, and parking the open tag any closer than that would leave
+       it fully scrolled in and still dimmed. */
+    const margin = 38;
+
+    const behavior: ScrollBehavior =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth";
+
+    if (left - margin < rack.scrollLeft) {
+      rack.scrollTo({ left: Math.max(0, left - margin), behavior });
+    } else if (right + margin > rack.scrollLeft + rack.clientWidth) {
+      rack.scrollTo({ left: right + margin - rack.clientWidth, behavior });
+    }
+  }, [active]);
+
+  /* Which ends of the rack have more tags beyond them. The fade is drawn
+     off this, so an edge only softens when something is actually cut by
+     it — a permanent fade at the end of the row would be dimming the
+     last tag for no reason. */
+  useEffect(() => {
+    const rack = rackRef.current;
+    if (!rack) return;
+
+    const update = () => {
+      const slack = rack.scrollWidth - rack.clientWidth;
+      /* A sub-pixel slack is a rounding artefact, not a hidden tag. */
+      if (slack <= 1) return setEdge("");
+      const atStart = rack.scrollLeft <= 1;
+      const atEnd = rack.scrollLeft >= slack - 1;
+      setEdge(atStart ? "end" : atEnd ? "start" : "both");
+    };
+
+    update();
+    rack.addEventListener("scroll", update, { passive: true });
+    /* Catches the breakpoint being crossed, and the fonts landing and
+       changing how wide the tags are. */
+    const ro = new ResizeObserver(update);
+    ro.observe(rack);
+    return () => {
+      rack.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, []);
+
   /* Opening a folder runs its pipeline. The animation is the reward for
      the click, so it should not need a second one. Stage and hold both
      reset: a freshly opened folder starts at its diagram and is free to
@@ -379,286 +450,298 @@ export default function Projects() {
           </p>
         </div>
 
-        {/* Name tags along the top, one folder body below. Every tag is
-            legible at once — which is the thing the buried pile got
-            wrong — and opening one is a single click. */}
-        <div
-          role="tablist"
-          aria-label="Projects"
-          className="fold-tabs"
-        >
-          {productionProjects.map((p, i) => {
-            const selected = i === active;
-            const live = isLive(p.liveUrl);
-            return (
-              <button
-                key={p.title}
-                ref={(el) => {
-                  tabRefs.current[i] = el;
-                }}
-                id={tabId(i)}
-                role="tab"
-                type="button"
-                aria-selected={selected}
-                aria-controls={panelId(i)}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => open(i)}
-                onKeyDown={(e) => onKeyDown(e, i)}
-                className="fold-tab"
-                style={{ ["--sticker" as string]: TYPE_COLOUR[i % TYPE_COLOUR.length] }}
-              >
-                <span className="fold-num">{pad(i + 1)}</span>
-                {p.title}
-                <span
-                  className="pip"
-                  data-on={live}
-                  title={live ? "Deployed" : "Source only"}
-                  aria-hidden="true"
-                />
-              </button>
-            );
-          })}
-        </div>
+        {/* The rack and the open folder. */}
+        <div className="fold">
+          {/* Name tags along the top, one folder body below. Every tag is
+              legible at once — which is the thing the buried pile got
+              wrong — and opening one is a single click. */}
+          <div
+            ref={rackRef}
+            role="tablist"
+            aria-label="Projects"
+            className="fold-tabs"
+            data-edge={edge || undefined}
+          >
+            {productionProjects.map((p, i) => {
+              const selected = i === active;
+              const live = isLive(p.liveUrl);
+              return (
+                <button
+                  key={p.title}
+                  ref={(el) => {
+                    tabRefs.current[i] = el;
+                  }}
+                  id={tabId(i)}
+                  role="tab"
+                  type="button"
+                  aria-selected={selected}
+                  aria-controls={panelId(i)}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => open(i)}
+                  onKeyDown={(e) => onKeyDown(e, i)}
+                  className="fold-tab"
+                  style={{ ["--sticker" as string]: TYPE_COLOUR[i % TYPE_COLOUR.length] }}
+                >
+                  <span className="fold-num">{pad(i + 1)}</span>
+                  {/* The phone's stand-in for the number: one letter, which
+                      says more than an index does. aria-hidden because the
+                      full name is already in the button — clipped to the
+                      eye on a closed tag, but read out in full. */}
+                  <span className="fold-initial" aria-hidden="true">
+                    {p.title.charAt(0)}
+                  </span>
+                  <span className="name">{p.title}</span>
+                  <span
+                    className="pip"
+                    data-on={live}
+                    title={live ? "Deployed" : "Source only"}
+                    aria-hidden="true"
+                  />
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Pressing something cancels the countdown in flight. Merely
-            hovering no longer does: moving the cursor onto the diagram to
-            look at it is the most natural thing to do while waiting, and
-            cancelling on that made the jump fire only when the reader
-            happened to keep their mouse still.
+          {/* Pressing something cancels the countdown in flight. Merely
+              hovering no longer does: moving the cursor onto the diagram to
+              look at it is the most natural thing to do while waiting, and
+              cancelling on that made the jump fire only when the reader
+              happened to keep their mouse still.
 
-            These fire on pointerdown, before the click handlers below, so
-            a press of Back or Run still re-arms afterwards. Capture
-            phase, so it fires however deep the target is. */}
-        <div
-          ref={bodyRef}
-          className="fold-body"
-          onPointerDownCapture={() => setPaused(true)}
-          onFocusCapture={() => setPaused(true)}
-          onKeyDownCapture={() => setPaused(true)}
-        >
-          {productionProjects.map((p, i) => {
-            const live = isLive(p.liveUrl);
-            const reel = hasDemo(p.youtubeUrl);
-            const diagram = ARCHITECTURES[p.title];
-            const onDemo = i === active && stage === 1;
+              These fire on pointerdown, before the click handlers below, so
+              a press of Back or Run still re-arms afterwards. Capture
+              phase, so it fires however deep the target is. */}
+          <div
+            ref={bodyRef}
+            className="fold-body"
+            onPointerDownCapture={() => setPaused(true)}
+            onFocusCapture={() => setPaused(true)}
+            onKeyDownCapture={() => setPaused(true)}
+          >
+            {productionProjects.map((p, i) => {
+              const live = isLive(p.liveUrl);
+              const reel = hasDemo(p.youtubeUrl);
+              const diagram = ARCHITECTURES[p.title];
+              const onDemo = i === active && stage === 1;
 
-            return (
-              <div
-                key={p.title}
-                id={panelId(i)}
-                role="tabpanel"
-                aria-labelledby={tabId(i)}
-                tabIndex={0}
-                hidden={i !== active}
-              >
-                <div className="proj-body">
-                  {/* First in the DOM so the heading leads; moved to the
-                      right column visually at lg. */}
-                  <div className="proj-text">
-                    <h3 className="proj-name">{p.title}</h3>
-                    <p className="proj-kicker">{p.kicker}</p>
-                    <p className="proj-desc">{p.description}</p>
+              return (
+                <div
+                  key={p.title}
+                  id={panelId(i)}
+                  role="tabpanel"
+                  aria-labelledby={tabId(i)}
+                  tabIndex={0}
+                  hidden={i !== active}
+                >
+                  <div className="proj-body">
+                    {/* First in the DOM so the heading leads; moved to the
+                        right column visually at lg. */}
+                    <div className="proj-text">
+                      <h3 className="proj-name">{p.title}</h3>
+                      <p className="proj-kicker">{p.kicker}</p>
+                      <p className="proj-desc">{p.description}</p>
 
-                    <div className="proj-tags">
-                      {p.tags.map((tag) => (
-                        <span key={tag} className="proj-tag">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                      <div className="proj-tags">
+                        {p.tags.map((tag) => (
+                          <span key={tag} className="proj-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
 
-                    {/* Two keys, not two identical keys. Source is always
-                        there; Launch only exists when something is
-                        actually deployed, so it is the lit one and reads
-                        as the rarer, more valuable door. Icons are drawn
-                        in the schematic's language — straight segments,
-                        square caps, no curves. */}
-                    <div className="proj-actions">
-                      <a
-                        href={p.codeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="proj-key"
-                      >
-                        <svg className="key-ico" viewBox="0 0 20 20" aria-hidden="true">
-                          <path d="M7.4 5.6 3.4 10l4 4.4" />
-                          <path d="M12.6 5.6 16.6 10l-4 4.4" />
-                          <path d="M11.3 4.4 8.7 15.6" />
-                        </svg>
-                        Source
-                      </a>
-
-                      {live && (
+                      {/* Two keys, not two identical keys. Source is always
+                          there; Launch only exists when something is
+                          actually deployed, so it is the lit one and reads
+                          as the rarer, more valuable door. Icons are drawn
+                          in the schematic's language — straight segments,
+                          square caps, no curves. */}
+                      <div className="proj-actions">
                         <a
-                          href={p.liveUrl}
+                          href={p.codeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="proj-key"
-                          data-lit="true"
                         >
                           <svg className="key-ico" viewBox="0 0 20 20" aria-hidden="true">
-                            <path d="M8.6 4.6H4.4v11h11v-4.2" />
-                            <path d="M10.4 9.6 15.6 4.4" />
-                            <path d="M11.4 4.4h4.2v4.2" />
+                            <path d="M7.4 5.6 3.4 10l4 4.4" />
+                            <path d="M12.6 5.6 16.6 10l-4 4.4" />
+                            <path d="M11.3 4.4 8.7 15.6" />
                           </svg>
-                          Launch
+                          Source
                         </a>
-                      )}
-                    </div>
-                  </div>
 
-                  {diagram && (
-                    <div className="proj-stage">
-                      {/* One frame, two stages. It is a fixed 16:9 so the
-                          diagram and the video are exactly the same size —
-                          otherwise advancing would jolt the page. */}
-                      <div
-                        className="stage"
-                        data-swapping={i === active && swapping}
-                        style={{ ["--dir" as string]: String(dir) }}
-                      >
-                        {/* Keyed siblings, not nested branches: React
-                            keeps the iframe alive across the slide. */}
-                        {i === active && (stage === 1 || leaving === 1) && (
-                          <div
-                            key="demo"
-                            className="stage-inner"
-                            data-dir={stage === 1 ? "in" : "out"}
+                        {live && (
+                          <a
+                            href={p.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="proj-key"
+                            data-lit="true"
                           >
-                            <div className="stage-video">
-                              <iframe
-                                src={getEmbedUrl(p.youtubeUrl!)}
-                                title={`${p.title} demo`}
-                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                loading="lazy"
-                                className="absolute inset-0 w-full h-full"
-                              />
-                              {/* pointer-events: none — the player is under this */}
-                              <span className="crt-lines" aria-hidden="true" />
-                            </div>
-                          </div>
-                        )}
-
-                        {i === active && reel && (
-                          <>
-                            {/* Faded rather than hidden. An iframe swallows
-                                pointer events, so hover over the video
-                                stage can never reach this element — if
-                                these were hidden until hover they would
-                                be unreachable there. Fading the chrome
-                                and leaving the glyph solid keeps them
-                                legible without being loud. */}
-                            <button
-                              type="button"
-                              className="stage-arrow"
-                              data-side="left"
-                              onClick={() => step(-1)}
-                              aria-label={`Previous — ${onDemo ? "architecture diagram" : "demo video"}`}
-                            >
-                              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path
-                                  d="M15 5l-7 7 7 7"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
-
-                            <button
-                              type="button"
-                              className="stage-arrow"
-                              data-side="right"
-                              onClick={() => step(1)}
-                              aria-label={`Next — ${onDemo ? "architecture diagram" : "demo video"}`}
-                            >
-                              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path
-                                  d="M9 5l7 7-7 7"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </>
-                        )}
-
-                        {(i !== active || stage === 0 || leaving === 0) && (
-                          <div
-                            key="diagram"
-                            className="stage-inner"
-                            data-dir={i !== active || stage === 0 ? "in" : "out"}
-                          >
-                            <figure className="stage-schem">
-                              {DRAFT.has(p.title) && (
-                                <figcaption className="schem-draft">Draft</figcaption>
-                              )}
-                              <Schematic diagram={diagram} runId={runs[p.title] ?? 0} />
-                            </figure>
-                          </div>
+                            <svg className="key-ico" viewBox="0 0 20 20" aria-hidden="true">
+                              <path d="M8.6 4.6H4.4v11h11v-4.2" />
+                              <path d="M10.4 9.6 15.6 4.4" />
+                              <path d="M11.4 4.4h4.2v4.2" />
+                            </svg>
+                            Launch
+                          </a>
                         )}
                       </div>
-
-                      {/* A two-step nav on a one-step folder is two dead
-                          controls. Projects without a reel say so instead. */}
-                      {reel ? (
-                      <div className="stage-nav">
-                          {/* A two-position rocker. The knob's place on
-                              the track *is* the state — the labels
-                              either side report it, they do not have to
-                              carry it on their own.
-
-                              One button, and any press anywhere on it
-                              throws the switch. It used to be two
-                              buttons, one per label, each of which did
-                              nothing when its own side was already on —
-                              and the knob always sits on the side that
-                              is already on, so pressing the knob, which
-                              is exactly what a switch invites, landed on
-                              a dead control. With two positions there is
-                              only ever one place to go, so every press
-                              can go there. */}
-                          <button
-                            type="button"
-                            role="switch"
-                            aria-checked={onDemo}
-                            aria-label={`Show the ${STAGES[1]}`}
-                            className="stage-switch"
-                            data-at={onDemo ? "1" : "0"}
-                            onClick={() => goStage(onDemo ? 0 : 1)}
-                          >
-                            {STAGE_KEYS.map((key, n) => (
-                              <span
-                                key={key}
-                                className="stage-pos"
-                                data-on={(onDemo ? 1 : 0) === n}
-                              >
-                                {key}
-                              </span>
-                            ))}
-
-                            <span className="stage-track" aria-hidden="true">
-                              <i className="knob" />
-                            </span>
-                          </button>
-
-                          <span className="sr-only" aria-live="polite">
-                            Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="stage-note">No demo reel on file yet.</p>
-                      )}
                     </div>
-                  )}
+
+                    {diagram && (
+                      <div className="proj-stage">
+                        {/* One frame, two stages. It is a fixed 16:9 so the
+                            diagram and the video are exactly the same size —
+                            otherwise advancing would jolt the page. */}
+                        <div
+                          className="stage"
+                          data-swapping={i === active && swapping}
+                          style={{ ["--dir" as string]: String(dir) }}
+                        >
+                          {/* Keyed siblings, not nested branches: React
+                              keeps the iframe alive across the slide. */}
+                          {i === active && (stage === 1 || leaving === 1) && (
+                            <div
+                              key="demo"
+                              className="stage-inner"
+                              data-dir={stage === 1 ? "in" : "out"}
+                            >
+                              <div className="stage-video">
+                                <iframe
+                                  src={getEmbedUrl(p.youtubeUrl!)}
+                                  title={`${p.title} demo`}
+                                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                  loading="lazy"
+                                  className="absolute inset-0 w-full h-full"
+                                />
+                                {/* pointer-events: none — the player is under this */}
+                                <span className="crt-lines" aria-hidden="true" />
+                              </div>
+                            </div>
+                          )}
+
+                          {i === active && reel && (
+                            <>
+                              {/* Faded rather than hidden. An iframe swallows
+                                  pointer events, so hover over the video
+                                  stage can never reach this element — if
+                                  these were hidden until hover they would
+                                  be unreachable there. Fading the chrome
+                                  and leaving the glyph solid keeps them
+                                  legible without being loud. */}
+                              <button
+                                type="button"
+                                className="stage-arrow"
+                                data-side="left"
+                                onClick={() => step(-1)}
+                                aria-label={`Previous — ${onDemo ? "architecture diagram" : "demo video"}`}
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                  <path
+                                    d="M15 5l-7 7 7 7"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              </button>
+
+                              <button
+                                type="button"
+                                className="stage-arrow"
+                                data-side="right"
+                                onClick={() => step(1)}
+                                aria-label={`Next — ${onDemo ? "architecture diagram" : "demo video"}`}
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                  <path
+                                    d="M9 5l7 7-7 7"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              </button>
+                            </>
+                          )}
+
+                          {(i !== active || stage === 0 || leaving === 0) && (
+                            <div
+                              key="diagram"
+                              className="stage-inner"
+                              data-dir={i !== active || stage === 0 ? "in" : "out"}
+                            >
+                              <figure className="stage-schem">
+                                {DRAFT.has(p.title) && (
+                                  <figcaption className="schem-draft">Draft</figcaption>
+                                )}
+                                <Schematic diagram={diagram} runId={runs[p.title] ?? 0} />
+                              </figure>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* A two-step nav on a one-step folder is two dead
+                            controls. Projects without a reel say so instead. */}
+                        {reel ? (
+                        <div className="stage-nav">
+                            {/* A two-position rocker. The knob's place on
+                                the track *is* the state — the labels
+                                either side report it, they do not have to
+                                carry it on their own.
+
+                                One button, and any press anywhere on it
+                                throws the switch. It used to be two
+                                buttons, one per label, each of which did
+                                nothing when its own side was already on —
+                                and the knob always sits on the side that
+                                is already on, so pressing the knob, which
+                                is exactly what a switch invites, landed on
+                                a dead control. With two positions there is
+                                only ever one place to go, so every press
+                                can go there. */}
+                            <button
+                              type="button"
+                              role="switch"
+                              aria-checked={onDemo}
+                              aria-label={`Show the ${STAGES[1]}`}
+                              className="stage-switch"
+                              data-at={onDemo ? "1" : "0"}
+                              onClick={() => goStage(onDemo ? 0 : 1)}
+                            >
+                              {STAGE_KEYS.map((key, n) => (
+                                <span
+                                  key={key}
+                                  className="stage-pos"
+                                  data-on={(onDemo ? 1 : 0) === n}
+                                >
+                                  {key}
+                                </span>
+                              ))}
+
+                              <span className="stage-track" aria-hidden="true">
+                                <i className="knob" />
+                              </span>
+                            </button>
+
+                            <span className="sr-only" aria-live="polite">
+                              Step {onDemo ? 2 : 1} of 2: {onDemo ? "demo" : "diagram"}
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="stage-note">No demo reel on file yet.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
       </div>

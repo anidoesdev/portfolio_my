@@ -739,6 +739,11 @@ button.glass-badge:active {
   }
 }
 
+/* Shown only on a phone, where it replaces the number. */
+.fold-initial {
+  display: none;
+}
+
 .fold-num {
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
@@ -749,41 +754,87 @@ button.glass-badge:active {
 }
 
 /* ---- The rack on a narrow screen -----------------------------------
-   Five tabs want about 600px and a phone has about 330, so the row
-   wrapped — and wrapping broke the one thing the rack has to get right.
-   An open tab drops the border it shares with the body to read as one
-   piece of card with it; on a second row of tabs there is nothing below
-   it to merge with, so it erased its edge against another tab and the
-   whole block looked out of true.
+   Five tags with their names want about 590px along the top and a phone
+   has about 330. Everything tried to solve that by finding somewhere
+   else to put the names — wrapped rows, a sideways scroller, a rail down
+   the left — and each one either cut a title or took width off the
+   folder, which is where the schematic needs it.
 
-   One row that scrolls instead. The open tab is always sitting on the
-   body's edge, whichever tab it is.
+   The names come off the rack instead. The folder already prints the
+   project's name at the head of the card in 2rem type, so on a phone a
+   closed tag only has to be a mark: the rack collapses to one initial
+   each — P R D S M — in a single row across the top of the card, and the
+   open tag widens to say which one it is. Nothing is truncated, nothing
+   scrolls, and the folder keeps the whole width of the screen.
+
+   Measured at the worst case (SYNTHESIS open, the longest name): about
+   245px of rack against 272px of room on a 320px handset, and the open
+   tag is the one that gives way if that is ever wrong.
    ------------------------------------------------------------------ */
 @media (max-width: 767px) {
   .fold-tabs {
+    /* Back on the body's top border, where the open tag erases its own
+       segment of it and the two read as one piece of card. */
     flex-wrap: nowrap;
-    overflow-x: auto;
-    /* The page hides its own scrollbar; this is a separate scroller and
-       has to be told again. */
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    /* Space for a focus ring on the first and last tab: an outline is
-       clipped by the scroll container, not drawn over it. */
-    padding-inline: 0.4rem;
+    align-items: flex-end;
+    gap: 2px;
+    padding-left: 0.25rem;
+    margin-bottom: -1px;
   }
-  .fold-tabs::-webkit-scrollbar {
+
+  .fold-tab {
+    flex: none;
+    min-width: 0;
+    gap: 0.25rem;
+    padding: 0.42rem 0.5rem 0.44rem;
+  }
+
+  /* The index goes and the initial takes its slot. P R D S M are all
+     distinct, and a letter points at the name where 01..05 points at
+     nothing. It stays in place on the open tag too, so the row of
+     letters still lines up across the rack with one tag expanded. */
+  .fold-num {
     display: none;
   }
-  .fold-tab {
-    /* Without this they share out the width instead of keeping it, and
-       five squashed tabs is the layout this rule exists to avoid. */
-    flex: none;
-    scroll-snap-align: start;
-    padding: 0.4rem 0.62rem 0.42rem;
+  .fold-initial {
+    display: inline;
     font-size: 0.95rem;
+    color: var(--amber-ink);
   }
+
+  /* The name is hidden from the eye on a closed tag, not from the
+     accessible name: display: none would leave the button announcing
+     itself as "01". This is the same clip the site's .sr-only uses. */
+  .fold-tab:not([aria-selected="true"]) .name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* The open tag is the one that says what it is. It is also the only
+     one allowed to shrink: if a longer name than SYNTHESIS ever arrives,
+     or the handset is narrower than 320px, the name ellipses inside the
+     tag rather than pushing the last number off the screen. */
   .fold-tab[aria-selected="true"] {
+    flex: 0 1 auto;
     padding-top: 0.56rem;
+  }
+  .fold-tab[aria-selected="true"] .name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+  }
+
+  .fold-tab .pip {
+    width: 0.35rem;
+    height: 0.35rem;
   }
 }
 
