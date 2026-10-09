@@ -99,8 +99,7 @@ export default function Hero() {
         <h1 className="slate-name">Anika Jain</h1>
 
         <p className="slate-lede">
-          I build intelligent systems — retrieval, agents, and the messy
-          plumbing that gets them into production.
+          A full-stack Applied AI Engineer, from paper to production.
         </p>
 
         {/* A definition list, so each label is bound to its value for a
