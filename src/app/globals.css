@@ -53,6 +53,30 @@
   --radius:      var(--r-md);
 }
 
+/* Pointer on everything clickable. Tailwind's reset puts buttons back
+   on the default arrow from inside its own layer, so this sits outside
+   any layer to win over it, and inside :where() so it carries zero
+   specificity: any component rule (a disabled key, say) still beats it. */
+:where(
+  a[href],
+  button:not(:disabled),
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  summary,
+  label[for],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"]
+) {
+  cursor: pointer;
+}
+:where(button:disabled, [aria-disabled="true"]) {
+  cursor: not-allowed;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -2611,6 +2635,33 @@ button.glass-badge:active {
   color: rgba(77, 117, 38, 0.75);
 }
 
+/* A client inside a freelance entry: highlighted name, points below */
+.log-client {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.log-client + .log-client {
+  margin-top: 0.5rem;
+}
+.log-client-name {
+  align-self: flex-start;
+  padding: 0.1rem 0.5rem;
+  border-left: 2px solid var(--terracotta-ink);
+  background: color-mix(in srgb, var(--terracotta-ink) 10%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--terracotta-ink);
+}
+.log-client-points {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-left: 0.85rem;
+}
+
 /* The spine down the left of the log */
 .log-spine {
   width: 1px;
@@ -2890,7 +2941,7 @@ button.glass-badge:active {
 
 .contact-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 1rem;
   padding: 0.68rem 0;
   border-bottom: 1px solid rgba(185, 226, 106, 0.18);
@@ -2898,15 +2949,18 @@ button.glass-badge:active {
   font-size: 0.875rem;
 }
 
-/* 9ch — one wider than LINKEDIN, the longest key. The face is monospace,
-   so that is an exact measure and the values fall into a column with no
+/* A fixed-width logo column, so the values fall into a column with no
    table and no grid. */
 .contact-row .k {
   flex: none;
-  width: 9ch;
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  width: 1.75rem;
   color: #bcd07e;
+}
+.contact-row .k svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .contact-row .v {

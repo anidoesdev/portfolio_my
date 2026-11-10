@@ -1,0 +1,328 @@
+- generic [active] [ref=e1]:
+  - navigation "Sections" [ref=e2]:
+    - list [ref=e3]:
+      - listitem [ref=e4]:
+        - link "Home" [ref=e5] [cursor=pointer]:
+          - /url: "#hero"
+      - listitem [ref=e8]:
+        - link "Projects" [ref=e9] [cursor=pointer]:
+          - /url: "#projects"
+      - listitem [ref=e12]:
+        - link "Experience" [ref=e13] [cursor=pointer]:
+          - /url: "#experience"
+      - listitem [ref=e16]:
+        - link "Skills" [ref=e17] [cursor=pointer]:
+          - /url: "#about"
+      - listitem [ref=e20]:
+        - link "Awards" [ref=e21] [cursor=pointer]:
+          - /url: "#achievements"
+      - listitem [ref=e24]:
+        - link "Contact" [ref=e25] [cursor=pointer]:
+          - /url: "#contact"
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - generic [aria-hidden] [ref=e31]:
+        - paragraph [ref=e32]:
+          - generic [ref=e33]: Anika Jain
+          - generic [ref=e35]: Sys 1.0
+        - paragraph [ref=e36]:
+          - generic [ref=e37]: Memory
+          - generic [ref=e39]: OK
+        - paragraph [ref=e40]:
+          - generic [ref=e41]: Retrieval
+          - generic [ref=e43]: OK
+        - paragraph [ref=e44]:
+          - generic [ref=e45]: Agents
+          - generic [ref=e47]: OK
+        - paragraph [ref=e48]:
+          - generic [ref=e49]: Ready
+        - button [ref=e50]: Skip
+      - generic [ref=e51]:
+        - heading "Anika Jain" [level=1] [ref=e52]
+        - paragraph [ref=e53]: "Full-stack AI engineer: I take AI from prototype to something people pay for."
+        - paragraph [ref=e54]: Open to freelance projects and full-time roles.
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - term [ref=e58]: Field
+            - definition [ref=e59]: Agents · Evals · RAG · Fine-tuning
+          - generic [ref=e60]:
+            - term [ref=e61]: Stack
+            - definition [ref=e62]: Python · TypeScript · PyTorch · FastAPI · Next.js · Docker
+          - generic [ref=e63]:
+            - term [ref=e64]: Source
+            - definition [ref=e65]:
+              - link "github.com/anidoesdev" [ref=e66] [cursor=pointer]:
+                - /url: https://github.com/anidoesdev
+        - navigation "Jump to section" [ref=e67]:
+          - list [ref=e68]:
+            - listitem [ref=e69]:
+              - link "Projects" [ref=e70] [cursor=pointer]:
+                - /url: "#projects"
+            - listitem [ref=e71]:
+              - link "Experience" [ref=e72] [cursor=pointer]:
+                - /url: "#experience"
+            - listitem [ref=e73]:
+              - link "Skills" [ref=e74] [cursor=pointer]:
+                - /url: "#about"
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - heading "Projects" [level=2] [ref=e78]
+        - paragraph [ref=e79]: 5 systems, end to end — retrieval, anomaly detection, model distillation, and multi-agent research. 3 deployed, all open source.
+      - generic [ref=e80]:
+        - tablist "Projects" [ref=e81]:
+          - tab "01 Runnel" [selected] [ref=e82]:
+            - generic [ref=e83]: "01"
+            - generic [ref=e84]: Runnel
+          - tab "02 MemNest" [ref=e86]:
+            - generic [ref=e87]: "02"
+            - generic [ref=e88]: MemNest
+          - tab "03 Papyrus" [ref=e90]:
+            - generic [ref=e91]: "03"
+            - generic [ref=e92]: Papyrus
+          - tab "04 Distill" [ref=e94]:
+            - generic [ref=e95]: "04"
+            - generic [ref=e96]: Distill
+          - tab "05 Synthesis" [ref=e98]:
+            - generic [ref=e99]: "05"
+            - generic [ref=e100]: Synthesis
+        - tabpanel "01 Runnel" [ref=e103]:
+          - generic [ref=e104]:
+            - generic [ref=e105]:
+              - heading "Runnel" [level=3] [ref=e106]
+              - paragraph [ref=e107]: A workflow automation platform, built from scratch
+              - paragraph [ref=e108]: A self-hosted workflow automation platform in a 9-package TypeScript monorepo. A Vue 3 canvas drives a custom graph execution engine with a hand-written expression language and a sandboxed Code node. An AI assistant builds and repairs workflows on a draft copy through validated tools, and only a person can apply that draft to the live workflow.
+              - generic [ref=e109]:
+                - generic [ref=e110]: Graph Execution Engine
+                - generic [ref=e111]: Expression Language Parser
+                - generic [ref=e112]: Agentic AI
+                - generic [ref=e113]: Human-in-the-Loop
+                - generic [ref=e114]: TypeScript Monorepo
+              - generic [ref=e115]:
+                - link "Source" [ref=e116] [cursor=pointer]:
+                  - /url: https://github.com/anidoesdev/Runnel.git
+                - link "Launch" [ref=e121] [cursor=pointer]:
+                  - /url: https://runnel.anidoes.dev
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - button "Previous — demo video" [ref=e128]
+                - button "Next — demo video" [ref=e131]
+                - figure [ref=e135]:
+                  - img "Two paths into one workflow. Along the top, a prompt goes to the assistant's agent loop, which edits a copy-on-write draft through validated tools; the draft only reaches the workflow once a person applies it. Along the bottom, the Vue 3 canvas edits the same workflow directly. The engine walks the workflow graph in dependency order across 23 node types. Underneath sit the expression language, the Code node's vm sandbox, AES-256-GCM credential encryption and TypeORM storage." [ref=e136]:
+                    - generic [ref=e137]:
+                      - generic [ref=e141]: Prompt
+                      - generic [ref=e144]:
+                        - generic [ref=e146]: Agent
+                        - generic [ref=e147]: loop
+                      - generic [ref=e148]:
+                        - generic [ref=e150]: Tools
+                        - generic [ref=e151]: validated
+                      - generic [ref=e152]:
+                        - generic [ref=e154]: Draft
+                        - generic [ref=e155]: copy-on-write
+                      - generic [ref=e156]:
+                        - generic [ref=e158]: Apply
+                        - generic [ref=e159]: human only
+                      - generic [ref=e160]:
+                        - generic [ref=e162]: Canvas
+                        - generic [ref=e163]: Vue 3
+                      - generic [ref=e164]:
+                        - generic [ref=e166]: Workflow
+                        - generic [ref=e167]: graph
+                      - generic [ref=e168]:
+                        - generic [ref=e170]: Engine
+                        - generic [ref=e171]: dep. order
+                      - generic [ref=e172]:
+                        - generic [ref=e174]: Nodes
+                        - generic [ref=e175]: 23 types
+                      - generic [ref=e176]: Expressions
+                      - generic [ref=e179]: vm sandbox
+                      - generic [ref=e182]: AES-256-GCM
+                      - generic [ref=e185]: TypeORM
+              - generic [ref=e188]:
+                - switch "Show the demo video" [ref=e189]:
+                  - generic [ref=e190]: Flow
+                  - generic [ref=e191]: Demo
+                - generic [ref=e192]: "Step 1 of 2: diagram"
+    - generic [ref=e194]:
+      - heading "Work Experience" [level=2] [ref=e196]
+      - list [ref=e197]:
+        - listitem [ref=e198]:
+          - button "Freelance Web & AI Automation Engineer@ Self-employed Sep 2026 – PresentRemote · Freelance" [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - text: Freelance Web & AI Automation Engineer
+                - generic [ref=e203]: "@ Self-employed"
+              - generic [ref=e204]: Sep 2026 – Present · Remote · Freelance
+          - list [ref=e207]:
+            - listitem [ref=e208]:
+              - generic [ref=e209]: Australian Client (Confidential)
+              - list [ref=e210]:
+                - listitem [ref=e211]: "> Optimising an AI agent inside a production web application for reliability, accuracy and cost."
+                - listitem [ref=e212]: "> Building a test harness with scenario-based test cases, automated runs and regression checks, so every improvement is measurable before it ships."
+            - listitem [ref=e213]:
+              - generic [ref=e214]: Mystical Numbers · India
+              - list [ref=e215]:
+                - listitem [ref=e216]: "> Designed and built the business website from scratch, with SEO and mobile-first design."
+                - listitem [ref=e217]: "> Built a paid registration funnel: ad → landing page → Razorpay payment → instant WhatsApp group access, with the post-payment flow automated via n8n/Make and Meta Pixel tracking."
+        - listitem [ref=e218]:
+          - button "Open Source Contributor@ Hugging Face · TRL May 2026 – PresentRemote" [ref=e220]:
+            - generic [ref=e221]:
+              - generic [ref=e222]:
+                - text: Open Source Contributor
+                - generic [ref=e223]: "@ Hugging Face · TRL"
+              - generic [ref=e224]: May 2026 – Present · Remote
+          - list [ref=e227]:
+            - listitem [ref=e228]: "> Fixed the _get_train_sampler docstring in TRL's GRPOTrainer to document the behaviour when num_iterations > 1, resolving an open issue."
+        - listitem [ref=e229]:
+          - button "Full Stack Engineer@ WREN Jun 2026 – Aug 2026United Kingdom · Remote · Full-time" [ref=e231]:
+            - generic [ref=e232]:
+              - generic [ref=e233]:
+                - text: Full Stack Engineer
+                - generic [ref=e234]: "@ WREN"
+              - generic [ref=e235]: Jun 2026 – Aug 2026 · United Kingdom · Remote · Full-time
+          - list [ref=e238]:
+            - listitem [ref=e239]: "> Sole engineer on a contracted MVP build for a UK children's sleep product: Next.js PWA + Supabase/Postgres, shipped ahead of a 50-family validation study."
+            - listitem [ref=e240]: "> Designed the data model and rules engine converting nightly parent logs into one human-reviewed weekly recommendation."
+            - listitem [ref=e241]: "> Enforced consent, age gating, and row-level security (RLS) at the database layer; built export, revoke, and wipe flows for UK GDPR and Children's Code compliance."
+            - listitem [ref=e242]: "> Built the operator review console and the app's shared design-system components."
+        - listitem [ref=e243]:
+          - button "Data Science Trainee@ Infosys Dec 2025 – May 2026Mysore · Full-time" [ref=e245]:
+            - generic [ref=e246]:
+              - generic [ref=e247]:
+                - text: Data Science Trainee
+                - generic [ref=e248]: "@ Infosys"
+              - generic [ref=e249]: Dec 2025 – May 2026 · Mysore · Full-time
+          - list [ref=e252]:
+            - listitem [ref=e253]: "> Tuned loss functions and optimizers for custom machine learning models, grounded in the underlying linear algebra, calculus and probability, to improve accuracy over standard baselines."
+            - listitem [ref=e254]: "> Trained and evaluated deep learning models in PyTorch and TensorFlow, optimising the training loop to cut training time on large datasets."
+            - listitem [ref=e255]: "> Built an end-to-end AI research pipeline that processes unstructured scientific data and automates pattern extraction, reducing manual analysis."
+            - listitem [ref=e256]: "> Implemented graph-based neural network architectures directly from research papers for highly relational data."
+            - listitem [ref=e257]: "> Built data ingestion and feature engineering workflows, and ran model evaluation, hyperparameter tuning and ablation studies to set reliable baselines."
+        - listitem [ref=e258]:
+          - button "Full Stack Engineer@ TripHexa Jul 2025 – Dec 2025Remote · Full-time" [ref=e260]:
+            - generic [ref=e261]:
+              - generic [ref=e262]:
+                - text: Full Stack Engineer
+                - generic [ref=e263]: "@ TripHexa"
+              - generic [ref=e264]: Jul 2025 – Dec 2025 · Remote · Full-time
+          - list [ref=e267]:
+            - listitem [ref=e268]: "> Took the product from zero to a working MVP in 3 months, owning the organizer dashboard, data model, and deployment pipeline."
+            - listitem [ref=e269]: "> Designed a Trip Template + Cohorts data model enabling organizers to manage dozens of departures, prices, and occupancies per template with zero data duplication."
+            - listitem [ref=e270]: "> Built a custom abstraction layer over Firebase/Firestore providing ACID-like transactional guarantees and schema validation on a NoSQL store (no ORM available)."
+            - listitem [ref=e271]: "> Shipped lead capture, booking, and payment flows that replaced manual spreadsheet workflows and readied the product for Razorpay and WhatsApp integrations."
+            - listitem [ref=e272]: "> Built a reusable Next.js + Tailwind component library, cutting new dashboard view delivery from days to hours."
+    - generic [ref=e274]:
+      - heading "Skills" [level=2] [ref=e276]
+      - generic [ref=e277]:
+        - generic [ref=e278]:
+          - term [ref=e279]:
+            - heading "Languages" [level=3] [ref=e280]
+          - definition [ref=e281]:
+            - list [ref=e282]:
+              - listitem [ref=e283]: Python·
+              - listitem [ref=e284]: TypeScript·
+              - listitem [ref=e285]: JavaScript·
+              - listitem [ref=e286]: SQL·
+              - listitem [ref=e287]: C++·
+              - listitem [ref=e288]: Java
+        - generic [ref=e289]:
+          - term [ref=e290]:
+            - heading "AI / ML / DL" [level=3] [ref=e291]
+          - definition [ref=e292]:
+            - list [ref=e293]:
+              - listitem [ref=e294]: PyTorch·
+              - listitem [ref=e295]: TensorFlow·
+              - listitem [ref=e296]: Transformers·
+              - listitem [ref=e297]: LangChain·
+              - listitem [ref=e298]: OpenAI API·
+              - listitem [ref=e299]: Scikit-learn
+        - generic [ref=e300]:
+          - term [ref=e301]:
+            - heading "Backend" [level=3] [ref=e302]
+          - definition [ref=e303]:
+            - list [ref=e304]:
+              - listitem [ref=e305]: Node.js·
+              - listitem [ref=e306]: FastAPI·
+              - listitem [ref=e307]: Express·
+              - listitem [ref=e308]: REST APIs
+        - generic [ref=e309]:
+          - term [ref=e310]:
+            - heading "Frontend" [level=3] [ref=e311]
+          - definition [ref=e312]:
+            - list [ref=e313]:
+              - listitem [ref=e314]: React·
+              - listitem [ref=e315]: Next.js·
+              - listitem [ref=e316]: Tailwind CSS
+        - generic [ref=e317]:
+          - term [ref=e318]:
+            - heading "Database & Cloud" [level=3] [ref=e319]
+          - definition [ref=e320]:
+            - list [ref=e321]:
+              - listitem [ref=e322]: PostgreSQL·
+              - listitem [ref=e323]: MongoDB·
+              - listitem [ref=e324]: Redis·
+              - listitem [ref=e325]: AWS·
+              - listitem [ref=e326]: Vercel
+        - generic [ref=e327]:
+          - term [ref=e328]:
+            - heading "MLOps & Deployment" [level=3] [ref=e329]
+          - definition [ref=e330]:
+            - list [ref=e331]:
+              - listitem [ref=e332]: Docker·
+              - listitem [ref=e333]: CI/CD for ML·
+              - listitem [ref=e334]: Model Serving (vLLM, TorchServe)·
+              - listitem [ref=e335]: MLflow·
+              - listitem [ref=e336]: Weights & Biases
+    - generic [ref=e338]:
+      - heading "Achievements" [level=2] [ref=e340]
+      - list [ref=e341]:
+        - listitem [ref=e342]:
+          - generic [ref=e343]:
+            - generic [ref=e344]: GATE
+            - generic [ref=e345]: Ranked
+          - generic [ref=e346]:
+            - paragraph [ref=e347]: 92.1 percentile
+            - paragraph [ref=e350]: All India rank 5,472 of 69,242
+            - paragraph [ref=e351]: Data Science and Artificial Intelligence (DA)
+    - generic [ref=e353]:
+      - heading "GitHub Activity" [level=2] [ref=e355]
+      - generic [ref=e357]:
+        - generic [ref=e358]: Contributions
+        - link "@anidoesdev" [ref=e359] [cursor=pointer]:
+          - /url: https://github.com/anidoesdev
+          - text: "@anidoesdev ↗"
+    - generic [ref=e363]:
+      - heading "Let's Connect" [level=2] [ref=e364]
+      - paragraph [ref=e365]: Have a project in mind, or just want to talk? My inbox is open and I answer everything.
+      - list [ref=e366]:
+        - listitem [ref=e367]:
+          - img "Email" [ref=e368]
+          - link "anikajain1307@gmail.com" [ref=e372] [cursor=pointer]:
+            - /url: mailto:anikajain1307@gmail.com
+        - listitem [ref=e373]:
+          - img "GitHub" [ref=e374]
+          - link "github.com/anidoesdev" [ref=e377] [cursor=pointer]:
+            - /url: https://github.com/anidoesdev
+        - listitem [ref=e378]:
+          - img "LinkedIn" [ref=e379]
+          - link "linkedin.com/in/anidoesdev" [ref=e382] [cursor=pointer]:
+            - /url: https://linkedin.com/in/anidoesdev
+        - listitem [ref=e383]:
+          - img "X" [ref=e384]
+          - link "x.com/anidoesdev" [ref=e387] [cursor=pointer]:
+            - /url: https://x.com/anidoesdev
+      - generic [ref=e388]:
+        - link "Say hello" [ref=e389] [cursor=pointer]:
+          - /url: mailto:anikajain1307@gmail.com
+          - text: Say hello
+          - generic [aria-hidden] [ref=e390]: ▸
+        - link "Résumé" [ref=e391] [cursor=pointer]:
+          - /url: /anika-jain-resume.pdf
+          - text: Résumé
+          - generic [aria-hidden] [ref=e392]: ↗
+      - generic [ref=e393]:
+        - paragraph [ref=e394]: © 2026 Anika Jain - designed and built from scratch
+        - paragraph [ref=e395]:
+          - generic [aria-hidden] [ref=e396]: ">"
+          - text: end of transmission
+  - button "Open Next.js Dev Tools" [ref=e403] [cursor=pointer]

@@ -31,8 +31,8 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "Anika Jain — Portfolio",
-  description: "Personal portfolio of Anika Jain — developer, designer, creator.",
+  title: "Anika Jain — Full-stack AI Engineer",
+  description: "Anika Jain, full-stack AI engineer building AI agents, evals, RAG systems and full-stack products. Open to freelance projects and full-time roles.",
 };
 
 export default function RootLayout({

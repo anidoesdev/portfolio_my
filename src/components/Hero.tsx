@@ -22,11 +22,15 @@ const jumpLinks = [
 const plate = [
   {
     term: "Field",
-    detail: "Retrieval · Anomaly detection · Distillation · Multi-agent",
+    detail: "Agents · Evals · RAG · Fine-tuning",
   },
   {
     term: "Stack",
-    detail: "Python · PyTorch · FastAPI · Docker",
+    detail: "Python · TypeScript · PyTorch · Next.js · Docker",
+  },
+  {
+    term: "Status",
+    detail: "Freelance · Open to full-time roles",
   },
   {
     term: "Source",
@@ -99,7 +103,8 @@ export default function Hero() {
         <h1 className="slate-name">Anika Jain</h1>
 
         <p className="slate-lede">
-          A full-stack Applied AI Engineer, from paper to production.
+          Full-stack AI engineer: I take AI from prototype to something
+          people pay for.
         </p>
 
         {/* A definition list, so each label is bound to its value for a
